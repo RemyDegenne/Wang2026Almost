@@ -1,0 +1,123 @@
+\chapter{Bankruptcy of mixture strategies}
+\label{chap:mixture}
+
+\begin{lemma}[Lemma B.2]
+  \label{lem:exp_regular}
+  \lean{Wang2026Almost.tendsto_integral_exp_neg_mul}
+  \leanok
+  Let $\gamma$ be a finite measure on $[0, \infty)$ and $A_n \to \infty$. Then
+  $\int e^{-x A_n} \, d\gamma(x) \to \gamma(\{0\})$.
+\end{lemma}
+
+\begin{proof}
+  For $\gamma$-a.e.\ $x$ ($x \ge 0$), $e^{-x A_n} \to \indic\{x = 0\}$, and $0 \le e^{-xA_n} \le 1$
+  as soon as $A_n \ge 0$, which holds for large $n$. Dominated convergence.
+\end{proof}
+
+\begin{remark}
+  The paper assumes $(A_n)$ positive and increasing (it uses monotone convergence); these
+  hypotheses are not needed. The lemma is formalized as a result of the paper but is not used:
+  our proof of Theorem~\ref{thm:nocash} does not go through the law of the iterated logarithm.
+\end{remark}
+
+\begin{lemma}[Large bets are dominated]
+  \label{lem:mixture_large}
+  \uses{lem:fixedWealth_le_rpow, thm:sos_crit_filtration}
+  Let $P$ be a non-degenerate null distribution, $X_n$ i.i.d.\ with law $P$, and $\eps > 0$ with
+  $\pm\eps \in \Fr$. Almost surely, $\sup_{\lambda \in \Fr, \abs\lambda \ge \eps} W^\lambda_n \to 0$.
+\end{lemma}
+
+\begin{proof}
+  The fixed-fraction wealths $W^{\eps}_n$ and $W^{-\eps}_n$ tend to $0$ a.s.\ by
+  Theorem~\ref{thm:sos_crit_filtration} (constant strategies, $\sum \eps^2 = \infty$). For
+  $\lambda \ge \eps$ in $\Fr$, Lemma~\ref{lem:fixedWealth_le_rpow} gives
+  $W^\lambda_n \le (W^\eps_n)^{\lambda/\eps} \le W^\eps_n$ as soon as $W^\eps_n \le 1$; symmetrically
+  for $\lambda \le -\eps$.
+\end{proof}
+
+\begin{lemma}[Small bets have a small limit]
+  \label{lem:mixture_small}
+  \uses{lem:supermartingale_integral, lem:supermartingale_tendsto, lem:wealth_supermartingale}
+  Let $X_n$ be i.i.d.\ with a null law $P$, $\pi$ a finite measure on $\Fr$ and $B \subseteq \Fr$
+  measurable. Then $n \mapsto \int_B W^\lambda_n \, d\pi(\lambda)$ converges a.s.\ to a limit $L_B
+  \ge 0$ with $\E[L_B] \le \pi(B)$.
+\end{lemma}
+
+\begin{proof}
+  Each $W^\lambda$, $\lambda \in \Fr$, is a nonnegative supermartingale for the past filtration
+  (Lemma~\ref{lem:wealth_supermartingale}), jointly measurable in $(\lambda, \omega)$; so is the
+  mixture (Lemma~\ref{lem:supermartingale_integral}). It converges a.s.\ and its limit has
+  expectation at most $\E[\int_B W^\lambda_0 \, d\pi] = \pi(B)$
+  (Lemma~\ref{lem:supermartingale_tendsto}).
+\end{proof}
+
+\begin{theorem}[No-cash criterion, Theorem 3.1]
+  \label{thm:nocash}
+  \lean{Wang2026Almost.tendsto_mixtureWealth}
+  \leanok
+  \uses{lem:mixture_large, lem:mixture_small, lem:null_basic}
+  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$, $X_n$ i.i.d.\ with law $P$, and
+  $\pi$ a probability measure on $\Fr$. Then $W^\pi_n \to \pi(\{0\})$ almost surely. In particular
+  $W^\pi_n \to 0$ a.s.\ if and only if $\pi(\{0\}) = 0$.
+\end{theorem}
+
+\begin{proof}
+  Since $W^0_n = 1$, for every $\eps > 0$,
+  $W^\pi_n = \pi(\{0\}) + \int_{0 < \abs\lambda < \eps} W^\lambda_n \, d\pi
+  + \int_{\abs\lambda \ge \eps} W^\lambda_n \, d\pi$. The last term is at most
+  $\sup_{\abs\lambda \ge \eps} W^\lambda_n \to 0$ (Lemma~\ref{lem:mixture_large}); the middle one
+  converges to $L_\eps \ge 0$ with $\E L_\eps \le \pi(\{0 < \abs\lambda < \eps\})$
+  (Lemma~\ref{lem:mixture_small}). Hence a.s., for all $j$, with $\eps_j = 1/(j+1)$ (small enough
+  for $\pm\eps_j \in \Fr$),
+  $\pi(\{0\}) \le \liminf W^\pi_n \le \limsup W^\pi_n \le \pi(\{0\}) + L_{\eps_j}$. Finally
+  $\E[\inf_j L_{\eps_j}] \le \inf_j \pi(\{0 < \abs\lambda < \eps_j\}) = 0$, so $\inf_j L_{\eps_j} =
+  0$ a.s. The last claim follows from the uniqueness of limits.
+\end{proof}
+
+\begin{remark}
+  The paper splits $\pi$ into its positive and negative parts and uses the law of the iterated
+  logarithm ($\liminf S_n = -\infty$, $\limsup S_n = +\infty$) with Lemma~\ref{lem:exp_regular}
+  along a random subsequence. The law of the iterated logarithm is not in Mathlib; the splitting at
+  $\abs\lambda = \eps$ avoids it.
+\end{remark}
+
+\begin{lemma}[The universal portfolio mixture]
+  \label{lem:betaMixture_prob}
+  \uses{def:mixtures}
+  For $a, b > 0$, $\pi_{a,b}$ is a probability measure concentrated on $[-1,1]$ with
+  $\pi_{a,b}(\{0\}) = 0$.
+\end{lemma}
+
+\begin{proof}
+  The Beta distribution is a probability measure on $[0,1]$ with a density, hence without atoms,
+  and $x \mapsto 2x - 1$ is injective.
+\end{proof}
+
+\begin{lemma}[Robbins' mixture]
+  \label{lem:robbins_prob}
+  \uses{def:mixtures}
+  Robbins' mixing distribution is a probability measure concentrated on $[-1,1]$ with
+  $\pi(\{0\}) = 0$.
+\end{lemma}
+
+\begin{proof}
+  The density vanishes outside $[-1,1]$ and is nonnegative ($C/\abs\lambda \ge C > e$, so
+  $\log\log(C/\abs\lambda) > 0$). On $(0, 1]$, $F(\lambda) = 1/\log\log(C/\lambda)$ has derivative
+  $\frac{1}{\lambda\log(C/\lambda)(\log\log(C/\lambda))^2}$, with $F(0^+) = 0$ and
+  $F(1) = 1/\log\log C$; by symmetry the total mass is $2 \cdot \frac{\log\log C}{2} \cdot
+  \frac{1}{\log\log C} = 1$. The measure is absolutely continuous, so $\pi(\{0\}) = 0$.
+\end{proof}
+
+\begin{proposition}[Universal portfolio and Robbins' mixture, Proposition 3.2]
+  \label{prop:mixture_bankrupt}
+  \lean{Wang2026Almost.tendsto_mixtureWealth_betaMixture, Wang2026Almost.tendsto_mixtureWealth_robbinsMixture}
+  \leanok
+  \uses{thm:nocash, lem:betaMixture_prob, lem:robbins_prob, lem:null_basic}
+  Under any non-degenerate null distribution, the wealths of the universal portfolio (mixing
+  distribution $\pi_{a,b}$, $a, b > 0$) and of Robbins' mixture converge to $0$ almost surely.
+\end{proposition}
+
+\begin{proof}
+  $[-1, 1] \subseteq \Fr$ since $m \in (0,1)$; apply Theorem~\ref{thm:nocash} with
+  Lemmas~\ref{lem:betaMixture_prob} and~\ref{lem:robbins_prob}.
+\end{proof}

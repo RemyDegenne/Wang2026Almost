@@ -1,0 +1,123 @@
+\chapter{Odds and ends}
+\label{chap:odds}
+
+\section{\texorpdfstring{Null asymptotics of $\klinf$}{Null asymptotics of KLinf}}
+
+\begin{lemma}
+  \label{lem:measurable_hindsightLogWealth}
+  \uses{def:hindsight}
+  If $m \in (0,1)$ and the $X_k$ are measurable, $L^*_n$ is measurable.
+\end{lemma}
+
+\begin{proof}
+  $\lambda \mapsto W^\lambda_n$ is continuous (a polynomial), so its supremum over the interval
+  $\Fr$ (with nonempty interior) equals its supremum over the countable dense subset
+  $\Fr \cap \mathbb Q$, a countable supremum of measurable functions.
+\end{proof}
+
+\begin{theorem}[$\chi^2$ limit, Theorem 5.1]
+  \label{thm:chisq_klinf}
+  \lean{Wang2026Almost.tendstoInDistribution_hindsightLogWealth}
+  \leanok
+  \uses{lem:good_event, lem:hindsight_value, lem:measurable_hindsightLogWealth, lem:clt, lem:slutsky,
+    lem:slln, lem:gaussian_sq, lem:null_basic}
+  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $X_n$ i.i.d.\ with law $P$.
+  Then $2 L^*_n$ converges in distribution to $\chi^2_1$.
+\end{theorem}
+
+\begin{proof}
+  On the event of Lemma~\ref{lem:good_event} (probability one), Lemma~\ref{lem:hindsight_value}
+  gives $2L^*_n - S_n^2/V_n \to 0$. Write $S_n^2/V_n = (S_n/(\sigma\sqrt n))^2 \cdot
+  \frac{n\sigma^2}{V_n}$: the CLT, the continuous map $x \mapsto x^2$ and
+  Lemma~\ref{lem:gaussian_sq} give $(S_n/(\sigma\sqrt n))^2 \to \chi^2_1$ in distribution; by the
+  strong law $V_n/(n\sigma^2) \to 1$ a.s.; Slutsky's lemma (twice) concludes.
+\end{proof}
+
+\begin{theorem}[Unbounded regret, Theorem 5.1]
+  \label{thm:unbounded_regret}
+  \lean{Wang2026Almost.not_bddAbove_logRegret_of_tendsto_wealth_zero}
+  \leanok
+  \uses{def:hindsight}
+  Let $m \in (0,1)$. If $W_n \to 0$ almost surely, then almost surely either $W_n = 0$ for some $n$,
+  or the regret $R_n = L^*_n - \log W_n$ is unbounded.
+\end{theorem}
+
+\begin{proof}
+  Pathwise: $\lambda \mapsto W^\lambda_n$ is continuous on the compact $\Fr$, hence bounded, and
+  $W^0_n = 1$, so $L^*_n \ge 0$. If $W_n > 0$ for all $n$ and $W_n \to 0$, then $\log W_n \to
+  -\infty$ and $R_n \ge -\log W_n \to \infty$.
+\end{proof}
+
+\begin{remark}
+  The paper writes the conclusion as $\sup_n (L^*_n - \log W_n) = \infty$ almost surely, with
+  $\log 0 = -\infty$; Lean's $\log 0 = 0$ forces the case distinction.
+\end{remark}
+
+\section{Sub-Gaussian test processes}
+
+\begin{theorem}[Sum-of-squares criterion II, filtration form]
+  \label{thm:sos_crit_subg_filtration}
+  \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto, lem:subg_sum_tendsto,
+    lem:subg_sum_little_o}
+  Let $P$ be such that $X - m$ is $1$-sub-Gaussian under $P$, $X$ i.i.d.\ along $\F$ with law $P$,
+  and $\lambda$ a predictable real process. Then the plug-in test process $M^\lambda_n$ converges
+  a.s.\ to $M_\infty$ with $\{M_\infty = 0\} = \{\sum (\lambda_n - m)^2 = \infty\}$ and
+  $\{M_\infty > 0\} = \{\sum (\lambda_n - m)^2 < \infty\}$ up to null sets.
+\end{theorem}
+
+\begin{proof}
+  Since $(x - m)^2 - (x - \lambda)^2 = 2(\lambda - m)(x - m) - (\lambda - m)^2$,
+  $\log M^\lambda_n = T_n - A_n/2$ with $T_n = \sum_{k<n} (\lambda_k - m)(X_k - m)$ and $A_n =
+  \sum_{k<n} (\lambda_k - m)^2$. By Lemma~\ref{lem:exp_subg_supermartingale} ($t = 1$, $c = 1$),
+  $M^\lambda$ is a nonnegative supermartingale and converges a.s.\
+  (Lemma~\ref{lem:supermartingale_tendsto}). On $\{A_\infty < \infty\}$, $T_n$ converges
+  (Lemma~\ref{lem:subg_sum_tendsto}) and $M_\infty = e^{T_\infty - A_\infty/2} > 0$. On
+  $\{A_\infty = \infty\}$, Lemma~\ref{lem:subg_sum_little_o} with $\eps = 1/4$ gives $T_n \le C +
+  A_n/4$, so $\log M^\lambda_n \le C - A_n/4 \to -\infty$ and $M_\infty = 0$.
+\end{proof}
+
+\begin{theorem}[Sum-of-squares criterion II, Theorem 5.2]
+  \label{thm:sos_crit_subg}
+  \lean{Wang2026Almost.sum_sq_criterion_subgaussian}
+  \leanok
+  \uses{thm:sos_crit_subg_filtration, lem:iid_of_run}
+  Let $P$ be a $1$-sub-Gaussian distribution with mean $m$ and $(\lambda, X)$ a run of an algorithm
+  in $\mathrm{const}(P)$. Then $M^\lambda_n$ converges a.s.\ to $M_\infty$ with
+  $\{M_\infty = 0\} = \{\sum (\lambda_n - m)^2 = \infty\}$ and
+  $\{M_\infty > 0\} = \{\sum (\lambda_n - m)^2 < \infty\}$ up to null sets.
+\end{theorem}
+
+\begin{proof}
+  Theorem~\ref{thm:sos_crit_subg_filtration} with Lemma~\ref{lem:iid_of_run}.
+\end{proof}
+
+\begin{remark}
+  The paper assumes $P$ non-degenerate; the proof does not use it. The paper's proof uses the
+  martingale strong law of large numbers on $\{A_\infty = \infty\}$; the exponential
+  supermartingale with $t = 1/2$ gives the needed upper bound directly.
+\end{remark}
+
+\begin{theorem}[No-cash criterion II, Theorem 5.3]
+  \label{thm:nocash_subg}
+  \lean{Wang2026Almost.tendsto_subgaussianMixtureTest}
+  \leanok
+  \uses{thm:sos_crit_subg_filtration, lem:subgTest_le_rpow, lem:supermartingale_integral,
+    lem:supermartingale_tendsto, lem:exp_subg_supermartingale}
+  Let $P$ be a $1$-sub-Gaussian distribution with mean $m$, $X_n$ i.i.d.\ with law $P$, and $\pi$ a
+  probability measure on $\R$. Then $M^\pi_n \to \pi(\{m\})$ almost surely.
+\end{theorem}
+
+\begin{proof}
+  As for Theorem~\ref{thm:nocash}, with $M^m_n = 1$: for $\abs{\lambda - m} \ge \eps$,
+  $M^\lambda_n \le M^{m \pm \eps}_n$ once $M^{m \pm \eps}_n \le 1$ (Lemma~\ref{lem:subgTest_le_rpow}),
+  and $M^{m\pm\eps}_n \to 0$ a.s.\ by Theorem~\ref{thm:sos_crit_subg_filtration} (constant
+  strategies); the mixture over $\{0 < \abs{\lambda - m} < \eps\}$ is a nonnegative supermartingale
+  (Lemmas~\ref{lem:exp_subg_supermartingale} and~\ref{lem:supermartingale_integral}) whose limit has
+  expectation at most $\pi(\{0 < \abs{\lambda - m} < \eps\})$.
+\end{proof}
+
+\begin{remark}
+  The paper assumes $P$ non-degenerate; the proof does not use it (for $P = \delta_m$,
+  $M^\lambda_n = e^{-n(\lambda - m)^2/2}$ and the claim is dominated convergence). The paper's proof
+  uses the law of the iterated logarithm, as for Theorem~\ref{thm:nocash}.
+\end{remark}

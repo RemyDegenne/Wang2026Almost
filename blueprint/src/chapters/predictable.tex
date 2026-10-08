@@ -1,0 +1,310 @@
+\chapter{Bankruptcy of predictable plug-in and hedging strategies}
+\label{chap:predictable}
+
+\section{The sum-of-squares criterion}
+
+\begin{lemma}[Bankruptcy on the divergence event]
+  \label{lem:sos_diverge}
+  \uses{def:predictable, lem:null_basic, lem:log_le_sub_mul_sq, lem:subg_sum_little_o, lem:hoeffding_lemma_null}
+  Let $P$ be a non-degenerate null distribution, $X$ i.i.d.\ along $\F$ with law $P$ and $\lambda$
+  a predictable strategy with $\lambda_n \in \Fr$ a.s. Then almost surely, if
+  $\sum_n \lambda_n^2 = \infty$ and $1 + \lambda_n (X_n - m) > 0$ for all $n$, then
+  $\log W_n \to -\infty$.
+\end{lemma}
+
+\begin{proof}
+  Let $Y_k = X_k - m$, $M = \max(\frac{1-m}{m}, \frac{m}{1-m})$, so that $\lambda_k Y_k \in [-1, M]$
+  a.s. By Lemma~\ref{lem:log_le_sub_mul_sq}, with $c = \frac{1}{2(1+M)}$,
+  $\log W_n \le T_n - c \sum_{k<n} \lambda_k^2 Y_k^2$, $T_n := \sum_{k<n} \lambda_k Y_k$. The
+  variables $Y_k$ and $Y_k^2 - \sigma^2$ are bounded, centered, independent of $\F_k$, hence
+  sub-Gaussian (Lemma~\ref{lem:hoeffding_lemma_null}). Let $A_n = \sum_{k<n}\lambda_k^2$. By
+  Lemma~\ref{lem:subg_sum_little_o} applied to the weights $\lambda_k$ and to the weights
+  $\lambda_k^2$ (with $\sum_{k<n} \lambda_k^4 \le K A_n$, $K = \max(m^{-2}, (1-m)^{-2})$), almost
+  surely for every $\eps > 0$ there is $C$ with $T_n \le C + \eps A_n$ and
+  $\sum_{k<n} \lambda_k^2 (Y_k^2 - \sigma^2) \ge -C - \eps A_n$. With $\eps = c\sigma^2/4$ for the
+  first and $\eps = \sigma^2/2$ for the second,
+  $\log W_n \le C' - \frac{c\sigma^2}{4} A_n \to -\infty$.
+\end{proof}
+
+\begin{lemma}[Non-bankruptcy on the convergence event]
+  \label{lem:sos_converge}
+  \uses{def:predictable, lem:null_basic, lem:log_ge_sub_sq, lem:subg_sum_tendsto, lem:hoeffding_lemma_null}
+  In the setting of Lemma~\ref{lem:sos_diverge}, almost surely, if $\sum_n \lambda_n^2 < \infty$
+  and $1 + \lambda_n(X_n - m) > 0$ for all $n$, then $\liminf_n \log W_n > -\infty$.
+\end{lemma}
+
+\begin{proof}
+  By Lemma~\ref{lem:subg_sum_tendsto}, almost surely on $\{\sum \lambda_n^2 < \infty\}$ the sums
+  $T_n$ converge, hence are bounded. Since $\lambda_n \to 0$ and $\abs{Y_n} \le 1$, there is $N$
+  with $\abs{\lambda_n Y_n} \le 1/2$ for $n \ge N$, and by Lemma~\ref{lem:log_ge_sub_sq}, for
+  $n \ge N$, $\log W_n \ge \log W_N + (T_n - T_N) - \sum_k \lambda_k^2$, which is bounded below.
+\end{proof}
+
+\begin{lemma}[The wealth converges]
+  \label{lem:wealth_tendsto}
+  \uses{lem:wealth_supermartingale, lem:supermartingale_tendsto}
+  In the setting of Lemma~\ref{lem:sos_diverge}, $W_n$ converges almost surely to a finite limit.
+\end{lemma}
+
+\begin{proof}
+  $W$ is a nonnegative supermartingale (Lemma~\ref{lem:wealth_supermartingale}); apply
+  Lemma~\ref{lem:supermartingale_tendsto}.
+\end{proof}
+
+\begin{theorem}[Sum-of-squares criterion, filtration form]
+  \label{thm:sos_crit_filtration}
+  \uses{lem:sos_diverge, lem:sos_converge, lem:wealth_tendsto, lem:wealth_basic}
+  Let $P$ be a non-degenerate null distribution, $X$ i.i.d.\ along $\F$ with law $P$, and $\lambda$
+  a predictable strategy with values in $\Fr$ a.s. Then $W_n$ converges a.s.\ to a random variable
+  $W_\infty$ with, almost surely,
+  $W_\infty = 0 \iff \sum_n \lambda_n^2 = \infty \text{ or } \exists n,\ \lambda_n(X_n - m) = -1$,
+  and $W_\infty > 0 \iff \sum_n \lambda_n^2 < \infty \text{ and } \forall n,\ \lambda_n (X_n - m) >
+  -1$.
+\end{theorem}
+
+\begin{proof}
+  Take $W_\infty$ the a.s.\ limit (Lemma~\ref{lem:wealth_tendsto}). Almost surely all factors
+  $1 + \lambda_n(X_n - m)$ are nonnegative. If one of them vanishes ($\lambda_n(X_n - m) = -1$), then
+  $W_k = 0$ for $k > n$ and $W_\infty = 0$. Otherwise $\log W_n = \sum_{k<n} \log(1 + \lambda_k(X_k
+  - m))$ and Lemmas~\ref{lem:sos_diverge} and~\ref{lem:sos_converge} decide: $W_\infty = 0$ iff
+  $\sum \lambda_n^2 = \infty$. The second equivalence follows since $W_\infty \ge 0$.
+\end{proof}
+
+\begin{theorem}[Sum-of-squares criterion, Theorem 2.1]
+  \label{thm:sos_crit}
+  \lean{Wang2026Almost.sum_sq_criterion}
+  \leanok
+  \uses{thm:sos_crit_filtration, lem:iid_of_run}
+  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$, and $(\lambda, X)$ a run of an
+  algorithm in the i.i.d.\ environment $\mathrm{const}(P)$ with $\lambda_n \in \Fr$ a.s. Then the
+  wealth converges a.s.\ to $W_\infty$ with $\{W_\infty = 0\} = \{\sum \lambda_n^2 = \infty\} \cup
+  \bigcup_n \{\lambda_n (X_n - m) = -1\}$ and $\{W_\infty > 0\} = \{\sum \lambda_n^2 < \infty\} \cap
+  \bigcap_n \{\lambda_n(X_n - m) > -1\}$ up to null sets.
+\end{theorem}
+
+\begin{proof}
+  Theorem~\ref{thm:sos_crit_filtration} with the filtration of Lemma~\ref{lem:iid_of_run}.
+\end{proof}
+
+\begin{remark}
+  The paper's strategies are predictable for $\sigma(X_0, \dots, X_{n-1})$; runs of LML algorithms
+  also cover randomized strategies, and Theorem~\ref{thm:sos_crit_filtration} any filtration. The
+  paper's proof uses the martingale convergence and divergence theorems of
+  \cite{hall2014martingale} and \cite{Fitzsimmonslecturenotes}; we use instead the exponential
+  supermartingales of Chapter~\ref{chap:pre_martingale}.
+\end{remark}
+
+\section{\texorpdfstring{Almost sure divergence of $\sum \Omega_p(n^{-1})$}{Almost sure divergence of sums of order 1/n in probability}}
+
+\begin{theorem}[Theorem 2.2]
+  \label{thm:sum_of_op}
+  \lean{Wang2026Almost.ae_not_summable_of_isBigOmegaInProb}
+  \leanok
+  \uses{def:asymp, lem:cesaro_of_summable_div, lem:measure_liminf_le}
+  Let $(Z_n)$ be a.s.\ nonnegative random variables with $Z_n = \Omp(n^{-1})$. Then
+  $\sum_n Z_n = \infty$ almost surely.
+\end{theorem}
+
+\begin{proof}
+  Let $\eps \in (0, 1/2)$; there are $\delta > 0$ and $N$ with $\Prob(A_n) \ge 1 - \eps$ for
+  $n \ge N$, where $A_n = \{Z_n \ge \delta/n\}$. On $C = \{\sum Z_n < \infty\}$,
+  $\sum_{n \ge 1} \indic_{A_n}/n \le \delta^{-1} \sum Z_n < \infty$, so by
+  Lemma~\ref{lem:cesaro_of_summable_div} $G_n := \frac1n \sum_{k<n} \indic_{A_k} \to 0$, and
+  $C \subseteq \liminf_n \{G_n < 1/2\}$. Now $\E[G_n] \ge \frac{n - N}{n}(1-\eps)$, so by Markov's
+  inequality applied to $1 - G_n \in [0,1]$, $\Prob(G_n < 1/2) \le 2(1 - \E G_n)$, whose limit
+  superior is at most $2\eps$. By Lemma~\ref{lem:measure_liminf_le},
+  $\Prob(C) \le \liminf_n \Prob(G_n < 1/2) \le 2\eps$. Since $\eps$ is arbitrary, $\Prob(C) = 0$.
+\end{proof}
+
+\begin{remark}
+  The paper uses Kronecker's lemma; Lemma~\ref{lem:cesaro_of_summable_div} is the special case
+  needed, with a two-line proof. The measurability of the $Z_n$ is only needed almost everywhere.
+\end{remark}
+
+\begin{corollary}[Corollary 2.3]
+  \label{cor:div_sample_mean}
+  \lean{Wang2026Almost.ae_not_summable_sum_sq_div_sq}
+  \leanok
+  \uses{thm:sum_of_op, lem:isBigOmegaInProb_of_tendstoInDistribution, lem:isBigOmegaInProb_sq,
+    lem:isBigOmegaInProb_mono, lem:clt}
+  Let $Y_0, Y_1, \dots$ be i.i.d.\ with mean $0$ and variance $\sigma^2 > 0$, $S_n = \sum_{k<n}
+  Y_k$. Then $\sum_{n \ge 1} S_n^2/n^2 = \infty$ almost surely.
+\end{corollary}
+
+\begin{proof}
+  By the central limit theorem (Lemma~\ref{lem:clt}), $S_n/\sqrt n$ converges in distribution to
+  $\gaussian(0, \sigma^2)$, which has no atom at $0$, so $S_n/n = \Omp(n^{-1/2})$
+  (Lemma~\ref{lem:isBigOmegaInProb_of_tendstoInDistribution}); squaring
+  (Lemma~\ref{lem:isBigOmegaInProb_sq}) and shifting the index
+  (Lemma~\ref{lem:isBigOmegaInProb_mono}), $Z_n := S_{n+1}^2/(n+1)^2 = \Omp(n^{-1})$; apply
+  Theorem~\ref{thm:sum_of_op}.
+\end{proof}
+
+\section{\texorpdfstring{The $n^{-1/2}$ criterion}{The n to the -1/2 criterion}}
+
+\begin{corollary}[Filtration form]
+  \label{cor:sq_crit_filtration}
+  \uses{thm:sos_crit_filtration, thm:sum_of_op, lem:isBigOmegaInProb_sq, lem:not_summable_inv_mul_log}
+  In the setting of Theorem~\ref{thm:sos_crit_filtration}, if $\lambda_n = \Omp(n^{-1/2})$ or
+  $\lambda_n = \Omas((n \log n)^{-1/2})$, then $W_n \to 0$ almost surely.
+\end{corollary}
+
+\begin{proof}
+  In the first case $\lambda_n^2 = \Omp(n^{-1})$ (Lemma~\ref{lem:isBigOmegaInProb_sq}), so
+  $\sum \lambda_n^2 = \infty$ a.s.\ by Theorem~\ref{thm:sum_of_op}. In the second case, a.s.\ there
+  is $c > 0$ with $\lambda_n^2 \ge c/(n \log n)$ for large $n$, and $\sum 1/(n\log n) = \infty$
+  (Lemma~\ref{lem:not_summable_inv_mul_log}). Conclude by Theorem~\ref{thm:sos_crit_filtration}.
+\end{proof}
+
+\begin{corollary}[$n^{-1/2}$ criterion, Corollary 2.4]
+  \label{cor:sq_crit}
+  \lean{Wang2026Almost.tendsto_wealth_zero_of_isBigOmega}
+  \leanok
+  \uses{cor:sq_crit_filtration, lem:iid_of_run}
+  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$, and $(\lambda, X)$ a run of an
+  algorithm in $\mathrm{const}(P)$ with $\lambda_n \in \Fr$ a.s. If $\lambda_n = \Omp(n^{-1/2})$ or
+  $\lambda_n = \Omas((n \log n)^{-1/2})$, then $W_n \to 0$ almost surely.
+\end{corollary}
+
+\begin{proof}
+  Corollary~\ref{cor:sq_crit_filtration} with Lemma~\ref{lem:iid_of_run}.
+\end{proof}
+
+\section{Null bankruptcy of KT, GRAPA, aGRAPA and hedging}
+
+\begin{lemma}[KT fractions are valid]
+  \label{lem:kt_mem}
+  \uses{def:strategies}
+  If $m \in (0,1)$, $C \ge m(1-m)$, $C \ge m/2$ and $X_k \in [0,1]$ for $k < n$, then $\lKT_n \in
+  \Fr$.
+\end{lemma}
+
+\begin{proof}
+  $-nm \le S_n \le n(1-m)$. Then $m(\frac12 + S_n) \le \frac m2 + nm(1-m) \le C + nC$, so
+  $\lKT_n \le 1/m$; and $(1-m)(S_n + \frac12) \ge -(1-m)nm \ge -C(n+1)$, so $\lKT_n \ge
+  -\frac{1}{1-m}$.
+\end{proof}
+
+\begin{proposition}[KT bettor, Proposition 2.5]
+  \label{prop:kt}
+  \lean{Wang2026Almost.kt_bankrupt}
+  \leanok
+  \uses{lem:kt_mem, lem:clt, lem:slutsky, lem:isBigOmegaInProb_of_tendstoInDistribution,
+    cor:sq_crit_filtration, lem:iid_of_plug_in, lem:isPlugIn_kt}
+  Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$, mean $m$ and variance $\sigma^2 > 0$, and
+  $C \ge \max(m(1-m), m/2)$. Then $\sqrt n \lKT_n \to \gaussian(0, \sigma^2/C^2)$ in distribution,
+  $\lKT_n = \Omp(n^{-1/2})$, and the KT wealth converges to $0$ almost surely.
+\end{proposition}
+
+\begin{proof}
+  $\sqrt n \lKT_n = \frac{S_n}{\sqrt n} \cdot \frac{n}{C(n+1)} + \frac{\sqrt n}{2C(n+1)}$; the CLT
+  for $S_n/\sqrt n$, the deterministic limits $\frac{n}{C(n+1)} \to \frac1C$ and
+  $\frac{\sqrt n}{2C(n+1)} \to 0$ and Slutsky's lemma (Lemma~\ref{lem:slutsky}) give the limit
+  $\gaussian(0,\sigma^2/C^2)$ (image of $\gaussian(0, \sigma^2)$ by $x \mapsto x/C$). It has no atom
+  at $0$, so $\lKT_n = \Omp(n^{-1/2})$
+  (Lemma~\ref{lem:isBigOmegaInProb_of_tendstoInDistribution}). The KT strategy is a plug-in strategy
+  (Lemma~\ref{lem:isPlugIn_kt}) with values in $\Fr$ a.s.\ (Lemma~\ref{lem:kt_mem}); conclude with
+  Corollary~\ref{cor:sq_crit_filtration} and Lemma~\ref{lem:iid_of_plug_in}.
+\end{proof}
+
+\begin{remark}
+  The paper takes $C \ge m(1-m)$ only. Then the first bet $1/(2C)$ exceeds $1/m$ when $m > 1/2$
+  and $C = m(1-m)$, and the wealth can become negative: the condition $C \ge m/2$ is needed for the
+  bankruptcy claim, which goes through Theorem~\ref{thm:sos_crit_filtration}. The weak limit does
+  not need it.
+\end{remark}
+
+\begin{lemma}[Almost sure rates under the null]
+  \label{lem:good_event}
+  \uses{lem:hoeffding_rate, lem:hoeffding_lemma_null}
+  Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$ with mean $m$ and variance $\sigma^2$. Almost surely,
+  $S_n = O(\sqrt n \log n)$ and $V_n - n\sigma^2 = O(\sqrt n \log n)$, where
+  $V_n = \sum_{k<n} (X_k - m)^2$.
+\end{lemma}
+
+\begin{proof}
+  $X_k - m$ and $(X_k - m)^2 - \sigma^2$ are bounded, centered and i.i.d.; apply
+  Lemma~\ref{lem:hoeffding_rate}.
+\end{proof}
+
+\begin{proposition}[GRAPA bettor, Proposition 2.6]
+  \label{prop:grapa}
+  \lean{Wang2026Almost.grapa_bankrupt}
+  \leanok
+  \uses{lem:good_event, lem:grapa_location, lem:clt, lem:slutsky,
+    lem:isBigOmegaInProb_of_tendstoInDistribution, cor:sq_crit_filtration, lem:iid_of_plug_in}
+  Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$, mean $m$ and variance $\sigma^2 > 0$, and $\lgr$ a
+  GRAPA strategy. Then almost surely
+  $\sqrt n \lgr_n = \frac{S_n}{\sigma^2 \sqrt n} + o(n^{-1/4} \log n)$; consequently
+  $\sqrt n \lgr_n \to \gaussian(0, \sigma^{-2})$ in distribution, $\lgr_n = \Omp(n^{-1/2})$, and the
+  GRAPA wealth converges to $0$ almost surely.
+\end{proposition}
+
+\begin{proof}
+  On the event of Lemma~\ref{lem:good_event}, Lemma~\ref{lem:grapa_location} gives
+  $\abs{\lgr_n - S_n/V_n} \le K \log^2 n / n$ for large $n$, and
+  $\abs{S_n/V_n - S_n/(n\sigma^2)} = \abs{S_n}\abs{n\sigma^2 - V_n}/(n\sigma^2 V_n) = O(\log^2 n/n)$.
+  Hence $\sqrt n \lgr_n - \frac{S_n}{\sigma^2 \sqrt n} = O(\log^2 n/\sqrt n) = o(n^{-1/4}\log n)$.
+  The difference tends to $0$ a.s., hence in probability, and $\frac{S_n}{\sigma^2\sqrt n} \to
+  \gaussian(0, \sigma^{-2})$ by the CLT; Slutsky's lemma gives the weak limit. The rest is as for
+  Proposition~\ref{prop:kt}: a GRAPA strategy is a plug-in strategy with values in $\Fr$.
+\end{proof}
+
+\begin{remark}
+  The paper verifies the conditions of Niemiro's theorem on M-estimators
+  \cite{niemiro1992asymptotics}; we give a direct proof in dimension one, with the stronger
+  remainder $O(\log^2 n / \sqrt n)$.
+\end{remark}
+
+\begin{lemma}
+  \label{lem:empVar_add_sq}
+  \uses{def:strategies}
+  $\hat\sigma^2_n + (\hat\mu_n - m)^2 = \frac1n \sum_{k<n} (X_k - m)^2$ for $n \ge 1$.
+\end{lemma}
+
+\begin{proof}
+  Expand the square.
+\end{proof}
+
+\begin{proposition}[aGRAPA bettor, Proposition 2.7]
+  \label{prop:agrapa}
+  \lean{Wang2026Almost.agrapa_bankrupt}
+  \leanok
+  \uses{lem:empVar_add_sq, lem:slln, lem:clt, lem:slutsky,
+    lem:isBigOmegaInProb_of_tendstoInDistribution, cor:sq_crit_filtration, lem:iid_of_plug_in}
+  Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$, mean $m$ and variance $\sigma^2 > 0$, and
+  $C \in (0,1)$. Then $\sqrt n \lagr_n \to \gaussian(0, \sigma^{-2})$ in distribution,
+  $\lagr_n = \Omp(n^{-1/2})$, and the aGRAPA wealth converges to $0$ almost surely.
+\end{proposition}
+
+\begin{proof}
+  By Lemma~\ref{lem:empVar_add_sq} the unclipped fraction is $\frac{S_n/n}{V_n/n}$. By the strong
+  law of large numbers (Lemma~\ref{lem:slln}), $V_n/n \to \sigma^2$ and $S_n/n \to 0$ a.s., so the
+  clipping is a.s.\ eventually inactive and $\sqrt n \lagr_n - \frac{S_n/\sqrt n}{V_n/n} \to 0$
+  a.s. The CLT and Slutsky's lemma (with the continuous map $(x, y) \mapsto x/y$ at $y = \sigma^2 >
+  0$) give the weak limit. The fractions are in $[-\frac{C}{1-m}, \frac Cm] \subseteq \Fr$ and form
+  a plug-in strategy; conclude as for Proposition~\ref{prop:kt}.
+\end{proof}
+
+\begin{proposition}[Predictable hedging, Proposition 2.8]
+  \label{prop:hedge}
+  \lean{Wang2026Almost.hedged_bankrupt}
+  \leanok
+  \uses{cor:sq_crit_filtration, lem:iid_of_plug_in}
+  Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$, mean $m$ and variance $\sigma^2 > 0$, $C, \alpha \in
+  (0,1)$, and $v$ a plug-in variance estimate with $v_n \to \sigma^2$ a.s. Then $\lPrH_n =
+  \Omas((n\log n)^{-1/2})$ and the hedged wealth converges to $0$ almost surely.
+\end{proposition}
+
+\begin{proof}
+  A.s.\ $v_n \to \sigma^2 > 0$, so the unclipped fraction tends to $0$ and is eventually at least
+  $\sqrt{\log(2/\alpha)/(2\sigma^2)} \cdot ((n+1)\log(n+2))^{-1/2} \ge c (n \log n)^{-1/2}$; the
+  clipping is eventually inactive. Both $\lPrH$ and $-\lPrH$ are plug-in strategies with values in
+  $\Fr$ and are $\Omas((n \log n)^{-1/2})$; by Corollary~\ref{cor:sq_crit_filtration} both wealths
+  $W^{\lPrH}_n$ and $W^{-\lPrH}_n$ tend to $0$ a.s., hence so does their average.
+\end{proof}
+
+\begin{remark}
+  The paper leaves the variance estimator unspecified (``an appropriate consistent variance
+  estimator''); the statement assumes a plug-in estimator converging almost surely.
+\end{remark}

@@ -1,0 +1,267 @@
+\chapter{Setting: betting wealth processes}
+\label{chap:setting}
+
+We test the null hypothesis $H_0 : \E_P[X] = m$ on i.i.d.\ observations $X_0, X_1, \dots$ with
+values in $[0, 1]$ and law $P$. A distribution $P$ on $[0,1]$ with mean $m$ is a \emph{null
+distribution}; it is \emph{non-degenerate} if $P \ne \delta_m$.
+
+\section{Wealth processes}
+
+\begin{definition}[Range of the bet fractions]
+  \label{def:fraction_range}
+  \lean{Learning.Betting.fractionRange}
+  \leanok
+  $\Fr := [-\frac{1}{1-m}, \frac{1}{m}]$. For $m \in (0,1)$, $x \in [0,1]$ and $\lambda \in \Fr$,
+  $1 + \lambda(x - m) \ge 0$.
+\end{definition}
+
+\begin{definition}[Wealth]
+  \label{def:wealth}
+  \lean{Learning.Betting.wealth}
+  \leanok
+  For real processes $\lambda = (\lambda_n)$ (the bet fractions) and $X = (X_n)$ (the observations),
+  the wealth after $n$ rounds is $W^\lambda_n := \prod_{k < n} (1 + \lambda_k (X_k - m))$.
+\end{definition}
+
+\begin{lemma}[Basic properties of the wealth]
+  \label{lem:wealth_basic}
+  \lean{Learning.Betting.wealth_zero, Learning.Betting.wealth_succ, Learning.Betting.wealth_nonneg,
+    Learning.Betting.measurable_wealth, Learning.Betting.one_add_mul_sub_nonneg}
+  \leanok
+  \uses{def:wealth, def:fraction_range}
+  $W_0 = 1$, $W_{n+1} = W_n (1 + \lambda_n (X_n - m))$; if $m \in (0,1)$, $\lambda_k \in \Fr$ and
+  $X_k \in [0,1]$ for $k < n$ then $W_n \ge 0$; $W_n$ is measurable when the $\lambda_k$ and $X_k$
+  are.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Immediate from the definition; $1 + \lambda(x - m) = (1-x)(1 - \lambda m) + x(1 + \lambda(1-m))$ is
+  a convex combination of nonnegative numbers.
+\end{proof}
+
+\begin{definition}[Fixed-fraction, mixture and hedged wealths]
+  \label{def:fixed_wealth}
+  \lean{Learning.Betting.fixedWealth, Learning.Betting.mixtureWealth, Learning.Betting.hedgedWealth}
+  \leanok
+  \uses{def:wealth}
+  The fixed-fraction wealth $W^\lambda_n$ for a constant $\lambda \in \R$; the mixture wealth
+  $W^\pi_n := \int W^\lambda_n \, d\pi(\lambda)$ for a probability measure $\pi$ on $\Fr$; the hedged
+  wealth $W^{\pm\lambda}_n := \frac12 (W^\lambda_n + W^{-\lambda}_n)$ for a process $\lambda$.
+\end{definition}
+
+\begin{definition}[Best-in-hindsight log-wealth and regret]
+  \label{def:hindsight}
+  \lean{Learning.Betting.hindsightLogWealth, Learning.Betting.logRegret}
+  \leanok
+  \uses{def:fixed_wealth}
+  $L^*_n := \log \sup_{\lambda \in \Fr} W^\lambda_n$ and, for a strategy $\lambda$,
+  $R_n := L^*_n - \log W^\lambda_n$.
+\end{definition}
+
+\begin{remark}
+  The paper defines $L^*_n = \max_{\lambda \in \Fr} \log W^\lambda_n$, which is the same number
+  when $W^\lambda_n > 0$ for some $\lambda$ (e.g.\ $\lambda = 0$). We take the logarithm of the
+  supremum to avoid Lean's convention $\log 0 = 0$ at the bet fractions with zero wealth. By the
+  dual representation of \cite{honda2010asymptotically}, $L^*_n = n \klinf(P_n, m)$ for the
+  empirical measure $P_n$; this identity is not used.
+\end{remark}
+
+\begin{definition}[Sub-Gaussian test processes]
+  \label{def:subg_test}
+  \lean{Learning.Betting.subgaussianTest, Learning.Betting.subgaussianMixtureTest}
+  \leanok
+  For a real process $\lambda$, $M^\lambda_n := \exp\big(\sum_{k<n} \frac{(X_k - m)^2 - (X_k -
+  \lambda_k)^2}{2}\big)$, and for a probability measure $\pi$ on $\R$,
+  $M^\pi_n := \int M^\lambda_n \, d\pi(\lambda)$ (constant $\lambda$ in the integrand).
+\end{definition}
+
+\section{Betting strategies}
+
+\begin{definition}[Predictable strategies]
+  \label{def:predictable}
+  Let $\F$ be a filtration of $(\Omega, \mathcal A)$. The observations are \emph{i.i.d.\ along
+  $\F$} with law $P$ if each $X_n$ is $\F_{n+1}$-measurable, independent of $\F_n$, and has law
+  $P$. A \emph{predictable strategy} is a process $\lambda$ adapted to $\F$ ($\lambda_n$ is
+  $\F_n$-measurable).
+\end{definition}
+
+\begin{definition}[The i.i.d.\ environment]
+  \label{def:iid_env}
+  \lean{Learning.Environment.const}
+  \leanok
+  For a probability measure $P$ on $\R$, $\mathrm{const}(P)$ is the LML environment (with trivial
+  observations) whose feedback is drawn from $P$ at each round, whatever the action. A run of an
+  algorithm $\mathrm{alg}$ with actions in $\R$ in this environment is a pair of processes
+  $(\lambda, X)$ such that $\lambda_n$ is drawn by $\mathrm{alg}$ (possibly at random) from the
+  history of the first $n$ rounds and $X_n \sim P$ is independent of that history and of
+  $\lambda_n$.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:iid_env_feedback}
+  \lean{Learning.IsAlgEnvSeq.hasLaw_feedback_const, Learning.IsAlgEnvSeq.indepFun_feedback_const,
+    Learning.IsAlgEnvSeq.iIndepFun_feedback_const}
+  \leanok
+  \uses{def:iid_env}
+  In a run of an algorithm in $\mathrm{const}(P)$, each $X_n$ has law $P$, is independent of the
+  history of the first $n$ rounds and of $\lambda_n$, and the $X_n$ are mutually independent.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  The conditional distribution of $X_n$ given the history and $\lambda_n$ is the constant kernel
+  $P$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:iid_of_run}
+  \uses{def:iid_env, def:predictable, lem:iid_env_feedback}
+  In a run $(\lambda, X)$ of an algorithm in $\mathrm{const}(P)$, the observations are i.i.d.\ along
+  the filtration generated by the history of the first $n$ rounds and the action $\lambda_n$
+  (LML's \texttt{IsAlgEnvSeq.filtrationAction}), and $\lambda$ is adapted to it.
+\end{lemma}
+
+\begin{proof}
+  $X_n$ is a function of the history of the first $n + 1$ rounds, $\lambda_n$ of the generator of
+  the $n$-th $\sigma$-algebra, and Lemma~\ref{lem:iid_env_feedback} gives the independence and the
+  law.
+\end{proof}
+
+\begin{definition}[Plug-in strategies]
+  \label{def:plug_in}
+  \lean{Learning.Betting.IsPlugIn}
+  \leanok
+  $\lambda$ is a \emph{plug-in} strategy for $X$ if each $\lambda_n$ is a measurable function of
+  $(X_0, \dots, X_{n-1})$.
+\end{definition}
+
+\begin{definition}[Past filtration]
+  \label{def:past_filtration}
+  The \emph{past filtration} of a process $X$ is $\F^X_n := \sigma(X_0, \dots, X_{n-1})$.
+\end{definition}
+
+\begin{lemma}
+  \label{lem:iid_of_plug_in}
+  \uses{def:past_filtration, def:plug_in, def:predictable}
+  If the $X_n$ are independent with law $P$ (and measurable), they are i.i.d.\ along $\F^X$, and
+  every plug-in strategy for $X$ is adapted to $\F^X$.
+\end{lemma}
+
+\begin{proof}
+  $X_n$ is independent of $(X_0, \dots, X_{n-1})$ by mutual independence (disjoint index sets).
+\end{proof}
+
+\begin{definition}[Classical strategies]
+  \label{def:strategies}
+  \lean{Learning.Betting.ktFraction, Learning.Betting.IsGrapa, Learning.Betting.empMean,
+    Learning.Betting.empVar, Learning.Betting.agrapaFraction, Learning.Betting.hedgeFraction}
+  \leanok
+  \uses{def:fixed_wealth, def:plug_in}
+  With $S_n := \sum_{k<n} (X_k - m)$, $\hat\mu_n := \frac1n \sum_{k<n} X_k$ and
+  $\hat\sigma^2_n := \frac1n \sum_{k<n} (X_k - \hat\mu_n)^2$:
+  \begin{itemize}
+    \item Krichevsky--Trofimov: $\lKT_n := \frac{1/2 + S_n}{C (n+1)}$;
+    \item GRAPA: $\lgr$ is a plug-in strategy such that $\lgr_n \in \Fr$ maximizes
+          $\lambda \mapsto W^\lambda_n$ over $\Fr$ (the paper's $\lambda^{\mathsf{GRAPA}}_{n+1} =
+          \lambda^{\mathsf{KL}}_n$);
+    \item approximate GRAPA: $\lagr_n := \big(-\frac{C}{1-m}\big) \vee \frac{\hat\mu_n -
+          m}{\hat\sigma^2_n + (\hat\mu_n - m)^2} \wedge \frac{C}{m}$;
+    \item predictable hedging with variance estimate $v$: $\lPrH_n := \big(-\frac{C}{1-m}\big)
+          \vee \sqrt{\frac{2 \log(2/\alpha)}{v_n (n+1) \log(n+2)}} \wedge \frac{C}{m}$.
+  \end{itemize}
+\end{definition}
+
+\begin{lemma}
+  \label{lem:isPlugIn_kt}
+  \lean{Learning.Betting.isPlugIn_ktFraction}
+  \leanok
+  \uses{def:strategies}
+  The KT strategy is a plug-in strategy.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\lKT_n$ is a continuous function of $X_0, \dots, X_{n-1}$.
+\end{proof}
+
+\section{Asymptotic notation in probability}
+
+\begin{definition}[Landau notation in probability and almost surely]
+  \label{def:asymp}
+  \lean{ProbabilityTheory.IsBigOInProb, ProbabilityTheory.IsBigOmegaInProb,
+    ProbabilityTheory.IsBigOAE, ProbabilityTheory.IsBigOmegaAE}
+  \leanok
+  For random variables $Z_n$ and numbers $a_n$: $Z_n = \Op(a_n)$ if for every $\eps > 0$ there is
+  $M > 0$ with $\Prob(\abs{Z_n} \le M a_n) \ge 1 - \eps$ for all but finitely many $n$;
+  $Z_n = \Omp(a_n)$ if for every $\eps > 0$ there is $\delta > 0$ with
+  $\Prob(\abs{Z_n} \ge \delta a_n) \ge 1 - \eps$ for all but finitely many $n$; $Z_n = \Oas(a_n)$
+  (resp.\ $\Omas(a_n)$) if almost surely $Z_n = O(a_n)$ (resp.\ $a_n = O(Z_n)$).
+\end{definition}
+
+\section{Leverage and portfolios}
+
+\begin{definition}[Minimal next wealth, predictably non-bankrupt event]
+  \label{def:pnb}
+  \lean{Wang2026Almost.nextWealthMin, Wang2026Almost.pnbEvent}
+  \leanok
+  \uses{def:wealth}
+  $\Wh_n := \min_{x \in \{0, 1\}} W_n (1 + \lambda_n (x - m))$, the minimal wealth after round $n$
+  given the information available before $X_n$; for $\rho \in \R$, the \emph{$\rho$-predictably
+  non-bankrupt event} is $N^\rho := \bigcap_n \{\Wh_n > \rho\}$.
+\end{definition}
+
+\begin{definition}[Leverage]
+  \label{def:leverage}
+  \lean{Wang2026Almost.leverageFraction, Wang2026Almost.oppLeverage}
+  \leanok
+  \uses{def:pnb}
+  The leveraged fraction $\beta^\rho_n := \frac{W_n \lambda_n}{W_n - \rho}$ (borrowing
+  $\frac{\rho}{1-\rho}$ units of cash and betting $\lambda$ with the leveraged wealth), and the
+  \emph{$\rho$-opportunistic leverage} $\gamma_n := \beta^\rho_n$ if $\Wh_n > \rho$, $\gamma_n :=
+  \lambda_n$ otherwise.
+\end{definition}
+
+\begin{definition}[Portfolio of two strategies]
+  \label{def:portfolio}
+  \lean{Wang2026Almost.portfolioFraction}
+  \leanok
+  \uses{def:wealth}
+  For strategies $\lambda, \nu$ and $\kappa \in \R$,
+  $\beta_n := \frac{(1-\kappa) W^\lambda_n \lambda_n + \kappa W^\nu_n \nu_n}{(1-\kappa)W^\lambda_n +
+  \kappa W^\nu_n}$.
+\end{definition}
+
+\begin{definition}[Paths]
+  \label{def:paths}
+  \lean{Wang2026Almost.coord, Wang2026Almost.IsBinaryPath, Wang2026Almost.IsPathPredictable}
+  \leanok
+  On the path space $\R^{\N}$: the coordinate process, the binary paths (values in $\{0,1\}$),
+  and the strategies $\lambda_n(x)$ depending only on $x_0, \dots, x_{n-1}$.
+\end{definition}
+
+\section{Two mixing distributions}
+
+\begin{definition}[Universal portfolio and Robbins' mixture]
+  \label{def:mixtures}
+  \lean{Wang2026Almost.betaMixture, Wang2026Almost.robbinsConst, Wang2026Almost.robbinsDensity,
+    Wang2026Almost.robbinsMixture}
+  \leanok
+  $\pi_{a,b}$ is the image of the $\mathrm{Beta}(a, b)$ distribution by $x \mapsto 2x - 1$;
+  Robbins' mixing distribution has density
+  $f(\lambda) = \frac{\indic\{\abs{\lambda} \le 1\} \log\log C}{2 \abs\lambda \log(C/\abs\lambda)
+  (\log\log(C/\abs\lambda))^2}$ with respect to the Lebesgue measure, $C = 6.6 e$.
+\end{definition}
+
+\section{Basic consequences of the null hypothesis}
+
+\begin{lemma}
+  \label{lem:null_basic}
+  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$. Then $m \in (0, 1)$ and
+  $\sigma^2 := \Var_P > 0$; if $X \sim P$ then $X \in [0,1]$ almost surely.
+\end{lemma}
+
+\begin{proof}
+  If $\Var_P = 0$ then $P = \delta_m$. If $m = 0$ then $X = 0$ a.s.\ ($X \ge 0$ with mean $0$), so
+  $P = \delta_0$; similarly for $m = 1$.
+\end{proof}

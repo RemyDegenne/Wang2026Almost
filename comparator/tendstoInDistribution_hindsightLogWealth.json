@@ -1,0 +1,14 @@
+{
+    "challenge_module": "Challenge_tendstoInDistribution_hindsightLogWealth",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.tendstoInDistribution_hindsightLogWealth",
+        "ProbabilityTheory.instIsProbabilityMeasureRealChiSquareMeasureOfNeZeroNat",
+        "ProbabilityTheory.chiSquarePDFReal._proof_1"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

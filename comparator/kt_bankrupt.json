@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge_kt_bankrupt",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.kt_bankrupt"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

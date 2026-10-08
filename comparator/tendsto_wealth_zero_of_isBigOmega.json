@@ -1,0 +1,15 @@
+{
+    "challenge_module": "Challenge_tendsto_wealth_zero_of_isBigOmega",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.tendsto_wealth_zero_of_isBigOmega",
+        "Learning.Environment.IsOblivious._proof_1",
+        "Learning.Environment.oblivious._proof_1",
+        "Learning.Environment.oblivious._proof_2"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

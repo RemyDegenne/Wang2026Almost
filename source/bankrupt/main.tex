@@ -1,0 +1,432 @@
+
+\section{Introduction}\label{sec:intro}
+
+We consider the problem of testing the mean of i.i.d.\ random variables taking values in $[0,1]$ via betting, studied by various authors including \cite{shafer2005probability,shafer2019game,shafer2021testing,waudby2024estimating,orabona2023tight,voracek2025starbets}. Let $(X_n) \iid P$ where $P$ is some distribution on $[0,1]$ with unknown mean $\mu(P) = \Exp X_1 \in [0,1]$, and let the null hypothesis be $H_0: \mu(P) = m$. To set the stage for our upcoming discourse, we recall that the \emph{betting wealth process} that sequentially tests $H_0$ with
+a \emph{fixed} bet fraction $\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]$ is
+\begin{equation}\label{eqn:bet-fixed}
+    W_n^\lambda := \prod_{k=1}^n (1 + \lambda(X_k - m) ).
+\end{equation}
+$(W_n^\lambda)$ is interpreted as follows. The statistician starts with unit wealth, and bets round by round on the outcomes of $X_1,X_2,\dots$, where $x \in \mathbb R$ units of bet on $X_k$ placed before the revelation of $X_k$ leads to $x\cdot (X_k - m)$ units of profit (if positive) or loss (if negative). Each round, the statistician bets a fixed fraction $\lambda$ of the current wealth.
+$W_n^\lambda$ is therefore the statistician's wealth after $n$ such rounds. Clearly, $(W^\lambda_n)$ forms
+a nonnegative martingale under any distribution $P$ on $[0,1]$ that satisfies the null $H_0: \mu(P)=m$ (``null distribution'' henceforth). Therefore, a key doctrine of game-theoretic statistics \citep{ramdas2023game} states that $(W^\lambda_n)$ quantifies the accumulation of evidence carried by the observations $(X_n)$ against the null hypothesis $H_0: \mu(P) = m$ in favor of the alternative hypothesis $H_1: \mu(P) \neq m$.
+
+%It is well-known that, under the null $H_0: m(P) = \mu$,  $W_n^\lambda$
+
+
+
+The fixed-fraction betting strategy \eqref{eqn:bet-fixed}, however, fails to be universally powerful in the sense that there always exists some alternative distribution (i.e.\ $P$ such that $\mu(P) \neq m$) under which $W_n^\lambda \to 0$ almost surely. To see that,  when $\lambda > 0$, under any non-degenerate $P$ such that $\mu(P) < m$, $\log W_n^\lambda \le \sum_{k=1}^n \lambda(X_k - m) \to -\infty$ and consequently $W_n^\lambda \to 0$. To overcome this, three (overlapping) classes of betting strategies derived from \eqref{eqn:bet-fixed} are 
+commonly employed.
+
+%\subsection{Three classes of betting strategies}
+
+\paragraph{Predictable plug-in.} Let $\blamb = (\lambda_n)_{n \ge 1}$ be a $[-\frac{1}{1-m}, \frac{1}{m}]$-valued stochastic process that is predictable with respect to the filtration $\sigma(X_1,\dots, X_n)$. The wealth process corresponding to betting $\lambda_k$ fraction of wealth on the upcoming $X_k$ reads
+\begin{equation}\label{eqn:predictable}
+    W_n^{\blamb} := \prod_{k=1}^n (1 + \lambda_k(X_k - m) ).
+\end{equation}
+$(W_n^{\blamb})$ remains a nonnegative martingale under $H_0$. Usually, the value of $\lambda_n$ is picked based on $X_1,\dots, X_{n-1}$ to match the sign of the ``reality-house discrepancy'' $\mu(P) - m$. The simplest idea is to use the empirical mean of $X_1-m, \dots, X_{n-1}-m$, leading to the Krichevsky-Trofimov-type (KT) bettor \citep{krichevsky1981performance,orabona2016coin}:
+\begin{equation}\label{eqn:kt-lambda}
+    \lKT_n := \frac{1/2 + \sum_{k=1}^{n-1}(X_k - m)}{Cn},
+\end{equation}
+where $C \ge {m(1-m)}$ is an appropriate constant. The KT bettor with $C={m(1-m)}$ is the ``standard'' KT bettor in the literature, where $\lKT_n$ estimates $\frac{\mu(P) - m}{m(1-m)}$, a quantity that equals the \emph{Kelly-optimal} bet fraction maximizing the expected log-payoff per round
+\begin{equation}\label{eqn:kelly-optimal}
+   \lkelly = \argmax_{\lambda\in [-\frac{1}{1-m}, \frac{1}{m}]} \bigg\{\Exp_P(\log(1+\lambda(X_1 - m)))\bigg\}
+\end{equation}
+when the data-generating distribution $P$ is the Bernoulli coin-toss $\operatorname{bernoulli}(\mu(P))$.
+In general, for non-Bernoulli $P$, the Kelly-optimal bet fraction \eqref{eqn:kelly-optimal} needs to be estimated instead by its natural M-estimator:
+\begin{equation}\label{eqn:grapa-lambda}
+    \lgr_n := \argmax_{ \lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} \left\{ \frac{1}{n-1}\sum_{k=1}^{n-1} \log(1+\lambda(X_k - m)) \right\} = \argmax_{ \lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} W_{n-1}^\lambda. 
+\end{equation}
+That is, $\lgr_n$ is the hindsight optimal fixed bet fraction after $n-1$ rounds (a.k.a.\ ``follow-the-leader''), and is therefore named the ``growth rate adaptive to the particular alternative'' (GRAPA) bettor by \cite{waudby2024estimating}. GRAPA requires an optimization procedure that may be computationally undesirable, therefore \cite{waudby2024estimating} also propose the approximate GRAPA (aGRAPA) bettor, which we discuss later.
+
+The method of predictable plugin betting \eqref{eqn:predictable} is the widest class of testing by betting strategies, among which we name KT and GRAPA here and include the additional aGRAPA in \cref{sec:bankrupt-pred}. The other two classes of betting strategies are both subclasses of predictable plugin betting. In fact, \citet[Proposition 2]{waudby2024estimating} prove that \emph{all} nonnegative martingales under $H_0:\mu(P)=m$ are representable by \eqref{eqn:predictable} for some predictable sequence $(\lambda_n)$. Nonetheless, we introduce the other two classes of betting strategies, since it is often easier to analyze the property of a betting strategy if it falls in to one of these two subclasses.
+
+\paragraph{Mixture.} Let $\pi$ be a probability measure on $[-\frac{1}{1-m},\frac{1}{m}]$. The wealth process corresponding to the portfolio consisting of the (possibly continuous) collection of different fixed-fraction bets $\{(W_n^\lambda) : \lambda \in \operatorname{supp}(\pi) \}$, weighted by $\lambda \sim \pi$, is
+\begin{equation}\label{eqn:mixture-wealth}
+    W_n^\pi := \int W_n^\lambda \, \pi(\d \lambda) = \int \left\{\prod_{k=1}^n (1 + \lambda(X_k - \mu))  \right\} \pi(\d \lambda).
+\end{equation}
+It is easy to verify that the mixture wealth \eqref{eqn:mixture-wealth} can be represented as an instance of predictable plug-in \eqref{eqn:predictable} with the predictable fraction sequence $\lambda_k^\pi = \frac{\int \lambda W_{k-1}^\lambda  \pi(\d \lambda) }{ \int W_{k-1}^\lambda  \pi(\d \lambda) }$, and is also a nonnegative martingale under $H_0$.
+Some choices of mixture measure $\pi$ that are continuously supported on $[-1,1]$ trace back to \cite{robbins1970statistical} in the context of subGaussian mean testing, as well as to \cite{cover1991universal,cover2002universal} in the context of portfolio selection (``universal portfolios''). Via these mixture measures, \cite{orabona2023tight} establish a link from regret bounds to confidence sequences for $\mu(P)$; and
+we shall soon see that the specific expressions of these measures do not matter for our current paper.
+
+
+\paragraph{Predictable hedging.} Finally, there is a class of strategies that resemble in form both predictable plug-in and mixture strategies. Let $\blamb = (\lambda_n)$ be a $[0, \min(\frac{1}{1-m}, \frac{1}{m} ) )$-valued predictable process. The hedged betting wealth process based on $\blamb$ is
+\begin{equation}\label{eqn:hedged}
+    W_n^{\pm\blamb} := \frac{1}{2} \prod_{k=1}^n (1 + \lambda_k(X_k - m) ) + \frac{1}{2} \prod_{k=1}^n (1 - \lambda_k(X_k - m) ),
+\end{equation}
+and is also a nonnegative martingale under $H_0$.
+That is, one takes a two-point mixture among the strategies $W_n^{\blamb}$ and $W_n^{-\blamb}$. The fraction sequence $\blamb$ here is often taken at the decreasing rate $\lambda_n \asymp n^{-1/2}$ or $(n\log n)^{-1/2}$, choices demonstrated by \cite{waudby2024estimating,shekhar2023near} to enable optimal $(1-\alpha)$-confidence sets for $\mu(P)$. A specific choice recommended by \citet[Equation (26)]{waudby2024estimating} reads
+\begin{equation}\label{eqn:hedging-rate}
+    \lambda_n^{\mathsf{PrH}} = \left( -\frac{C}{1-m} \right) \vee \sqrt{\frac{2\log(2/\alpha)}{\widehat \sigma_{n-1}^2 n \log(n+1)}}
+    \wedge \frac{C}{m},
+\end{equation}
+where $\widehat \sigma_{n-1}^2$ is an appropriate consistent variance estimator from $X_1,\dots, X_{n-1}$, and $C\in(0,1)$ some clipping constant.
+
+\vspace{1em}
+
+Many variations of these betting strategies exist.
+To quote from \cite{waudby2024estimating}, 
+``each of these betting strategies have their respective benefits, whether computational, conceptual, or
+statistical''. We refer the reader to the original work by \cite{waudby2024estimating} and \cite{orabona2023tight} as well as the papers cited therein for more discussions on betting strategies for the bounded mean problem.
+
+A crucial shared property that separates all these involved strategies from the na\"ive fixed-fraction strategy \eqref{eqn:bet-fixed} is that they are all \emph{universally power-one}. That is, for \emph{any} alternative distribution $P$ (i.e.\ $P$ on $[0,1]$ with mean $\mu(P)\neq m$), the wealth process $(W_n)$ of these strategies always grows to infinitely almost surely: $P(W_n \to \infty)=1$. 
+Very often, the wealth growth happens almost surely at an exponential rate: $P(\liminf n^{-1}\log W_n > 0) = 1$. Indeed, it is not hard to see that the KT bettor with $C = 2$, the GRAPA bettor, and the mixture bettor with continuous $\pi$ on $[-1,1]$ are all exponentially powerful in this sense.
+
+Additionally, as is frequently alluded to in our introduction to them, many of these strategies are adapted from the online learning and portfolio selection literature where there is neither hypothesis testing framework nor probability distribution assumed on the observation sequence $(X_n)$; they enjoy sharp pathwise regret bounds $R_n := \sup_{\lambda} (\log W_n^\lambda) - \log W_n$ at the rate of $R_n \lesssim \log n$ on \emph{every} sample path $(X_n) \in [0,1]^\infty$. Many, on the other hand, lead to $(1-\alpha)$-confidence sequences for $\mu(P)$ by inversion $\CI_n = \{ m : W_n(m) \le 1/\alpha \}$ (where $W_n(m)$ is the wealth testing $H_0: \mu(P) = m$) of optimal size.
+
+
+\textbf{The key contribution} of our current paper is that, these well-designed betting strategies which oftentimes enjoy exponential almost sure growth rates under alternative distributions, or logarithmic regret bounds in the pathwise sense, or minimax optimal confidence sequences under inversion, would \emph{all fall into bankruptcy \textbf{with probability one} under any non-degenerate null distribution}.
+That is, as long as $\mu(P) = m$ and $P$ is not a point mass at $m$,
+\begin{equation}\label{eqn:bankruptcy}
+    P( W_n \to 0 ) = 1
+\end{equation}
+for all these wealth processes $(W_n)$. Further, we demonstrate that the null bankruptcy phenomenon \eqref{eqn:bankruptcy} does \emph{not} happen on some suboptimal variants of these betting strategies, which suggests that null bankruptcy is a fundamental property of ``good'' strategies.
+
+Our results that $P( W_n \to 0 ) = 1$ under any non-degenerate null $P$ complete the picture regarding the behavior of these betting strategies in the asymptotic regime, complementary to the fact that $P(W_n \to \infty) = 1$ under any alternative $P$  mentioned earlier. They also deepen our prior understanding of these wealth processes under the null: we previously were only aware of the fact that $(W_n)$ is a nonnegative martingale under any null $P$, and therefore (1) it must converge a.s.\ to \emph{some random variable}, and (2) it satisfies the nonasymptotic Ville's inequality $P( \sup W_n < x) \ge 1- x^{-1}$, i.e.\ it is unlikely to accumulate wealth more than $x$, \emph{for $x$ (much) larger than 1}.
+
+The null bankruptcy of the simple and less powerful fixed-fraction betting strategy \eqref{eqn:bet-fixed}, we note, is well-understood and known as the ``gambler's ruin'' in elementary probability textbooks. The null bankruptcy of these involved, power-one, pathwise minimal-regret strategies that we prove in this paper, in contrary, requires applying and devising of some insightful results in asymptotic probability, and oftentimes happens much more subtly. At the end of this paper, we also 
+%conjecture 
+show that a subclass of strategies that do not go bankrupt under the null are all ``improvable'' in some sense. 
+% that all ``very powerful'' betting strategies are subject to,
+%a strong conjecture that, if true, would imply many
+%novel lower bounds in statistical testing and estimation that resemble but differ subtly from the classical Cram\'er-Rao-type results.
+
+
+\paragraph{Notation.} We shall frequently employ the asymptotic notations in its both pathwise and in-probability usages. Let $(X_n)$ be a sequence of random variables and $(a_n)$ a sequence of nonrandom positive numbers. We say $X_n = O_{a.s.}(a_n)$ etc.\ if the pathwise event $X_n=O(a_n)$ happens with probability 1.
+We recall $X_n = O_p(a_n)$ if for any $\varepsilon > 0$, there exists $M > 0$ such that
+\begin{equation}
+  \Pr(|X_n| \le M a_n) \ge 1- \varepsilon \quad \text{for all but finitely many }n.
+\end{equation}
+Similarly, we say $X_n = \Omega_p(a_n)$ if for any $\varepsilon > 0$ there exists $\delta > 0$ such that
+\begin{equation}
+  \Pr(|X_n| \ge \delta a_n) \ge 1- \varepsilon \quad \text{for all but finitely many }n.
+\end{equation}
+It is well-known that if $(X_n)$ converges weakly to some distribution, then $X_n = O_p(1)$; and if to some distribution that does not charge 0 with positive probability, $X_n = \Omega_p(1)$. The sample mean of i.i.d.\ random variables with positive and finite variance is both $O_p(n^{-1/2})$ and $\Omega_p(n^{-1/2})$, but neither $O_{a.s.}(n^{-1/2})$ nor $\Omega_{a.s.}(n^{-1/2})$.
+%\section{Bankruptcy of non-adaptive hedging}
+
+We use the symbols $\Pr(\cdot)$ and $\Exp(\cdot)$ to denote probability and expected value in a generic context; we use $P(\cdot)$ and $\Exp_P(\cdot)$ for probability and expected value when specifically $(X_n)\iid P$.
+
+
+\paragraph{Additional related work.} A few other categories of recent research are surveyed in \cref{sec:related}, including (1) subGaussian and sub-$\psi$ test processes; (2) the contrasts among ``all'', ``$P$-almost all'', and ``$P$-most'' paths, and between ``always'' and ``eventually'' valid statements; (3) past papers that occasionally mention or hint at null bankruptcy.
+
+\section{Bankruptcy of predictable plug-in and hedging}\label{sec:bankruptcy-predictable}
+\subsection{Necessary and sufficient condition for null bankruptcy}
+
+Our first theoretical contribution is that we identify the necessary and sufficient condition for the null bankruptcy \emph{event} (and consequently for this event to happen almost surely) of any predictable plugin betting strategy. As we cited earlier from \cite{waudby2024estimating}, all nonnegative martingales are some predictable plugin betting strategy, this completely characterizes the null bankruptcy behavior of all these processes.
+The following result states that,
+under any non-degenerate null $P$, bankruptcy happens exactly on the sample paths where the sum of squares of the bet fractions $\sum \lambda_n^2$ diverges, and sample paths where an ``all-in bet'' loses all current wealth, up to a $P$-negligible set.
+
+\begin{theorem}[Sum-of-squares criterion]\label{thm:sos-crit} Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $(X_n)\iid P$.
+    Let $\blamb = (\lambda_n)$ be a predictable process taking values in $[-\frac{1}{1-m}, \frac{1}{m}]$.
+    Then, the $\blamb$-betting wealth process
+    \begin{equation}
+        W_n^{\blamb}=\prod_{k=1}^n (1 + \lambda_k(X_k - m))
+    \end{equation}
+    converges almost surely to a random variable $W_\infty$ satisfying
+    \begin{equation}
+       \{W_\infty = 0 \} = \left\{ \sum_{n=1}^\infty \lambda_n^2 = \infty \right\}  \cup \bigcup_{n=1}^\infty \{ \lambda_n(X_n - m) = -1 \} 
+    \end{equation}
+    and consequently 
+    \begin{equation}
+        \{ W_\infty > 0 \} = \left\{ \sum_{n=1}^\infty \lambda_n^2 < \infty \right\} \cap \bigcap_{n=1}^\infty \{ \lambda_n(X_n - m) > -1 \}.
+    \end{equation}
+\end{theorem}
+
+
+We prove \cref{thm:sos-crit} in \cref{sec:pf-sos-crit}. The key steps include (1)
+upper and lower bounding the log-wealth process $\log W_n^{\blamb}$ via
+\begin{equation}
+ x - x^2 \le \log(1+x) \le x
+\end{equation}
+for small $x$, reducing the problem to the analysis of the martingale $S_n= \sum_{k=1}^n \lambda_k(X_k - m)$ and its predictable quadratic variation;
+and (2) martingale convergence and divergence characterizations found in \cite{hall2014martingale,Fitzsimmonslecturenotes}. 
+It is worth noting that the event $\{ \lambda_n(X_n - m) = -1 \} $ only happens when both the bet fraction and the observation take extreme values:
+\begin{equation}
+     \{ \lambda_n(X_n - m) = -1 \}  = \left\{ \lambda_n = -\frac{1}{1-m}, X_n = 1 \right\} \cup \left\{ \lambda_n = \frac{1}{m}, X_n = 0 \right\}
+\end{equation}
+thus losing all current wealth.
+We also note that \citet[Lemma 33]{ramdas2020admissible} also prove a sufficient condition for martingale bankruptcy, which, in this case, states that $P(\sum_{k=1}^\infty \lambda_k^2(X_k - m)^2 =\infty ) = 1$ implies $P(W_n^{\blamb} \to 0) = 1$. It is easy to see that our \cref{thm:sos-crit} implies their result, because $\sum_{k=1}^\infty \lambda_k^2(X_k - m)^2 =\infty$ implies $\sum_{k=1}^\infty \lambda_k^2 =\infty$, due to the boundedness $(X_k - m)^2 \le 1$.
+Let us demonstrate in the following subsections that \cref{thm:sos-crit} facilitates the bankruptcy analysis of various betting strategies with explicit $(\lambda_n)$ expression. 
+
+
+
+%\section{Bankruptcy of KT and GRAPA strategies}
+
+\subsection{Almost sure divergence of $\sum_n \Omega_p(n^{-1})$}
+
+Consider for a moment the simplest predictable plug-in betting strategy, the KT bettor \eqref{eqn:kt-lambda}.
+From \cref{thm:sos-crit}, it is clear that KT \eqref{eqn:kt-lambda} with any $C$ is null-bankrupt if and only if the sum $\sum_n S_n^2/n^2$ diverges, where $S_n$ is the sum of $n$ i.i.d.\ mean-zero random variables $X_1 - m, \dots, X_n - m$. From the central limit theorem, we know that $S_n/n = \Omega_p(n^{-1/2})$, and therefore this sum is of the form $\sum_n \Omega_p(n^{-1})$. 
+
+However, we were unable to locate existing work on the divergence of either the specific sum $\sum_n S_n^2/n^2$, or the general sums of form $\sum_n \Omega_p(n^{-1})$, even though these, at first sight, seem elementary problems. In particular, as we shall discuss soon, the law of the iterated logarithm (LIL) does \emph{not} imply $\sum_n S_n^2/n^2 = \infty$ almost surely. On the other hand, it is tempting to conjecture that, unlike $\sum_n \Omega_{a.s.}(n^{-1})=\infty$, the event $\sum_n \Omega_p(n^{-1}) = \infty$ does not necessarily happen almost surely, in light of various textbook counterexamples where convergence in probability does not imply convergence almost surely. Nevertheless, in the following theorem, we defy this conventional wisdom and assert that $\sum_n \Omega_p(n^{-1}) = \infty$ always happens almost surely.
+
+
+\begin{theorem}\label{thm:sum-of-op}
+    Let $(Z_n)$ be a nonnegative sequence of random variables such that $Z_n = \Omega_p(n^{-1})$. Then, $\Pr(\sum_{n=1}^\infty Z_n = \infty) = 1$.
+\end{theorem}
+
+The proof of \cref{thm:sum-of-op}, a result arguably of independent interest, is in \cref{sec:pf-sum-of-op}.
+We can immediately apply the theorem to $Z_n = S_n^2/n^2 = \Omega_p(n^{-1})$ due to the central limit theorem. This special case, we believe, also deserves its separate attention and dissemination to the broader audience due to its simple form but not-that-simple proof. We therefore write it down separately.
+
+\begin{corollary}\label[corollary]{lem:div-sample-mean}
+    Let $Y_1,Y_2,\dots$ be i.i.d.\ random variables with mean 0 and variance $\sigma^2 > 0$ and $S_n = Y_1+\dots+Y_n$.
+    Then,
+    \begin{equation}
+        \sum_{n=1}^\infty \frac{S_n^2}{n^2} = \infty \quad \text{almost surely}.
+    \end{equation}
+\end{corollary}
+
+We point out that an invalid ``one-line'' proof attempt of \cref{lem:div-sample-mean} is the following: via the law of the iterated logarithm (LIL), $|S_n| \asymp \sqrt{n \log \log n}$ almost surely, and therefore $\sum_n S_n^2/n^2 \asymp \sum_n n^{-1} \log \log n = \infty$. The pitfall, we note, is that LIL only ensures that a \emph{subsequence} $(n_k)$ with $S_{n_k} = \Omega_{a.s.} (\sqrt{n_k \log\log n_k})$, and $\sum_{k} n_k^{-1} \log\log n_k$ may converge if  this subsequence $(n_k)$ is ``sparse'' (e.g.\ $n_k = k^2$). On the contrary, our statement is based conceptually on the fact that sample sizes $n$ such that $Z_n \asymp 1/n$ occupy a non-sparse subset among natural numbers: if one looks at the proof, the inclusions \eqref{eqn:incl1}, \eqref{eqn:incl2} state that $\sum_n Z_n$ converges only when, as $n$ grows, the number of events $A_k = \{ Z_k \ge \delta/k \}$ among $1\le k\le n$ happen grows sublinearly, which, we later show, is of low probability. This fact is not captured by LIL. Finally, an alternative proof of \cref{lem:div-sample-mean} based on Donsker's invariance principle is provided in \cref{sec:donsker}.
+
+\subsection{Null bankruptcy of KT, GRAPA, aGRAPA, etc.} \label{sec:bankrupt-pred}
+
+The combination of \cref{thm:sos-crit,thm:sum-of-op} leads to the following sufficient condition for bankruptcy. Namely, almost sure null bankruptcy happens if the bet fractions $(\lambda_n)$ have a decay rate $\Omega_p(n^{-1/2})$ or $\Omega_{a.s.}((n\log n)^{-1/2})$ under the null.
+
+\begin{corollary}[$n^{-1/2}$ criterion] \label[corollary]{cor:sq-crit} Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $(X_n)\iid P$. Let $\blamb = (\lambda_n)$ be a predictable process taking values in $[-\frac{1}{1-m}, \frac{1}{m}]$.
+    Suppose that either $\lambda_n = \Omega_p(n^{-1/2})$ or $\lambda_n = \Omega_{a.s.}((n\log n)^{-1/2})$ under $P$.
+    Then, the $\blamb$-betting wealth process
+    \begin{equation}
+        W_n^{\blamb}=\prod_{k=1}^n (1 + \lambda_k(X_k - m))
+    \end{equation}
+    converges almost surely to 0.
+\end{corollary}
+Note that
+$\lambda_n = \Omega_p(n^{-1/2})$ and $\lambda_n = \Omega_{a.s.}((n\log n)^{-1/2})$ are two very different conditions and neither implies the other.
+Various predictable plug-in betting and hedging strategies mentioned in \cref{sec:intro} and by \cite{waudby2024estimating} fall into this category. First, the standard CLT for the sample mean immediately implies the following bankruptcy guarantee for KT.
+\begin{proposition} Let $(X_n)\iid P$ with mean $m$ and variance $\sigma^2 > 0$. The KT bet fractions $\lKT_n$ defined in \eqref{eqn:kt-lambda} satisfies the asymptotic normality
+    \begin{equation}\label{eqn:kt-lambda-clt}
+   \sqrt{n} \lKT_n = \frac{1/2+\sum_{k=1}^{n-1}(X_k - m)}{C \sqrt{n}} \stackrel{\text{weakly}}{\longrightarrow} \mathcal{N}(0,C^{-2}\sigma^2).
+\end{equation}
+Therefore $\lKT_n = \Omega_p(n^{-1/2})$, and consequently the KT wealth process $\prod_{k=1}^n(1+\lKT_k(X_k - m))$ converges to 0 almost surely.
+\end{proposition}
+
+Second, GRAPA \eqref{eqn:grapa-lambda} is almost surely null-bankrupt because, as a standard M-estimator, the GRAPA bet fractions $(\lgr_n)$ also satisfy asymptotic normality and an $\Omega(n^{-1/2})$ decay rate under any non-degenerate null.
+\begin{proposition}\label[proposition]{prop:grapa-bahadur} Let $(X_n)\iid P$ with mean $m$ and variance $\sigma^2 > 0$.
+    The GRAPA bet fraction $\lgr_n$ defined in \eqref{eqn:grapa-lambda} satisfies the almost sure Bahadur expansion
+    \begin{equation}\label{eqn:bahadur}
+         \sqrt{n}\lgr_{n+1} = \frac{1}{\sigma^2} \cdot \frac{\sum_{k=1}^n (X_k - m)}{\sqrt{n}}  + o_{a.s.}(n^{-1/4} \log n) \stackrel{\text{weakly}}{\longrightarrow} \mathcal{N}(0,\sigma^{-2}).
+    \end{equation}
+    Therefore $\lgr_n = \Omega_p(n^{-1/2})$, and consequently the GRAPA wealth process $\prod_{k=1}^n(1+\lgr_k(X_k - m))$ converges to 0 almost surely.
+\end{proposition}
+The proof of \cref{prop:grapa-bahadur} involves checking that the M-estimation problem for $\lambda \mapsto \Exp_P(\log(1+\lambda(X_1 - m)))$ satisfies all of the seven regularity conditions for the Bahadur expansion result of M-estimators due to \cite{niemiro1992asymptotics}. We put these details in \cref{sec:grapa-bahadur}. As a quick sanity check of these two asymptotics, we note that KT with $C = m(1-m) = \sigma^2$ coincides with GRAPA in the Bernoulli coin-toss case (see e.g.\ \citet[Section 4]{orabona2016coin}).
+
+Next, the approximate GRAPA (aGRAPA) bettor by \citet[Section B.3]{waudby2024estimating} reads
+\begin{equation}
+   \lagr_n = \left( -\frac{C}{1-m} \right) \vee \frac{\widehat \mu_{n-1} - m}{\widehat\sigma^2_{n-1}+(\widehat \mu_{n-1} - m)^2} \wedge \frac{C}{m} ,
+\end{equation}
+where $\widehat \mu_{n-1}$ and $\widehat\sigma^2_{n-1}$ are the sample mean and variance of $X_1,\dots, X_{n-1}$, and $C\in(0,1)$ a clipping constant (cf.\ the null Bahadur expansion of GRAPA \eqref{eqn:bahadur}). The consistency of these estimators as well as the standard CLT immediately give rise to its asymptotic normality similar to that of KT and GRAPA.
+\begin{proposition} Let $(X_n)\iid P$ with mean $m$ and variance $\sigma^2 > 0$.
+    The aGRAPA bet fraction $\lagr_n$ defined above satisfies the asymptotic normality
+    \begin{equation}
+         \sqrt{n}\lagr_{n}  \stackrel{\text{weakly}}{\longrightarrow} \mathcal{N}(0,\sigma^{-2}).
+    \end{equation}
+    Therefore $\lagr_n = \Omega_p(n^{-1/2})$, and the aGRAPA wealth process $\prod_{k=1}^n(1+\lagr_k(X_k - m))$ converges to 0 almost surely.
+\end{proposition}
+
+Finally,  predictable hedging betting strategies of form \eqref{eqn:hedged}, proposed on grounds of tightness of the implied confidence sequences (as opposed to wealth growth), are also almost surely null-bankrupt as $\lambda_n$ is set to always be $\Omega_{a.s.}(n^{-1/2})$ or $\Omega_{a.s.}((n \log n)^{-1/2})$, regardless of null or alternative.
+
+\begin{proposition} Let $(X_n)\iid P$ with mean $m$ and variance $\sigma^2 > 0$.
+    Let $\lambda_n^{\mathsf{PrH}}$ be the bet fraction defined in \eqref{eqn:hedging-rate}. 
+    Then, $\lambda_n^{\mathsf{PrH}} = \Omega_{a.s.}((n \log n)^{-1/2})$, and consequently the hedged wealth process $0.5\cdot\prod_{k=1}^n(1+\lambda_k^{\mathsf{PrH}}(X_k - m)) +0.5\cdot \prod_{k=1}^n(1-\lambda_k^{\mathsf{PrH}}(X_k - m))$ converges to 0 almost surely.
+\end{proposition}
+
+As a short summary of this section, we have shown that many of the proposed ``good'' betting strategies are null-bankrupt almost surely via the sum-of-square criterion, \cref{thm:sos-crit}. It is natural to ask if there are ``equally good'' strategies that do not go bankrupt. We delay this profound question to \cref{sec:all}, after discussing mixture strategies among which the question has a much clearer answer.
+
+\section{Bankruptcy of mixture strategies}
+
+We next study the null bankruptcy behavior of mixture strategies \eqref{eqn:mixture-wealth}. While it is true that mixture strategies form a subclass of predictable plugin strategies via $\lambda_k^\pi = \frac{\int \lambda W_{k-1}^\lambda  \pi(\d \lambda) }{ \int W_{k-1}^\lambda  \pi(\d \lambda) }$, and therefore \cref{thm:sos-crit} implies the $\pi$-mixture strategy bankrupts if and only if $\sum_k (\lambda_k^\pi)^2$ diverges, we shall soon see that the bankruptcy of the mixture strategy is much easier to analyze directly via its native integration form
+\begin{equation}
+    W_n^\pi = \int W_n^\lambda \, \pi(\d \lambda) = \int \left\{\prod_{k=1}^n (1 + \lambda(X_k - m))  \right\} \pi(\d \lambda).
+\end{equation}
+Specifically, the only condition that determines if a mixture strategy is null-bankrupt is whether the mixture distribution $\pi$ has an atom at 0 (i.e.\ it charges the set $\{0\}$ with a positive probability $\pi(\{0\})>0$). Intuitively, if $\pi$ has an atom at 0, the mixture strategy always keeps some capital unwagered (``cash''), therefore it never goes bankrupt. The precise statement below is proved in \cref{sec:pf-nocash}.
+
+
+\begin{theorem}[No-cash criterion]\label{thm:nocash} Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $(X_n)\iid P$.
+Let $\pi$ be a probability measure  on $[-\frac{1}{1-m}, \frac{1}{m}]$. Then, the mixture wealth $(W_n^\pi)$ converges to $\pi(\{0\})$ almost surely. In particular, $W_\infty^\pi = 0$ almost surely if and only if $\pi$ does not have an atom at 0, i.e.\ $\pi(\{0\}) = 0$.
+\end{theorem}
+That is, any mixture betting strategy converges almost surely to the fraction of the mixture assigned to $\lambda = 0$. For any mixture distribution $\pi$ on $[-\frac{1}{1-m}, \frac{1}{m}]$, we can decompose the $\pi$-mixture strategy into its ``cash component'' $\pi|_{\{0\}}$ and its ``bet component'' $\pi|_{[-\frac{1}{1-m},0)\cup(0, \frac{1}{m}] }$, with the former staying constant and the latter going to bankruptcy.
+
+
+In particular, the two mixtures employed by \cite{orabona2023tight} are both continuous, thus atomless at 0, and are consequently null-bankrupt.
+\begin{proposition}\label[proposition]{prop:mixture-bankrupt}
+    The universal portfolio betting strategy proposed by \citet[Section 4]{orabona2023tight}, which corresponds to $W_n^\pi$ where $\pi$ is a Beta distribution rescaled to $[-1,1]$, and the Robbins' iterated logarithm betting strategy proposed by \citet[Section 5]{orabona2023tight}, which corresponds to $W_n^\pi$ where $\pi$ has density $f_\pi(\lambda)=\frac{\id_{\{ |\lambda| \le 1 \} } \log \log C}{2|\lambda| \log(C/|\lambda|) (\log\log(C/|\lambda|))^2 }$ where $C=6.6e$, both converge to 0 almost surely under any non-degenerate null distribution.
+\end{proposition}
+Note that Robbins' mixture achieves the iterated logarithmic rate via being ``heavy at 0'': its \emph{density} satisfies $f_\pi(0) = \infty$. However, the mixture measure still charges 0 mass to the point $\{ 0 \}$, thus null-bankrupt.
+
+
+We now revisit the question asked at the end of \cref{sec:bankruptcy-predictable}. Among mixture strategies, we know from \cref{thm:nocash} that null-bankrupt strategies are exactly those without the cash component $\pi(\{0\})$. Given any null-non-bankrupt mixture strategy, its bet component $\pi' = \pi|_{[-\frac{1}{1-m},0)\cup(0, \frac{1}{m}] }$ yields a strictly more powerful,  null-bankrupt strategy as
+\begin{equation}\label{eqn:remove-cash}
+    W^{\pi'}_n = \frac{W_n^\pi - \pi(\{ 0 \})}{1-\pi(\{ 0 \})} > W_n^\pi
+\end{equation}
+eventually on every sample path where $W^\pi_n \to \infty$. In this sense, all good \emph{mixture} betting strategies must be cash-free and go bankrupt almost surely under the null.
+
+\section{Do all good strategies go bankrupt?}\label{sec:all}
+
+We demonstrated above that known ``good'' mixture betting strategies are null-bankrupt. We now explore this principle in greater generality: do \emph{all ``good'' strategies} go bankrupt?
+
+
+Revisiting our earlier argument around \eqref{eqn:remove-cash}, given an original strategy $M_n^\pi$, we constructed another strategy $M_n^{\pi'}$ that  makes more money under the alternative, at the price of making less money (and possible bankruptcy) under the null; it \emph{improves}
+ upon the original strategy $M_n^\pi$ in this sense.
+
+Our key result in this section is that it is possible to generalize the cash-removal improvement \eqref{eqn:remove-cash} to \emph{all} strategies
+on certain sample paths which we refer to as being ``predictably non-bankrupt''. Let $(W_n)$ be the wealth process of some strategy whose bet fraction process is $(\lambda_n)$. Define
+\begin{equation}
+    \widehat W_n = \min_{x \in [0,1] } W_{n-1}(1 + \lambda_n(x - m)) = \min\{ W_{n-1}(1 + \lambda_n(0 - m)),  W_{n-1}(1 + \lambda_n(1 - m))  \}.
+\end{equation}
+That is, $\widehat W_n$ is the minimum possible wealth at time $n$ conditioned on the information available up to time $n-1$. Therefore, it forms a predictable process. For $\rho > 0$, we define the \emph{$\rho$-predictably non-bankrupt} event as
+\begin{equation}\label{eqn:pnb}
+    N^{\rho} := \bigcap_{n=1}^\infty \{ \widehat W_n > \rho \}.
+\end{equation}
+The event $N^\rho$ says that it is always guaranteed that the next-round wealth cannot drop below $\rho$. It implies wealth never \emph{actually} drops below $\rho$, and is implied by bet fraction being always small enough:
+\begin{equation}
+    \{ |\lambda_n| < 1-\rho W_{n-1}^{-1} \} \subseteq \{ \widehat W_n > \rho \} \subseteq \{ W_n > \rho \}.
+\end{equation}
+Clearly, for mixture strategies with cash component $\pi(\{ 0 \}) \ge \rho$ and non-degenerate bet component, the event $N^\rho$ is the entire space. Our result below states that we can improve any strategy on the event $N^\rho$.
+
+%that do not go bankrupt under the null, and show that all such strategies are similarly improvable, in a high-probability sense. Below, we spell out the statement in full. Our improvability argument is made over a null-alternative pair of \emph{Bernoulli} distributions that generate \emph{binary} observations $(X_n) \in \{ 0,1 \}^\infty$. Generalization to the general setting of non-degenerate distributions is feasible via some careful additional assumptions on the fraction sequence $(\lambda_n)$. 
+
+%Our argument takes multiple steps, and primarily holds in the setting of \emph{binary} observations $(X_n) \in \{ 0,1 \}^\infty$ but can be generalized to the general setting of non-degenerate distributions with some careful additional assumptions on the fraction sequence $(\lambda_n)$. 
+
+
+\begin{theorem}[Improvability on predictably non-bankrupt paths] \label[theorem]{cor:improve}
+    %Suppose the observations $(X_n)$ are binary and let $m, m_1 \in (0,1)$. For any betting strategy whose wealth process $(W_n)$ that satisfies $P(W_\infty > 0) = 1$ under the null $P = \operatorname{bernoulli}(m)$ and $P_1(\inf W_n > 0) = 1$ under the alternative $P_1= \operatorname{bernoulli}(m_1)$, and for any $\delta > 0$, there always exists another betting strategy whose wealth process $(W_n^\sharp)$ satisfies:
+    Let $(W_n)$ be the wealth process of some betting strategy, $\rho \in (0,1)$, and $N^\rho$ be its $\rho$-predictably non-bankrupt event as defined in \eqref{eqn:pnb}. There exists another betting strategy whose wealth process $(W_n^\sharp)$ satisfies $W_n^\sharp = \frac{W_n - \rho}{1 - \rho}$ on the event $N^\rho$. Consequently, on the event $N^\rho$:
+    \begin{gather}
+     \{ W_n > 1 \} \subseteq \{ W_n^\sharp > W_n  \}, \quad \{ W_n \to \infty \} \subseteq \{\liminf W_n^\sharp / W_n = 1/(1-\rho) > 1  \}; \label{eqn:improve-alt} \\
+    \{ W_n < 1 \} \subseteq \{ W_n^\sharp < W_n  \}, \quad \{ W_\infty < 1 \} \subseteq \{ W_\infty^\sharp =  (W_\infty - \rho)/(1-\rho) < W_\infty \}. \label{eqn:improve-null}
+    \end{gather}
+\end{theorem}
+
+
+To summarize \cref{cor:improve} in a nutshell: when the original strategy is predictably non-bankrupt, the improvement strategy makes more money under the alternative \eqref{eqn:improve-alt}, and loses more money under the null \eqref{eqn:improve-null}.
+The intuition behind \cref{cor:improve} is the \emph{borrowing} or \emph{leveraging} 
+%(see also \cite{wang2024borrow})
+nature of the cash-removal improvement \eqref{eqn:remove-cash} for mixture strategies: the cash-removed strategy $W_n^{\pi '}$ is equivalent to borrowing some cash and investing in a leveraged cash-holding strategy $W_n^\pi$. Analogously, the improvement strategy $W_n^{\sharp}$ in \cref{cor:improve} is equivalent to leveraging the original strategy $W_n$ on $N^\rho$. The full roadmap to developing these concepts of borrowing, the construction of $W_n^\sharp$, as well as the proof of \cref{cor:improve} can all be found in \cref{sec:pf-improve}.
+
+
+As we admitted, the predictably non-bankrupt event $N^\rho$ is a subset of the actually non-bankrupt event $\bigcap_{n=1}^\infty \{ W_n > \rho \}$ (which must happen for some $\rho$ on a $W_\infty > 0$ path). Therefore, there is still a narrow gap between our result above and the general question ``do all good strategies go bankrupt''. We expect future work to close this gap.
+We further our discussion on this intriguing question in \cref{sec:further-bankruptcy}, with examples and reasoning around (in fact, against) (1) whether exponentially powerful strategies are all null-bankrupt, (2) whether the Cram\'er-Rao bounds imply the necessary null-bankruptcy of some strategies, and (3) whether we can make the wealth lower bound $\rho$ a predictable sequence in \cref{cor:improve}.
+
+
+
+\section{Odds and ends}
+
+Our discussion on the null bankruptcy of testing-by-betting strategies naturally leads us to consider two adjacent topics that we have already hinted at. First, since these strategies are often compared against a hindsight optimum in regret analysis, it is natural to consider the null behavior of the hindsight optimum too. Second, bounded betting wealth processes are related to (and differ subtly from) subGuassian, or more generally, sub-$\psi$ testing processes, and we attempt to extend our techniques to the null bankruptcy analysis of these processes.
+
+\subsection{Null asymptotics of $\klinf$}\label{sec:klinf}
+
+Let $(W_n)$ be the wealth process of some betting strategy.
+Much has been studied on the pathwise regret
+\begin{equation}
+    R_n = \max_{\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} (\log W_n^\lambda) - \log W_n.
+\end{equation}
+Having showed that $\log W_n \to -\infty$ on $P$-almost all paths for non-degenerate null $P$, and knowing that $R_n$ is usually $O(\log n)$ on \emph{all} sample paths from the online learning literature (e.g.\ KT \eqref{eqn:kt-lambda} in the binary case \citep{orabona2016coin}, the two mixtures mentioned in \cref{prop:mixture-bankrupt}),
+we now investigate the behavior of
+\begin{equation}
+   L_n^* :=\max_{\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} (\log W_n^\lambda) = \max_{\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} \sum_{k=1}^n \log(1+\lambda(X_k - m)),
+\end{equation}
+the best-in-hindsight log-wealth, under the null.
+%We show in this section that $2 L_n^*$, twice the best-in-hindsight log-wealth, converges weakly to $\chi^2_{(1)}$ under any non-degenerate null.
+
+%Many betting strategies (e.g.\ KT \eqref{eqn:kt-lambda} in the binary case \citep{orabona2016coin}, the two mixtures mentioned in \cref{prop:mixture-bankrupt}) are proved to satisfy $R_n = O(\log n)$ on \emph{all} sample paths. In fact, \cite{orabona2023tight} propose using $\exp(\overline{R}_n - L_n^*)$, where $\overline{R}_n$ is an upper bound of $R_n$ as a proxy to $W_n$ for computable confidence sequences: since $\exp(\overline{R}_n - L_n^*) \le W_n$, $(\exp(\overline{R}_n - L_n^*))$ is an e-process upper bounded by the nonnegative martingale $(W_n)$, the latter being always more powerful when employed in testing.
+
+
+%Our null-bankruptcy results show that $ -\log W_n \to \infty$ on $P$-almost all sample paths where $P$ is any non-degenerate null distribution. It is natural to ask what null asymptotic properties $L_n^*$, the hindsight maximum log-wealth, satisfies.
+%Recalling the definition of GRAPA \eqref{eqn:grapa-lambda}, we see that $L_n^*$ can be expressed as
+%\begin{equation}
+%    L_n^* = \log W_n^{\lgr_{n+1}} =\sum_{k=1}^n \log(1 + \lgr_{n+1} (X_k - m) ).
+%\end{equation}
+It is worth noting that the quantity $L_n^*$ 
+%has been studied in two additional bodies of literature besides online learning. 
+is better known as being related to the $\klinf$ statistic in the literature on multi-armed bandits. Many bandit methods \citep{thesis} are derived from controlling $\klinf(P_n, m)$
+where $P_n$ is the empirical measure and $
+    \klinf(P, m) = \min\{ \kl(P \| Q) : Q \text{ on }[0,1] \text{ with mean }m \}$.
+Crucially, the $\klinf$ statistic defined via this minimization is shown by \cite{honda2010asymptotically} to have a dual representation that coincides with the hindsight maximum log-wealth, $n \klinf(P_n, m ) = L_n^*$.
+We thus denote $\lKL_n = \argmax_{\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]}  W_n^\lambda$, and so $L_n^* = W_n^{\lKL_n}$. Recalling the definition of GRAPA from \eqref{eqn:grapa-lambda}, we see that $\lgr_{n+1} = \lKL_n$.
+
+%$L_n^*$ is also related to the empirical likelihood studied by \cite{owen1988empirical} to test $\mu(P) = m$ for $P$, without assuming boundedness, which is defined as
+%\begin{equation}\label{eqn:el}
+%    \operatorname{EL}(P_n, m) := \sup \left\{ \frac{L_n(Q)}{L_n(P_n)} \middle| \operatorname{supp} Q \subseteq \operatorname{supp}P_n, \mu(Q)=m \right\}
+%\end{equation}
+%where $L_n(Q) =\prod_{k=1}^n ( F_Q(X_k) - F_Q(X_k^-) )$ is the nonparametric likelihood, maximized by the empirical measure $P_n$.
+%It is studied extensively by \cite{owen2001empirical} that: (1) under any non-degenerate, bounded (not necessarily to $[0,1]$) null $P$, $-2\log  \operatorname{EL}(P_n, m)$ converges weakly to $\chi^2_{(1)}$; and (2) the maximization \eqref{eqn:el} has the dual representation
+%\begin{equation}\label{eqn:el-max}
+ % -\log  \operatorname{EL}(P_n, m) = \max_{\lambda} \sum_{k=1}^n \log(1+\lambda(X_k - m)).
+%\end{equation}
+%The only different between \eqref{eqn:el-max} and \eqref{eqn:klinf-max} is that \eqref{eqn:el-max} is an \emph{unconstrained} optimization where $\lambda$ can take any value as long as the logarithms are all defined; whereas \eqref{eqn:klinf-max} is an \emph{constrained} optimization with $\lambda \in[-\frac{1}{1-m}, \frac{1}{m}]$. 
+An \emph{unconstrained} version of the hindsight maximum log-wealth, 
+\begin{equation}
+-\log \operatorname{EL}_n = \sup_{\lambda} \sum_{k=1}^n \log(1+\lambda(X_k - m))    ,
+\end{equation}
+where $\lambda$ can take any value as long as the logarithms are all defined, on the other hand, has been studied in the concept of the empirical likelihood by \cite{owen2001empirical} and the dual likelihood by \cite{mykland1995dual}. See also the discussion by \citet[Section E.6]{waudby2024estimating}. These authors show that the unconstrained supremum $-2\log \operatorname{EL}_n$ converges weakly to a $\chi^2_{(1)}$ limit. We note that as a well-behaved M-estimation procedure, adding the constraint $\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]$ does not alter its asymptotic behavior, so the same $\chi^2_{(1)}$ limit applies to the constrained maximum $L_n^*$ as well. We prove this fact formally in \cref{sec:pf-chisq-klinf} using the Bahadur expansion of the GRAPA/$\klinf$ bet fractions $\lgr_{n+1} = \lKL_n$ in \cref{prop:grapa-bahadur}.
+
+\begin{theorem}\label{thm:chisq-klinf}  Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $(X_n)\iid P$. Then, twice the hindsight maximum log-wealth
+    \begin{equation}
+  2  L^*_n =  2\max_{\lambda \in [-\frac{1}{1-m}, \frac{1}{m}]} \log W_n^\lambda = 2\sum_{k=1}^n \log(1 + \lKL_n (X_k - m) )
+    \end{equation}
+    converges weakly to a $\chi^2$ distribution with 1 degree of freedom. 
+    Consequently, a null-bankrupt strategy must have unbounded regret on $P$-almost all paths:
+    \begin{equation}\label{eqn:unbounded-regret}
+        P(W_n \to 0)=1 \implies P( \sup(L_n^* - \log W_n)=\infty) = 1.
+    \end{equation}
+\end{theorem}
+
+The hindsight maximum wealth $\prod_{k=1}^n (1 + \lKL_n (X_k - m) )$, therefore, converges weakly to $\exp(Z^2/2)$ where $Z \sim \mathcal{N}(0,1)$. We remark that this distribution is named the ``standard critical log-chi-squared distribution'' by \citet[Proposition 5.7]{Wang2025ensm}, and has infinite expected value.
+This is in contrast to the almost sure bankruptcy of the GRAPA wealth $\prod_{k=1}^n (1 + \lKL_{k-1} (X_k - m) )$. These two have similar forms but have significantly different asymptotic behaviors, which is unsurprising: the hindsight maximum wealth is not a martingale, whereas the GRAPA wealth is. The unboundedness (i.e.\ $\omega(1)$ lower bound) of the regret \eqref{eqn:unbounded-regret} on almost all null paths complements the $O(\log n)$ all-path upper bounds in the literature.
+
+
+Finally, we remark that both $\operatorname{EL}_n$ and $\klinf$ defined above are nonparametric likelihood ratio (NPLR) statistics:
+\begin{gather}
+    \operatorname{EL}_n = \sup \left\{ \frac{L(Q)}{L(P_n)} : \text{$Q$ with support on $\operatorname{supp}P_n$ and mean $m$} \right\},
+    \\
+ {-L_n^*}= {- n \klinf(P_n, m)} = \sup  \left\{ \log \frac{L(Q)}{L(P_n)} : \text{$Q$ with support on $[0,1]$ and mean $m$} \right\},
+\end{gather}
+where $L(\cdot)$ denotes the nonparametric likelihood, maximized globally by the empirical measure $P_n$. See e.g.\ \cite{gaffke2005three} for $\klinf$'s NPLR representation. Therefore, the asymptotic $\chi^2$ limit of both $-2\log \operatorname{EL}_n$ and $2L_n^*$ generalize the classical theorem of \cite{wilks1938large}.
+
+\subsection{Null bankruptcy in subGaussian and sub-$\psi$ testing}\label{sec:crit-subg}
+
+Counterparts of the divergence criteria \cref{thm:sos-crit,thm:nocash} can also be established for the plug-in and mixture strategies based on the subGaussian test martingale
+\begin{equation}\label{eqn:subG-main}
+    M^\lambda_n = \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda)^2}{2} \right),
+\end{equation}
+for which the online learning perspective is recently established by \cite{agrawal2025eventually}. See \cref{sec:related} for a short introduction.
+
+
+\begin{theorem}[Sum-of-squares criterion II]\label{thm:sos-crit-subg}
+ Let $P$ be a non-degenerate 1-subGaussian distribution with mean $m$ and $(X_n)\iid P$.
+    Let $\blamb = (\lambda_n)$ be a predictable process taking values in $\mathbb R$.
+    Then, the $\blamb$-plugin test process
+    \begin{equation}
+        M_n^{\blamb}= \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda_k)^2}{2} \right)
+    \end{equation}
+    converges almost surely to a random variable $M_\infty$ satisfying
+    $$ \{M_\infty = 0 \} = \left\{ \sum_{n=1}^\infty (\lambda_n-m)^2 = \infty \right\},
+    \text{\; and consequently \;} \{ M_\infty > 0 \} = \left\{ \sum_{n=1}^\infty (\lambda_n-m)^2 < \infty \right\}.$$
+\end{theorem}
+
+
+\begin{theorem}[No-cash criterion II]\label{thm:nocash-subg}  Let $P$ be a non-degenerate 1-subGaussian distribution with mean $m$ and $(X_n)\iid P$.  Let $\pi$ be a probability measure  on $\mathbb R$.
+    Then, the $\pi$-mixture test process
+    \begin{equation}
+        M_n^{\pi}=\int \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda)^2}{2} \right) \pi(\d \lambda)
+    \end{equation}
+    converges almost surely to $\pi(\{m\})$.
+\end{theorem}
+
+Both theorems above are proved in \cref{sec:pf-subg}.
+Finally, there is a generalization of the subGaussian mean testing martingale \eqref{eqn:subg-fixed} for the general \emph{sub-$\psi$} random variables. See e.g.\ \cite{howard2020time,howard2021time} for an introduction. In the sub-$\psi$ case, the process \eqref{eqn:subG-main} (taking $m=0$ for simplicity)
+\begin{equation}
+         M_n^{\blamb} = \exp\left\{ \sum_{k=1}^n \left(\lambda X_k - \frac{1}{2}\lambda^2 \right)  \right\} \quad \text{becomes} \quad
+    \exp\left\{    \sum_{k=1}^n \left( \lambda X_k -\psi(\lambda)\right)\right\}
+\end{equation}
+where $\psi(\cdot)$ is a function that locally behaves like $\psi(x) \approx \frac{x^2}{2}$ for $x\approx 0$. Therefore, one may prove similar sum-of-squares and no cash criteria for these testing strategies. We omit these straightforward extensions from our paper.
+
+
+\section{Conclusion}
+
+Many successful betting strategies for the bounded mean testing problem converge almost surely to zero wealth under all non-degenerate null distributions, and we provided some preliminary insight that this principle may apply more broadly to all betting strategies that satisfy some growth condition.
+We also discussed the null asymptotic $\chi^2$ distribution of the hindsight maximum wealth ($\klinf$); and presented the analogous bankruptcy results for the unbounded (sub-$\psi$) test martingales.
+Our results are complementary to numerous results on the regret, null maximal concentration, and confidence sets corresponding to these strategies.
+
+
+Our work also posed the natural question ``do all \emph{good} strategies go bankrupt?'' to which we answered by introducing predictably non-bankrupt paths and their improvability. Since predictable non-bankruptcy is stronger than bankruptcy, a gap remains between our answer and a fully satisfactory one to the question. We expect future work to close this gap.
+
+

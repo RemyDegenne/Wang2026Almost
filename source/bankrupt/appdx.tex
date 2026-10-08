@@ -1,0 +1,504 @@
+\section{Additional related work}\label[appendix]{sec:related}
+
+Our research on the null bankruptcy of bounded mean betting wealth processes is also related to the following topics.
+
+\paragraph{SubGaussian and sub-$\psi$ mean testing.} Many of the betting strategies/wealth processes we mentioned in \cref{sec:intro} have counterparts in the (equally) classic Gaussian, subGaussian \citep{robbins1970statistical,robbins1968iterated}, and sub-$\psi$ \citep{howard2020time,howard2021time} mean testing literature.
+Let $(X_n)\iid P$ where $P$ is a subGaussian distribution on $\mathbb R$ with variance factor 1 and unknown mean $\mu(P)$. That is, $\Exp_P \exp( t (X_1 - \mu(P)) ) \le \exp(t^2/2)$ for all $t \in \mathbb R$. The analogy of ``fixed fraction bet'' \eqref{eqn:bet-fixed} testing the null $\mu(P) = m$ is the likelihood ratio martingale
+\begin{equation}\label{eqn:subg-fixed}
+    M^\lambda_n = \prod_{k=1}^n \frac{p(X_k; \lambda, 1 )}{p(X_k; m, 1)} = \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda)^2}{2} \right),
+\end{equation}
+where $p(\cdot; \mu,\sigma^2 )$ is the probability density function of $\mathcal{N}(\mu,\sigma^2)$.
+Predictable plugin 
+\begin{equation}
+    \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda_k)^2}{2} \right)
+\end{equation}
+or mixture
+\begin{equation}
+  \int  \exp\left(\sum_{k=1}^n \frac{(X_k - m)^2 - (X_k - \lambda)^2}{2} \right) \pi(\d \lambda)
+\end{equation}
+test processes that achieve universal power compared to the constant $\lambda$ are similarly available. More generally, we say $P$ is sub-$\psi$ with variance factor 1 if $\Exp_P \exp( t (X_1 - \mu(P)) ) \le \exp(\psi(t))$ for all $t \in [0, t_{\max})$, where $\psi$ is usually a function satisfying $\psi(t) \approx t^2/2$ when $t \to 0$ \citep{howard2020time}. The fixed-fraction test martingale testing the null $\mu(P) = m$ is now
+\begin{equation}\label{eqn:subpsi-fixed}
+    \exp\left\{    \sum_{k=1}^n \left( (\lambda - m) (X_k - m) -\psi(\lambda - m)\right)\right\}.
+\end{equation}
+When $\psi(t) = t^2/2$, \eqref{eqn:subpsi-fixed} equals \eqref{eqn:subg-fixed}. Predictable plug-in and mixture are similarly available.
+In \cref{sec:crit-subg}, we discuss the null bankruptcy of these processes too.
+
+
+\paragraph{All vs.\ $P$-almost all vs.\ $P$-most paths; always vs.\ eventually valid.} We have mentioned a line of work  either belonging to or inspired by the online learning and portfolio selection literature, notably that of \cite{cover1991universal,cover2002universal,orabona2016coin,orabona2023tight}. Indeed, the betting process \eqref{eqn:predictable} is equivalent to the online prediction game with logarithmic loss, with the total accumulated loss being $-\log W_n^{\blamb}$. These authors usually prove regret bounds that characterize the \emph{always-valid largeness} of $(W_n)$ on \emph{all} sample paths. The sequential inference literature \citep{howard2020time,waudby2024estimating}, on the other hand, draws heavily on the standard Ville's inequality which characterizes the \emph{always-valid smallness} of $(W_n)$ on \emph{$P$-most} sample paths: sample paths where $\sup(W_n) \le 1/\alpha$ is of $P$ measure at most $1-\alpha$.
+Recently, \cite{agrawal2025eventually} deliver some very novel findings on the regret bounds that apply to $P$-most paths, not for the bounded betting game but for the \emph{subGaussian} game \eqref{eqn:subg-fixed}. They reason that in the subGaussian regime with unbounded observations, (always-valid) regret bounds may only apply to $P$-most paths.
+We, on the other hand, primarily focus on the \emph{eventual smallness} of $(W_n)$ on \emph{$P$-almost all} sample paths. These sample paths constitute a larger set than a $P$-most set, but a proper subset of all paths. \cite{agrawal2025eventually} also notice that \emph{eventual largeness} statements (asymptotic regret bounds) can be proved on a $P$-almost all set of paths. 
+
+
+\paragraph{Other work on null-bankrupt test processes.} In the sequential statistics literature, many authors have proposed test processes that are nonnegative martingales, supermartingales, or e-processes under the null hypothesis, and mentioned along the way that these processes converge to 0 under (some) null distributions. These include \citet[Section 4.1]{ramdas2022testing} in the context of testing exchangeable bits, \citet[Table 3]{wang2025anytime} in the context of mixture-based t-tests and Z-tests. A sufficient condition for martingale bankruptcy is proposed by \citet[Lemma 33]{ramdas2020admissible}, 
+%which we shall discuss soon 
+which we discussed
+when presenting a more useful necessary and sufficient condition \cref{thm:sos-crit}. Finally, it is noted by \cite{grunwald2023posterior} that test processes generalize the Bayesian prior-posterior ratio, and the null bankruptcy is therefore analogous to the concentration of posterior distribution towards the point mass on the ground truth, a concept visualized in passing in the bounded betting case by \citet[Figure 18]{waudby2024estimating}.
+
+
+
+
+\section{Omitted and additional proofs}
+
+\subsection{Proof of \cref{thm:sos-crit} (sum-of-squares criterion)}\label[appendix]{sec:pf-sos-crit}
+
+\begin{proof}
+    Consider the process $S_n= \sum_{k=1}^n \lambda_k(X_k - m)$, a square-integrable martingale with quadratic variation $ \langle S\rangle_n = \sigma^2 \sum_{k=1}^n \lambda_k^2$ where $\sigma^2 = \Var X_1 > 0$. 
+
+    First, on the event $\{\sum_{n=1}^\infty \lambda_n^2 = \infty \} =  \{\langle S \rangle_\infty = \infty \}$, since $\Exp(\sup_n (S_n- S_{n-1})^2 ) \le \max( m^2/(1-m)^2, (1-m)^2/m^2 ) < \infty$, by \citet[Theorem 2(b)]{Fitzsimmonslecturenotes}, $S_n$ diverges almost surely. Further, on the event $\{S_n \text{ diverges} \}$, since $\Exp(\sup_n |S_n- S_{n-1}| ) < \infty$, we learn from \citet[Theorem 2.14]{hall2014martingale} that $\liminf S_n = -\infty$ almost surely. Because $W_n^{\blamb} \le \exp(S_n)$, this further implies that $\liminf W_n^{\blamb} = 0$ a.s.\ on this event. Since $W_n$ is a nonnegative martingale, it converges a.s.\ on the entire probability space to some $W_\infty$, so we can take $W_\infty$ such that $W_\infty = \lim W_n^{\blamb} = \liminf W_n^{\blamb} = 0$ on $\{\sum_{n=1}^\infty \lambda_n^2 = \infty \}$. 
+
+
+    Second, on the event $\left\{ \sum_{n=1}^\infty \lambda_n^2 < \infty \right\} \cap \bigcap_{n=1}^\infty \{ \lambda_n(X_n - m) > -1 \}$, there exists a random finite sample size $N$ such that when $n > N$, $|\lambda_n| \le 1/2$. Using the inequality $\log(1+x) \ge x - x^2 $ for $|x|\le 1/2$:
+    \begin{equation}\label{eqn:three-parts-converge}
+        \log W_n^{\blamb} \ge \sum_{k=1}^N \log( 1 + \lambda_k(X_k - m)) +\sum_{k= N+1}^n \lambda_k(X_k - \mu) - \sum_{k= N+1}^n \lambda_k^2(X_k - m)^2.
+    \end{equation}
+    First, the standard martingale convergence result from \citet[Theorem 2.15]{hall2014martingale} states that $S_n$ converges a.s.\ to a finite random variable on the event $\{ \sum_{n=1}^\infty \lambda_n^2 < \infty \} = \{ \langle S\rangle_\infty < \infty \}$; $\sum_{k=1}^n \lambda_k^2(X_k - m)^2$ also converges on this event as $| \lambda_k^2(X_k - m)^2| \le \lambda_k^2$. These indicate that the second and third terms in \eqref{eqn:three-parts-converge} both converge.
+    The events $\{ \lambda_n(X_n - m) > -1 \}$ further ensure the first term in \eqref{eqn:three-parts-converge} is finite.
+    Therefore, the right hand side of \eqref{eqn:three-parts-converge} converges a.s.\ to a finite variable on the event $\left\{ \sum_{n=1}^\infty \lambda_n^2 < \infty \right\} \cap \bigcap_{n=1}^\infty \{ \lambda_n(X_n - m) > -1 \}$. This implies we can ensure $W_\infty > 0$ on this event.
+
+    Finally, on any event $\{ \lambda_n(X_n - m) = -1 \}$, it is clear that $W_k^{\blamb} = 0$ for all $k \ge n$.
+\end{proof}
+
+
+\subsection{Proof of \cref{thm:sum-of-op} (almost sure divergence of $\sum \Omega_p(n^{-1})$)}\label[appendix]{sec:pf-sum-of-op}
+
+\begin{proof} Take any $\varepsilon \in (0,0.5)$.
+    The condition $Z_n = \Omega_p(n^{-1})$ implies that there exist $\delta > 0$ and $N \ge 1$ such that $\Pr( n Z_n \ge \delta ) \ge 1-\varepsilon$ for all $n \ge N$.
+    Consider the events $A_n = \{ nZ_n \ge \delta \}$ and the convergence event $C = \{ \sum_{n=1}^\infty Z_n < \infty \}$. We have,
+    \begin{equation}
+        Z_n \ge Z_n \id_{A_n} \ge \frac{\delta \id_{A_n}}{n}.
+    \end{equation}
+    Therefore,
+    \begin{align}
+        C &\subseteq \left\{ \sum_{n=1}^\infty \frac{\delta \id_{A_n}}{n} < \infty \right\} = \left\{ \sum_{n=N+1}^\infty \frac{\id_{A_n}}{n} < \infty \right\} \label{eqn:incl1} \\
+        &\stackrel{(*)}\subseteq \left\{ \lim_{n \to \infty} \frac{1}{n}\sum_{k=N+1}^n \id_{A_k} = 0 \right\} =\left\{ \lim_{n \to \infty} \frac{1}{n-N}\sum_{k=N+1}^n \id_{A_k} = 0 \right\}. \label{eqn:incl2}
+    \end{align}
+    where the inclusion $(*)$ is due to Kronecker's lemma. Now, recalling that $\liminf E_n$ is the event that all but finitely many of events among $(E_n)$ happen simultaneously, and noting that $\lim a_n = 0$ implies that $a_n < 0.5$ for all but finitely many $n$,
+    \begin{equation}
+        \left\{ \lim_{n \to \infty} \frac{1}{n-N}\sum_{k=N+1}^n \id_{A_k} = 0 \right\} \subseteq \liminf_{n \to \infty} \left\{  \frac{1}{n-N} \sum_{k=N+1}^n \id_{A_k} < 0.5 \right\}.
+    \end{equation}
+    Next, noting that the random variable $G_n := \frac{1}{n-N} \sum_{k=N+1}^n \id_{A_k} \in [0,1]$ has expected value $\Exp G_n = \frac{1}{n-N}\sum_{k=N+1}^n \Pr(A_k) \ge 1-\varepsilon$, Markov's inequality implies
+    \begin{equation}
+        \Pr\left(  \frac{1}{n-N} \sum_{k=N+1}^n \id_{A_k} < 0.5 \right) = \Pr(1-G_n \ge 0.5) \le \frac{\Exp (1-G_n)}{0.5} \le 2\varepsilon.
+    \end{equation}
+    Combining everything above, we have
+    \begin{equation}
+        \Pr(C) \le \Pr \left(  \liminf_{n \to \infty} \left\{  \frac{1}{n-N} \sum_{k=N+1}^n \id_{A_k} < 0.5 \right\} \right) \stackrel{(**)}{\le} \liminf_{n\to\infty}  \Pr\left(  \frac{1}{n-N} \sum_{k=N+1}^n \id_{A_k} < 0.5 \right) \le 2\varepsilon
+    \end{equation}
+    where we applied Fatou's lemma to obtain the inequality $(**)$. Since $\varepsilon \in (0,0.5)$ is arbitrary, we see that $\Pr(C)=0$.
+\end{proof}
+
+
+\subsection{Divergence of $\sum S_n^2/n^2$ via Donsker's invariance principle}\label[appendix]{sec:donsker}
+
+Below is an alternative proof of \cref{lem:div-sample-mean}.
+\begin{proof} Assume $\sigma^2 = 1$ without loss of generality.
+Let us study
+\begin{equation}
+    T_n = S_1^2 + \dots + S_n^2.
+\end{equation}
+By Donsker's invariance principle, as random variables in the Skorokhod space $\mathcal{D}[0,1]$, the functions
+\begin{equation}
+ B^{(n)}(t) :=  n^{-1/2} S_{\lfloor nt \rfloor}, \quad t \in[0,1]
+\end{equation}
+converge weakly to the standard Wiener process $B(t)$. Now consider the following function $F$ from the Skorokhod space $\mathcal{D}[0,1]$ to $\mathbb R$:
+\begin{equation}
+    F(f) = \int_0^1 f(t)^2 d t.
+\end{equation}
+We have
+\begin{equation}
+    F(B^{(n)}) = \int_0^1 n^{-1} S_{\lfloor nt \rfloor}^2 dt = n^{-1} \sum_{k=1}^n n^{-1} S_k^2 = n^{-2}T_n
+\end{equation}
+and
+\begin{equation}
+    F(B) =  \int_0^1 B^2(t) d t =: B^*.
+\end{equation}
+$F$ is a continuous function from the Skorokhod space to real numbers, a technical fact which we discuss later.
+Therefore, the continuous mapping theorem implies that
+\begin{equation}
+    n^{-2} T_n \stackrel{\text{weakly}}{\longrightarrow} B^*,
+\end{equation}
+a random variable with a continuous distribution on $(0,\infty)$. For any $\delta > 0$, let $w_{\delta} > 0$ be the $\delta$-quantile of $B^*$. That is, $P( B^* \le w_\delta ) = \delta$. By Fatou's lemma,
+\begin{equation}
+    \Pr( \liminf\{ n^{-2} T_n \le w_\delta \} ) \le \liminf \Pr( n^{-2} T_n \le w_\delta   ) = \Pr( B^* \le w_\delta ) = \delta,
+\end{equation}
+where we recall that $\liminf A_n$ is the event that all but finitely many of events among $(A_n)$ happen simultaneously. 
+Noting that $ \lim_{n \to \infty} n^{-2} T_n = 0$ would imply $ n^{-2} T_n \le w_\delta$ for all but finitely many $n$:
+\begin{equation}
+    \Pr( \lim n^{-2} T_n = 0 ) \le  \Pr(\liminf\{ n^{-2} T_n \le w_\delta \} ) \le \delta,
+\end{equation}
+and the arbitrariness of $\delta$ implies that $\Pr( \lim n^{-2} T_n = 0 ) = 0$.
+
+Finally, by Kronecker's lemma, $\sum_{n=1}^\infty n^{-2} S_n^2 < \infty$ implies $n^{-2} T_n = n^{-2}\sum_{k=1}^n S_k^2 \to 0$. Since the latter happens with probability 0,
+we see that $\sum_{n=1}^\infty n^{-2} S_n^2 = \infty$ almost surely. This completes the proof.
+\end{proof}
+
+Several remarks on this proof are as follows. First, the Skorokhod continuity of $F$ is proved below as \cref{lem:skrokhod-continuous}. Second, (yet) an alternative proof strategy that avoids the Skorokhod topology is to consider an appropriate ``linear interpolation'' of $B^{(n)}$, which converges to $B$ in the space of continuous functions (where the continuity of $F$ is straightforward). 
+
+
+
+\begin{lemma}\label[lemma]{lem:skrokhod-continuous}
+    Let $\cD[0,1]$ be the space of c\`adl\`ag functions on $[0,1]$ equipped with the Skorokhod $J_1$ topology. Consider the square-integral functional $F:\cD[0,1]\to [0,\infty)$,
+    \begin{equation}
+        F(f) = \int_0^1 f^2(x) dx.
+    \end{equation}
+    Then, $F$ is continuous with respect to the standard topology on $[0,\infty)$ and the Skorokhod $J_1$ topology on $\cD[0,1]$.
+\end{lemma}
+\begin{proof}
+    First, we observe that c\`adl\`ag functions on $[0,1]$ are all bounded, implying that $F(f) < \infty$ for all $f \in \cD[0,1]$.
+
+    Next, given an $f \in \cD[0,1]$, assume $\|f(x)\|_\infty \le C$. Consider the Skorokhod $J_1$ metric $d$ defined as
+    \begin{equation}
+       d(f,g) := \inf_{\lambda \in \mathbb T} \left\{ \|f\circ \lambda - g\|_\infty + \|\lambda - id \|_\infty \right\}
+    \end{equation}
+    where $\mathbb T$ is the set of all increasing bijections on $[0,1]$. Consider the $\varepsilon$-ball around $f$:
+    \begin{equation}
+        B(f;\varepsilon) = \{ g \in \cD[0,1] : d(f,g)<\varepsilon \}.
+    \end{equation}
+    For any $g\in B(f;\varepsilon)$, there must exist a $\lambda\in \mathbb T$ such that
+    \begin{equation}
+         \|f\circ \lambda - g\|_\infty + \|\lambda - id \|_\infty \le \varepsilon.
+    \end{equation}
+    Therefore, for any $x \in [0,1]$,
+    \begin{gather}
+        g(x) \le f\circ\lambda(x) + \varepsilon \le \sup_{|y-x|\le\varepsilon} f(y) + \varepsilon,
+        \\
+        g(x) \ge f\circ\lambda(x) - \varepsilon \ge \inf_{|y-x|\le\varepsilon} f(y) - \varepsilon,
+        \\
+        |g(x)| \le C + \varepsilon.
+    \end{gather}
+    Therefore,
+    \begin{align}
+        |g^2(x) - f^2(x)| \le |g(x) + f(x)||g(x)-f(x)| \le (2C+\varepsilon)\left( \sup_{|y-x|\le \varepsilon}f(y) - \inf_{|y-x|\le \varepsilon}f(y) + 2\varepsilon\right).
+    \end{align}
+    Now, consider the two Riemann integrals
+    \begin{equation}
+        \int_0^1 \left(\sup_{|y-x|\le 1/2N}f(y) \right) dx \quad \text{and} \quad \int_0^1 \left(\inf_{|y-x|\le 1/2N}f(y)\right) dx.
+    \end{equation}
+    The Riemann sum of the first (resp.\ second) integral above on the partition
+    \begin{equation}
+        (0, 1/N, \dots, (N-1)/N, 1 ),
+    \end{equation}
+    which has mesh $1/N$,
+    is close to the upper (resp.\ a lower) Darboux sum of $\int_0^1 f(x) dx$ on the partition
+    \begin{equation}
+        (0, 1/2N, 3/2N, \dots, (2N-1)/2N, 1),
+    \end{equation}
+    which has mesh $1/N$, and their difference (occurring only near the end points 0 and 1) is at most $2C/N$. Since $f$ is Riemann, hence Darboux, integrable,
+    \begin{equation}
+       \lim_{N \to \infty} \int_0^1 \left(\sup_{|y-x|\le 1/2N}f(y) - \inf_{|y-x|\le 1/2N}f(y) \right) dx = 0.
+    \end{equation}
+    It therefore follows that
+    \begin{equation}
+      \lim_{\varepsilon \to 0}  \sup_{ g\in B(f;\varepsilon) } |F(g) - F(f)| =  \lim_{\varepsilon \to 0} \int_0^1 (2C+\varepsilon)\left( \sup_{|y-x|\le \varepsilon}f(y) - \inf_{|y-x|\le \varepsilon}f(y) + 2\varepsilon\right) dx=0,
+    \end{equation}
+    concluding that $F$ is continuous at $f$.
+\end{proof}
+
+
+\subsection{Proof of \cref{prop:grapa-bahadur} (Bahadur expansion of GRAPA/$\klinf$ bet fractions)}\label[appendix]{sec:grapa-bahadur}
+
+
+\begin{proof}
+Define $f(\lambda, x) = -\log(1 + \lambda(x - m))$, $Q(\lambda) = \Exp_P{f(\lambda, X)}$, and
+\begin{equation}
+    Q_n(\lambda) = \frac{1}{n} \sum_{i=1}^n f(\lambda, X_i),
+\end{equation}
+where we consider the domain $\lambda \in [-1/(1-m), 1/m]$. Let $\lambda^*$ and $\lKL_n$ be the minimizers of $Q$ and $Q_n$ respectively. Then, $\lgr_{n+1} = \lKT_n$. (See \cref{sec:klinf} for the concept of $\lKT_n$ and $\klinf$.)
+
+We now verify that the M-estimation problem above meets all assumptions for Theorem 5 in \cite{niemiro1992asymptotics}, with regularity constants $s=0$ and $r=10$. Note that while the asymptotic results of \cite{niemiro1992asymptotics} are stated for open domains, they also apply to our closed domain $ [-1/(1-m), 1/m]$ as the minimizer is allowed to be defined arbitrarily when $Q_n$ has no minimum on the open domain $(-1/(1-m), 1/m)$.
+
+
+
+\newcommand{\E}[1]{\Exp_P\left(#1\right)}
+\begin{itemize}
+    \item $f(\cdot,x)$ is convex for any $x\in[0,1]$.
+    \item For any $\lambda \in (-1/(1-m), 1/m$, the expected value $Q(\lambda) = \E{f(\lambda, X)}$ is finite, since $f(\lambda, \cdot)$ is an upper and lower bounded function.
+    \item $\lambda^* = 0$ is the unique minimizer of $Q(\lambda)$. To see this, $Q(0) = 0$ and if $\lambda \neq 0$, because (1)
+    $t \mapsto -\log(1+t)$ is strictly convex, (2) $\lambda(X-\mu)$ is not a point mass:
+\begin{equation}
+     Q(\lambda) = \E{  -\log(1 + \lambda(X - m)) } > -\log(1 + \E{\lambda(X - \mu)}) = 0.
+\end{equation}
+\end{itemize}
+The properties above already ensured $\lKT_n \to \lambda^* $ almost surely. The following additional properties ensure normality and almost sure Bahadur expansion. Let $g(\lambda, x) =f'(\lambda, x) = \frac{-x + m}{1 + \lambda(x-m)}$.
+\begin{itemize}
+    \item $\E{ g^2(\lambda, X) } < \infty$ for each $\lambda$, since $g(\lambda, \cdot)$ is bounded.
+    \item $Q(\lambda)$ is twice differentiable at the minimum $\lambda = 0$, and $Q''(0) > 0$. To see this, for small $\lambda$:
+    \begin{equation}
+        Q''(\lambda) = \E{ g'(\lambda, X) } = \E{ \frac{(X - m)^2}{ (1 + \lambda(X-m))^2 }  }, \quad Q''(0) = \Var{X} > 0.
+    \end{equation}
+    \item Expanding $Q'(\lambda) = \E{g(\lambda, X)}$ near $\lambda \approx 0$:
+    \begin{align}
+        & Q'(\lambda) = \E{ g(\lambda, X)  } = \E{ g(0, X) + \lambda g'(0, X)  + \frac{\lambda^2}{2} g''(\xi_X , X) } =
+        \\
+        &\lambda \Var X - \frac{\lambda^2}{2} \E{ \frac{2(X - m)^3}{ (1 + \xi_X(X-m))^3 } }
+    \end{align}
+    where $|\xi_X| \le |\lambda|$ is the Lagrange remainder that depends on $X$. It is easy to see that if $|\lambda| < 1/2$,
+    \begin{equation}
+         |Q'(\lambda) - \lambda Q''(0)| \le 8 \lambda^2.
+    \end{equation}
+    \item Consider $\E{ (g(\lambda , X) - g(0 ,X) )^2 }$ near $\lambda \approx 0$. With a similar Lagrange remainder $|\zeta_X| \le |\lambda|$:
+    \begin{align}
+        &\E{ (g(\lambda , X) - g(0 ,X) )^2 } = \E{ (X-m)^2 \left( 1 - \frac{1}{1 +\lambda(X - m)} \right) ^2} =
+        \\
+        &\E{ (X-m)^2 \left( \frac{\lambda (X - \mu) }{  (1 + \zeta_X(X - m))^2   }   \right) ^2} .
+    \end{align}
+    Therefore if $|\lambda| < 1/2$,
+    \begin{equation}
+         \E{ (g(\lambda , X) - g(0 ,X) )^2 }  \le  16 \lambda^2.
+    \end{equation}
+    \item Finally, for $|\lambda| < 1/2$,
+    \begin{equation}
+        \E{ g^{10}(\lambda, X) } = \E{  \frac{|X - m|^{10}}{|1 + \lambda(X-m)|^{10}} } \le 1024.
+    \end{equation}
+\end{itemize}
+From these properties, we have verified that all conditions for Theorem 5 in \cite{niemiro1992asymptotics} hold with $s=0$ and $r=10$. It thus follows that, \emph{almost surely},
+\begin{align}
+    \sqrt{n}\lKL_n &=  - \frac{1}{Q''(0)} \cdot \frac{\sum_{k=1}^n g(0, X_k)}{\sqrt{n}} + o(n^{-1/4} \log n) \\
+    &= \frac{1}{\Var X} \cdot \frac{\sum_{k=1}^n (X_k - m)}{\sqrt{n}}  + o(n^{-1/4} \log n),
+\end{align}
+which concludes the proof.
+\end{proof}
+
+We also remark that the Bahadur expansion of $\lgr_{n+1} = \lKL_n$ above can be combined with \cref{lem:div-sample-mean} to show that $\sum (\lgr_{n})^2 = \infty$ almost surely, thus an alternative proof of the bankruptcy of GRAPA.
+
+
+\subsection{Proof of \cref{thm:nocash} (no-cash criterion)}\label[appendix]{sec:pf-nocash}
+
+The proof of \cref{thm:nocash} is made convenient by the following lemma.
+
+\begin{lemma}\label[lemma]{lem:exp-regular}
+    Let $\gamma$ be a measure on $[0,\infty)$. Then,
+    \begin{equation}
+        \lim_{n \to \infty} \int_0^\infty \exp( - x A_n ) \gamma(\d x) = \gamma(\{0\})
+    \end{equation}
+    for any positive increasing sequence $( A_n )$ that increases to $\infty$.
+\end{lemma}
+\begin{proof}
+    The functions $( \exp(-xA_n) : x \in [0,\infty) )_{n \ge 1}$ are pointwise monotone decreasing, and bounded in $[0,1]$. Therefore, due to the monotone convergence theorem,
+    \begin{equation}
+                \lim_{n \to \infty} \int_0^\infty \exp( - x A_n ) \gamma(\d x) =   \int_0^\infty \left\{ \lim_{n \to \infty}  \exp( - x A_n ) \right\} \gamma(\d x) =  \int_0^\infty \id_{\{ x=0 \}} \gamma(\d x) =\gamma(\{0\}),%. \qedhere
+    \end{equation}
+    concluding the proof.
+\end{proof}
+
+Now we prove \cref{thm:nocash}.
+
+
+\begin{proof}
+First, let us prove the case when $\pi$ does not have an atom at 0, i.e., $\pi(\{0\}) = 0$.
+Let $\pi^+$ and $\pi^-$ be the restrictions of $\pi$ on $(0,1/m]$ and $[-1/(1-m),0 )$ respectively. Since $\pi$ does not have an atom at 0,
+    \begin{equation}
+    W_n^\pi = \underbrace{\int_0^{1/m} \left\{\prod_{k=1}^n (1 + \lambda(X_k - m))  \right\} \pi^+(\d \lambda)}_{W^+_n} +  \underbrace{\int_{-1/(1-m)}^0 \left\{\prod_{k=1}^n (1 + \lambda(X_k - m))  \right\} \pi^-(\d \lambda)}_{W^-_n}.
+\end{equation}
+$(W^{+}_n)$ and $(W^-_n)$ are both nonnegative martingales (since they are mixtures of nonnegative martingales), and let us show that they both converge to 0 almost surely. By the inequality $1+x \le \exp(x)$:
+\begin{equation}
+    W_n^+ \le \int_0^{1/m} \exp\left( \lambda \sum_{k=1}^n(X_k - m)  \right) \pi^+(\d \lambda).
+\end{equation}
+By the law of the iterated logarithm, $\liminf \sum_{k=1}^n (X_k - m) = -\infty$ almost surely, so
+there exists a (random) sequence of positive integers $n_1 < n_2 < \dots$ such that $s_N := -\sum_{k=1}^{n_N}(X_k - m) $ is a positive increasing sequence that increases to $\infty$. By \cref{lem:exp-regular}, the sequence $(W_{n_N}^+)_{N \ge 0}$ then converges to 0. Therefore we see that,
+\begin{equation}
+    \liminf_{n \to \infty}  W_n^+ = 0, \quad\text{almost surely}.
+\end{equation}
+However, $W_n^+$ is a nonnegative martingale, so it must converge almost surely, therefore
+\begin{equation}
+    \lim_{n \to \infty}  W_n^+ = 0, \quad\text{almost surely}.
+\end{equation}
+The same reasoning holds for $W_n^-$, using $\limsup \sum_{k=1}^n (X_k - m) = \infty$ almost surely. This concludes the proof that $W_n^\pi \to 0$ almost surely.
+
+Next, if $\pi$ has an atom at 0, i.e., $\pi(\{0\}) > 0$, we can simply decompose the wealth into its ``cash component'' and its ``bet component''
+\begin{equation}
+    W_n^\pi = \pi(\{0\}) \cdot W_n^0 + \int W_n^\lambda \, \pi|_{[-\frac{1}{1-m},0)\cup(0,\frac{1}{m}]}(\d \lambda),
+\end{equation}
+where $W_n^0 = 1$, and the second part converges to 0. Therefore, $W_n^\pi \to \pi(\{0\})$ almost surely.
+\end{proof}
+
+
+\subsection{Discussion and proof for \cref{cor:improve} (improvability of non-bankrupt strategies)}\label[appendix]{sec:pf-improve}
+
+We begin our argument by noting that the cash-removal \eqref{eqn:remove-cash} is actually a mixture of two strategies, $\pi$-mixture and cash ($M_n^{\bf 0} = 1$), with a \emph{negative} weight on cash. That is, one leverages (longs) the original strategy $\pi$-mixture by borrowing (shorting) some cash.
+Let us therefore clarify the general scenarios for the mixture of two strategies that may or may not allow shorting.
+
+
+\begin{fact}[Mixture of two predictable plug-ins, long only]\label[fact]{fct:mixture-of-two} Let $(W_n^{\blamb})$ and $(W_n^{\bnu})$ be the wealth processes corresponding to two predictable bet fraction sequences $\blamb$ and $\bnu$. Then, the portfolio consisting of these two strategies
+\begin{equation}
+   (1-\kappa) W_n^{\blamb} + \kappa W_n^{\bnu}
+\end{equation}
+is equivalent to the predictable plug-in strategy $W_n^{\bbeta}$ with bet fraction sequence
+\begin{equation}\label{eqn:fraction-mixture-1}
+    \beta_n = \frac{(1-\kappa)W_{n-1}^{\blamb} \lambda_n +  \kappa W_{n-1}^{\bnu} \nu_n }{(1-\kappa)W_{n-1}^{\blamb} + \kappa W_{n-1}^{\bnu}},
+\end{equation}
+where $\kappa \in [0,1]$ is a constant.
+\end{fact}
+
+To see that the bet fraction \eqref{eqn:fraction-mixture-1} $\beta_n \in [-\frac{1}{1-m}, \frac{1}{m}]$, it is a convex combination of $\lambda_n, \nu_n \in [-\frac{1}{1-m}, \frac{1}{m}]$.
+
+\begin{fact}[Mixture of two predictable plug-ins, short allowed]\label[fact]{fct:short} Let $(W_n^{\blamb})$ and $(W_n^{\bnu})$ be the wealth processes corresponding to two predictable bet fraction sequences $\blamb$ and $\bnu$. If these strategies further ensure that, \textbf{on all binary paths $(X_n) \in \{0, 1\}^{\infty}$},
+\begin{equation}\label{eqn:bound-on-bin-paths}
+    \frac{W_n^{\blamb}}{W_n^{\bnu}} > \rho \in [0,1), \quad \forall n
+\end{equation}
+then, the portfolio consisting of these two strategies
+\begin{equation}
+   (1-\kappa) W_n^{\blamb} + \kappa W_n^{\bnu}
+\end{equation}
+is equivalent to the predictable plug-in strategy $W_n^{\bbeta}$ with bet fraction sequence
+\begin{equation}\label{eqn:fraction-mixture-2}
+    \beta_n = \frac{(1-\kappa)W_{n-1}^{\blamb} \lambda_n +  \kappa W_{n-1}^{\bnu} \nu_n }{(1-\kappa)W_{n-1}^{\blamb} + \kappa W_{n-1}^{\bnu}},
+\end{equation}
+where we can now \textbf{long $\blamb$ and short $\bnu$}:
+\begin{equation}
+    \kappa \in \left[ -\frac{\rho}{1 - \rho}, 1 \right].
+\end{equation}
+In particular, when $\bnu = \bf 0$, it means that starting with any strategy $\blamb$ with always-valid strict wealth lower bound $W_n^{\blamb} > \rho$ on all binary paths, one can borrow $b = -\kappa \in (0, \rho/(1-\rho)]$ amount of cash and execute the leveraged bets
+\begin{equation}
+    \beta_n =  \frac{(1+b)W_{n-1}^{\blamb} \lambda_n  }{(1+b)W_{n-1}^{\blamb} - b}\quad \implies \quad W_n^{\bbeta} = (1+b)W_n^{\blamb} - b
+\end{equation}
+instead. 
+\end{fact}
+To see that the bet fraction $\beta_n$ defined in \eqref{eqn:fraction-mixture-2} is in $[-\frac{1}{1-m}, \frac{1}{m}]$ even when $\kappa < 0$,
+$$1+\beta_n(X_n - m) = \frac{  (1-\kappa) W_n^{\blamb} + \kappa W_n^{\bnu}}{  (1-\kappa) W_{n-1}^{\blamb} + \kappa W_{n-1}^{\bnu}} > 0$$
+for all binary paths, it holds in particular when $X_n = 0$ and $1$. This is why we require the bound \eqref{eqn:bound-on-bin-paths} to hold on binary paths when formulating shorting here: if we merely know by oracle that $ \frac{W_n^{\blamb}}{W_n^{\bnu}} > \rho $ without knowing $X_n$ can take $0$ and $1$, the bet fraction equivalent to shorting \eqref{eqn:fraction-mixture-2} might correspond to an infeasible fraction that just ``happens not to'' lead to negative wealth. The assumption of \eqref{eqn:bound-on-bin-paths} on all binary paths is weaker than \eqref{eqn:bound-on-bin-paths} on all bounded paths $(X_n)\in [0,1]^\infty$, and in general incomparable to \eqref{eqn:bound-on-bin-paths} on $P$-almost all paths under some distribution $P$.
+
+
+We also see here that for a mixture strategy with cash component $\pi(\{0\}) > 0$, removing the cash component is an instance of the above with $\rho = \pi(\{0\})$ and $b =  \rho/(1-\rho)$. However, in general, a non-bankrupt strategy's minimum wealth is a path-dependent quantity that is not known in advance. We thus employ the following idea: we fix \emph{some} $\rho > 0$, and execute the bet fraction equivalent to borrowing $b=\rho/(1-\rho)$
+\begin{equation}
+    \beta_n^{\rho} = \frac{ (1+\frac{\rho}{1-\rho}) W_{n-1}^{\blamb} \lambda_n }{(1+\frac{\rho}{1-\rho}) W_{n-1}^{\blamb} - \frac{\rho}{1-\rho}} = \frac{W_{n-1}^{\blamb} \lambda_n}{W_{n-1}^{\blamb} - \rho}
+\end{equation}
+when it is valid (i.e.\ $\beta_n^\rho \in [-\frac{1}{1-m}, \frac{1}{m}]$). Analogous to the discussion around the validity of \eqref{eqn:fraction-mixture-2} above, we have the following statement characterizing when the validity $\beta_n^\rho \in [-\frac{1}{1-m}, \frac{1}{m}]$ holds. We recall from \cref{sec:all} that
+\begin{equation}
+    \widehat W_n^{\blamb} = \min_{x \in [0,1] } W_{n-1}^{\blamb}(1 + \lambda_n(x - m)) = \min\{ W_{n-1}^{\blamb}(1 + \lambda_n(0 - m)),  W_{n-1}^{\blamb}(1 + \lambda_n(1 - m))  \}.
+\end{equation}
+\begin{lemma}
+    $\{ \widehat W_n^{\blamb} > \rho \} \subseteq \{ -\frac{1}{1-m} < \beta_n^\rho < \frac{1}{m} \}$.
+\end{lemma}
+\begin{proof} On the event $\{ \widehat W_n^{\blamb} > \rho \}$, 
+    we have $W_{n-1}^{\blamb}(1+ \lambda_n(x-m) ) > \rho$ for $x=0$, $m$, and $1$. So
+    \begin{equation}
+        1 + \beta_n^\rho(x - m) = \frac{\frac{1}{1-\rho}W_{n-1}^{\blamb}(1+ \lambda_n(x-m) ) - \frac{\rho}{1-\rho}  }{\frac{1}{1-\rho}W_{n-1}^{\blamb} - \frac{\rho}{1-\rho}} > 0, \quad x \in \{0, 1\}.
+    \end{equation}
+    Therefore, $\beta_n^\rho < \frac{1}{m}$ by $x = 0$, and $\beta_n^\rho > -\frac{1}{1-m}$ by $x=1$.
+\end{proof}
+
+%In particular, the three conditions above are guaranteed on all binary paths such that $\inf W_n^{\blamb} > \rho$ {\todo this might be false; let's just define ``predictably non-bankrupt" events}. This leads us to the following transformation.
+
+That is, one can bet $\beta_n^\rho $ when $\{ \widehat W_n^{\blamb} > \rho \}$ happens. This leads us to the following definition of a new strategy that ``opportunistically'' executes the $\rho$-leverage.
+
+\begin{definition}[Opportunistic leveraging] Let $\blamb = (\lambda_n)$ be a predictable plugin betting strategy and $\rho > 0$. Define $E_n = \{ \widehat W_n^{\blamb} > \rho \}$. Then the events $(E_n)$ are predictable. Define the new plugin fraction
+\begin{equation}
+    \gamma_n = \id_{ E_n } \frac{W_{n-1}^{\blamb} \lambda_n}{W_{n-1}^{\blamb} - \rho} + (1-\id_{ E_n }) \lambda_n,
+\end{equation}
+which is predictable and always belongs to $[-\frac{1}{1-m}, \frac{1}{m}]$. Therefore $\bgam = (\gamma_n)$ is also a predictable plugin betting strategy.
+Further, on $\cap_{k=1}^n E_k$, $W_n^{\bgam} = \frac{W_n^{\blamb} - \rho}{1 - \rho}$. 
+%Further, under binary stream $(X_n)\in\{0,1\}^\infty$, $\cap_{n=1}^\infty \{W_n^{\blamb} > \rho \} = \cap_{n=1}^\infty E_n$. 
+We call this new strategy $\bgam$ the \emph{$\rho$-opportunistic leverage} of the strategy $\blamb$.
+\end{definition}
+
+In words, the transformation above defines a new strategy that, at each step, first checks if it is safe to execute a bet fraction corresponding to borrowing $b = \rho/(1-\rho)$ by seeing if the precondition $E_n = \{ \widehat W_n^{\blamb} > \rho \}$ holds, then does so if it is and executes the original bet fraction if otherwise. Thus, if next-step minimum wealth $\widehat W_n^{\blamb} $ is indeed always above $\rho$, the new strategy's wealth process is indistinguishable from borrowing $b = \rho/(1-\rho)$ and leveraging the original strategy from the outset. This transformation leads to the proof of \cref{cor:improve}.
+%We show below that this new strategy improves, in a high probability sense, any null-non-bankrupt binary betting strategy.
+
+
+
+\begin{proof}
+   Let $(W_n^\sharp)$ be the wealth process of the {$\rho$-opportunistic leverage} of the original strategy. On the event $N^\rho = \bigcap_{n=1}^\infty E_n$, $W_n^\sharp = \frac{W_n - \rho}{1-\rho}$ for all $n$, thus $W_n^\sharp < W_n$ if $W_n < 1$, $W_n^\sharp > W_n$ if $W_n > 1$, and $W_n^\sharp / W_n \to 1/(1-\rho)$ if $W_n \to \infty$.
+\end{proof}
+
+
+\begin{remark}
+    The construction above uses the concept of borrowing. Recently, \cite{wang2024borrow} discuss at length the definition, effect, and utility of borrowing in testing-by-betting. Our definition in \cref{fct:short} corresponds to the ``net wealth'' (i.e.\ always paying back the debt after borrowing) discussed by \cite{wang2024borrow}, and differs from it in that we do not allow negative wealth.
+\end{remark}
+
+\subsection{Proof of \cref{thm:chisq-klinf} ($\chi^2_{(1)}$ limit of $\klinf$)}\label[appendix]{sec:pf-chisq-klinf}
+
+\begin{proof}
+    Due to the Bahadur expansion of the GRAPA bet fractions in \cref{prop:grapa-bahadur},
+    \begin{equation}
+       \lKL_{n} = \frac{1}{\sigma^2} \cdot \frac{\sum_{k=1}^n (X_k - m)}{n}  + r_n 
+    \end{equation}
+    where $r_n = o_{a.s.}(n^{-3/4} \log n)$. Expanding $\log(1+x)$, we have
+    \begin{align}
+          L^*_n =&  \sum_{k=1}^n \log(1 + \lKL_n (X_k - m) ) = \sum_{k=1}^n \lKL_n (X_k - m)  -  \sum_{k=1}^n \frac{(\lKL_n)^2 (X_k - m)^2}{2(1+\xi_{nk})^2}, \\
+           =& \frac{S_n^2}{n\sigma^2} + r_n S_n - \frac{( - S_n + n\sigma^2 r_n )^2}{2n \sigma^2}  \sum_{k=1}^n \frac{(X_k - m)^2}{n\sigma^2(1+\xi_{nk})^2} = \frac{S_n^2}{2n\sigma^2} + o_{a.s.}(n^{-1/4}\log^2 n).
+    \end{align}
+    where $|\xi_{nk}| \le |\lKL_n| = o_{a.s.}(\sqrt{n^{-1} \log n})$ is the Lagrange remainder, and $S_n = \sum_{k=1}^n (X_k - m) = o_{a.s.}(\sqrt{n\log n})$. Noting that $\frac{S_n^2}{n\sigma^2}$ converges weakly to $\chi^2_{(1)}$, we see that so does $2L_n^*$ via Slutsky's theorem.
+\end{proof}
+
+\subsection{Proofs of the subGaussian criteria, \cref{thm:sos-crit-subg,thm:nocash-subg}}\label[appendix]{sec:pf-subg}
+
+The proof of \cref{thm:sos-crit-subg} is below.
+\begin{proof}
+    Without loss of generality, let $m=0$. Consider the log-process
+    \begin{equation}\label{eqn:log-subg}
+        \log M_n^{\blamb} = \sum_{k=1}^n \lambda_k X_k - \frac{1}{2} \sum_{k=1}^n \lambda_k^2.
+    \end{equation}
+    On the event $\{ \sum \lambda_n^2 < \infty \}$, the martingale $\sum_{k=1}^n \lambda_k X_k$ has convergent quadratic variation, therefore it a.s.\ converges due to \citet[Theorem 2.15]{hall2014martingale}, so $\log  M_n^{\blamb}$ converges a.s.\ on this event. Therefore, $M_n^{\blamb}$ converges a.s.\ to a non-zero random variable on this event.
+
+    On the event $\{ \sum \lambda_n^2 = \infty \}$, we invoke the martingale strong law of large numbers \citep[Theorem 3]{Fitzsimmonslecturenotes} and see that $\frac{\sum_{k=1}^n \lambda_k X_k}{\sum_{k=1}^n \lambda_k^2} \to 0$ almost surely. Therefore, on this event,
+    \begin{equation}
+          \log M_n^{\blamb} = \left(\frac{\sum_{k=1}^n \lambda_k X_k}{\sum_{k=1}^n \lambda_k^2} - \frac{1}{2}\right)\cdot\left({\sum_{k=1}^n \lambda_k^2}\right) \to (0-0.5)\cdot(+\infty) = -\infty
+    \end{equation}
+    almost surely. So $M_n^{\blamb} \to 0$ a.s.\ on this event.
+\end{proof}
+The proof of \cref{thm:nocash-subg} is below.
+\begin{proof}
+    It suffices to consider $m = 0$ and $\pi(\{ 0 \}) = 0$. Similar to the proof of \cref{thm:nocash}, we show that the nonnegative martingales
+    \begin{equation}
+        M_n^+ = \int_0^\infty\exp\left(\sum_{k=1}^n \frac{X_k^2 - (X_k - \lambda)^2}{2} \right) \pi^+(\d \lambda), \;  M_n^- = \int_{-\infty}^0\exp\left(\sum_{k=1}^n \frac{X_k^2 - (X_k - \lambda)^2}{2} \right) \pi^-(\d \lambda)
+    \end{equation}
+    both converge a.s.\ to 0, where $\pi^+$ and $\pi^-$ are the $(0,\infty)$ and $(-\infty,0)$ parts of $\pi$ respectively. Note that
+    \begin{equation}
+        M_n^+ = \int_0^\infty\exp\left(\sum_{k=1}^n \frac{2 \lambda X_k - \lambda^2}{2} \right) \pi^+(\d \lambda) \le \int_0^\infty\exp\left(\lambda \sum_{k=1}^n X_k \right) \pi^+(\d \lambda).
+    \end{equation}
+    Using the same technique as in the proof of \cref{thm:nocash}, $\liminf \sum_{k=1}^n X_k = -\infty$ a.s.\ and \cref{lem:exp-regular} imply that $\lim M_n^+ = \liminf M_n^+ = 0$ a.s.. The same works for $M_n^-$.
+\end{proof}
+
+
+\section{Further discussions on good strategies' necessary bankruptcy} \label[appendix]{sec:further-bankruptcy}
+
+
+In this appendix, we further discuss the topic in \cref{sec:all}.
+We first present additional examples exploring the question ``do all good strategies go bankrupt''.
+Below, a slightly modified predictable plug-in strategy is no longer null-bankrupt,  still remains universally power, but is always only \emph{sub}exponentially powerful.
+
+\begin{example}[Increasingly intermittent bets]\label[example]{ex:intermittent} Let $\alpha > 1$ and consider the set $I_\alpha = \{ \lfloor n^\alpha \rfloor : n = 1,2,\dots \}$.
+    Let $\lambda_n' = \id_{ n \in I_{\alpha} } \lambda_n$, where $\lambda_n$ is either the KT bet fraction $\lKT_n$ with $C=2$, the GRAPA bet fraction $\lgr_n$, or the aGRAPA bet fraction $\lagr_n$. Then, the wealth process
+    \begin{equation}
+        W_n' = \prod_{k=1}^n (1 + \lambda_k'(X_k -m) = \prod_{k\in I_{\alpha}, k\le n } (1 + \lambda_k'(X_k-m))
+    \end{equation}
+    grows sub-exponentially fast $\log W_n' =  \Theta_{a.s.}(n^{1/\alpha})$ under any alternative distribution, and converges a.s.\ to a positive random variable under any null distribution.
+\end{example}
+
+That is, one only bets at times $n=1,4,9,16\dots$ if, for example, $\alpha = 2$. The almost sure non-bankruptcy of these strategies is an easy corollary of \cref{thm:sos-crit}. This strategy is improvable by ``betting more frequently'': the standard KT/GRAPA/aGRAPA strategy that does not withhold from betting at $n \notin I_\alpha$. The improvement makes more money under the alternative, at the price of making less money (and possible bankruptcy) under the null. 
+
+
+Given the subexponentially growing wealth in \cref{ex:intermittent},
+it is tempting to think that exponential wealth growth $ \log W_n =  \Theta_{a.s.}(n)$ under any alternative implies null-bankruptcy. The following strategy, however, is a simple counterexample to this conjecture.
+
+\begin{example}[Cash-GRAPA mixture] \label[example]{ex:cashgrapa} By the argument from \cref{fct:mixture-of-two}, there exists a betting strategy constituting of a 50-50 mixture between cash and GRAPA:
+\begin{equation}
+    W_n= \frac{1}{2} + \frac{1}{2}\prod_{k=1}^n (1 + \lgr_k(X_k - m)).
+\end{equation}
+Then, $W_n$ converges a.s.\ to $1/2$ under any non-degenerate null, but also grows exponentially fast under any alternative distribution, attaining the same rate $n^{-1}\log W_n = \lkelly$ as the cashless GRAPA.
+\end{example}
+
+This strategy can be improved by, again, ``removing the cash''. We note that
+our ``generalized cash-removal'' idea elaborated in \eqref{sec:pf-improve} can make already exponentially powerful strategies like \cref{ex:cashgrapa} make multiplicatively more money, but cannot make subexponentially powerful strategies like \cref{ex:intermittent} make exponentially money. Generalizing the ``betting more frequently'' improvement we mentioned above for \cref{ex:intermittent} to more subexponentially powerful strategies is of interest for future work.
+
+
+
+Next, we discuss the relevance (or lack thereof) of the Cram\'er-Rao lower bounds.
+One might notice that for the null-bankrupt strategies
+KT, GRAPA, and aGRAPA, the bet fractions are estimators that converge a.s.\ to a fixed number $\lKT_n \to \frac{\mu(P) - m}{C}$, $\lgr_n \to \lkelly$, and $\lagr_n \to \frac{\mu(P) - m}{\sigma^2(P) + (\mu(P)-m)^2}$ that is some functional $f(P)$ of the distribution $P$ such that $f(P) = 0$ for null $P$, and $\Exp_P( \log (1+f(P)\cdot (X-m)) ) > 0 $ for alternative $P$. For readers familiar with statistical lower bounds, it is also tempting to relate sum-of-squares criterion \cref{thm:sos-crit} or the $n^{-1/2}$ criterion \cref{cor:sq-crit} to the Cram\'er-Rao bounds. Indeed, they all concern the optimal $n^{-1/2}$ rate of regular statistical estimation problems. If a strategy's bet fractions $(\lambda_n)$ estimate one such functional $f(P)$ subject to some Cram\'er-Rao bounds, can we show the null bankruptcy of the strategy since $|\lambda_n - f(P)|$, which is $|\lambda_n |$ under the null, is at least $\approx n^{-1/2}$?
+
+A closer look at the Cram\'er-Rao bounds suggests otherwise.  With some additional regularity assumptions on $f(P)$ and $\lambda_n$, the Cram\'er-Rao bounds lower bound the \emph{mean-square errors} of these estimators:
+\begin{equation}
+    \Exp_P(  (\lambda_n - f(P))^2 )  = \Omega(n^{-1}).
+\end{equation}
+However, it is easy to see that these variance bounds would imply neither $\lambda_n - f(P) = \Omega_{p}(n^{-1/2})$ nor $ \sum_{n=1}^\infty (\lambda_n - f(P))^2 = \infty$; a sequence of random variables may have infinite expected values while vanishing to 0 at an arbitrarily fast almost sure rate.
+
+
+Finally, regarding \cref{cor:improve}, it is tempting to consider the following alternative to both the wealth lower bound condition $\bigcap_{n=1}^\infty\{ W_n \ge \rho \}$ and the predictable non-bankruptcy condition $\bigcap_{n=1}^\infty \{ \widehat W_n > \rho \}$: since these lower bounds serve to allow the leveraging (long/short mixture) argument in \cref{sec:pf-improve}, \emph{can we make $\rho$ vary predictably?} Alternatively speaking, can we work on the condition $\bigcap_{n=1}^\infty\{ W_n \ge \rho_n \}$ for a \emph{predictable sequence of wealth lower bounds $(\rho_n)$} and construct the leveraged improvement strategy mimicking what we do in \cref{sec:pf-improve}? The answer, we believe, is generally negative, and sits astride the following two areas: 
+\begin{itemize}
+    \item In sequential, nonnegative martingale-based inference, if $M_n(\theta)$ is a nonnegative supermartingale for every $\theta$, then so is $\int M_n(\theta) \pi(\d \theta)$ for any mixture distribution $\pi$. What about $\int M_n(\theta) \pi_n(\d \theta)$ for a \emph{predictable} sequence of mixtures $(\pi_n)$? This now requires the sequence to have \emph{consistent marginals} (see e.g.\ Section 5.1 and Lemma A.2 in \cite{flynn2023improved}, and Section 3.1 in \cite{akhavan2025bernstein}). If $\theta$ can only take two values, it is easy to see that $(\pi_n)$ can only be a constant. 
+    \item In mathematical finance, one frequently encounters the notion of \emph{self-financing portfolios} (see e.g.\ Definition 5.4 in \cite{FollmerSchied+2025}). In our scenario, if one formally considers a predictable sequence of lower bounds $(\rho_n)$ on $(W_n)$ and invests in the ``$(\rho_n)$-leveraged portfolio'' with wealth process $\frac{W_n-\rho_n}{1-\rho_n}$, then one needs external capital to manage the imbalanced buying and selling of cash and $(W_n)$.
+    Namely, it is not a self-financing portfolio and the wealth $\frac{W_n-\rho_n}{1-\rho_n}$ is not a martingale.
+\end{itemize}
+

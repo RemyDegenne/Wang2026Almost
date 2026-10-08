@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge_grapa_bankrupt",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.grapa_bankrupt"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

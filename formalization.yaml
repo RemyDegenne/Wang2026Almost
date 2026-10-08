@@ -1,0 +1,131 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml (v0.4): repo-root metadata for formalization projects.
+# See https://github.com/mathlib-initiative/formalization.yaml for the fields.
+
+version: "v0.4"
+
+project:
+  name: "Wang2026Almost"
+  description: >-
+    A Lean 4 / Mathlib formalization of "Almost sure null bankruptcy of testing-by-betting
+    strategies" (Wang, Agrawal, Ramdas, COLT 2026): the sum-of-squares criterion for the
+    bankruptcy of predictable betting strategies under a non-degenerate null, the almost sure
+    divergence of series of order Ω_p(1/n), the n^{-1/2} criterion and the null bankruptcy of the
+    Krichevsky–Trofimov, GRAPA, approximate GRAPA and predictable hedging bettors, the no-cash
+    criterion for mixture strategies (universal portfolio, Robbins' mixture), the improvability of
+    strategies on their predictably non-bankrupt paths by leverage, the χ²₁ null limit of the
+    best-in-hindsight log-wealth n KL_inf, and the sub-Gaussian versions of the two criteria.
+    Betting strategies are runs of algorithms of the LML (Lean Machine Learning) library in its
+    i.i.d. environment, or more generally processes predictable for a filtration along which
+    the observations are i.i.d.; the wealth processes and the classical strategies are written
+    in library generality, to be contributed to LML, and the probabilistic tools (Landau
+    notation in probability, exponential supermartingales of conditionally sub-Gaussian sums,
+    almost sure rates from Hoeffding's inequality) to Mathlib. The development is
+    blueprint-driven and proceeds in two phases: phase 1 states the headline results (this file
+    lists them; their statements are `sorry`-ed challenge statements for leanprover/comparator),
+    phase 2 proves them.
+  authors:
+    - "Rémy Degenne"
+  responsible_maintainers:
+    - "Rémy Degenne"
+  license: "Apache-2.0"
+  # extra keys (tolerated by the schema), kept for convenience:
+  repository: "https://github.com/RemyDegenne/Wang2026Almost"
+  blueprint: "https://remydegenne.github.io/Wang2026Almost/blueprint/"
+
+# This repository is the substantive formalization, not a packaging or comparison layer.
+repository:
+  role: "substantive-development"
+
+sources:
+  - title: "Almost sure null bankruptcy of testing-by-betting strategies"
+    authors:
+      - "Hongjian Wang"
+      - "Shubhada Agrawal"
+      - "Aaditya Ramdas"
+    id: "COLT 2026; arXiv:2602.08888"
+    type: "conference-paper"
+    location: >-
+      Theorems 2.1, 2.2, 3.1, 4.1, 5.1, 5.2, 5.3, Corollaries 2.3, 2.4, Propositions 2.5–2.8,
+      3.2, Lemmas B.2, B.3, Facts 1, 2 and the claims of Definition B.4; see status.scope
+    relationship: "formalizes"
+    license: ""
+    author_endorsement: "not-contacted"
+    note: >-
+      The LaTeX source of the paper (arXiv 2602.08888) is vendored in this repository under
+      `source/`. The formalization is driven by a blueprint (`blueprint/src/`, written by Claude
+      with the formalizer's review) that decomposes the paper's proofs into small lemmas and
+      replaces the steps relying on results absent from Mathlib (law of the iterated logarithm,
+      martingale divergence theorems, Niemiro's Bahadur expansion for M-estimators) by direct
+      arguments; the blueprint is a derived artifact of this project, not an independent source.
+      The statements started from the statement-only formalization of the paper in
+      `LMLPapers` (COLT2026/Wang2026Almost). The formalizer is not an author of the paper.
+
+related_formalizations: []   # no earlier or parallel formalization with proofs is known
+
+# Sequential testing by betting, game-theoretic statistics, martingales, online learning.
+classification:
+  arxiv: ["math.ST", "stat.ML", "cs.LG"]
+  msc2020:
+    - "62L10"   # sequential statistical analysis
+    - "60G42"   # martingales with discrete parameter
+    - "60F15"   # strong limit theorems
+    - "68T05"   # learning and adaptive systems
+
+status:
+  scope: >-
+    Phase 1 (statements), 2026-10-08. The results of the paper are stated in Lean, each as a
+    `sorry`-ed theorem (headline results, comparator targets listed in `comparator/targets.txt`)
+    or lemma (supporting results), over definitions written in library generality. Namespace
+    `Wang2026Almost`, files `Wang2026Almost/WAR2026/<Result>.lean`; blueprint labels in
+    parentheses.
+
+    Theorem 2.1 (`sum_sq_criterion`, `thm:sos_crit`): for a non-degenerate null distribution `P`
+    on `[0, 1]` with mean `m` and a run `(lam, X)` of an LML algorithm in the i.i.d. environment
+    `Environment.const P` with bet fractions in `[-1/(1-m), 1/m]`, the wealth converges a.s. to
+    `W` with `W = 0` iff `Σ lam² = ∞` or an all-in bet is lost, and `W > 0` iff `Σ lam² < ∞` and
+    no all-in bet is lost.
+    Theorem 2.2 (`ae_not_summable_of_isBigOmegaInProb`, `thm:sum_of_op`): a.s. nonnegative
+    `Z n = Ω_p(1/n)` have `Σ Z n = ∞` a.s.
+    Corollary 2.3 (`ae_not_summable_sum_sq_div_sq`, `cor:div_sample_mean`): `Σ S_n²/n² = ∞` a.s.
+    for i.i.d. centered square-integrable non-degenerate increments.
+    Corollary 2.4 (`tendsto_wealth_zero_of_isBigOmega`, `cor:sq_crit`): in the setting of
+    Theorem 2.1, `lam n = Ω_p(n^{-1/2})` or `Ω_{a.s.}((n log n)^{-1/2})` implies `W n → 0` a.s.
+    Propositions 2.5–2.8 (`kt_bankrupt`, `grapa_bankrupt`, `agrapa_bankrupt`, `hedged_bankrupt`;
+    `prop:kt`, `prop:grapa`, `prop:agrapa`, `prop:hedge`): asymptotic normality of `√n λ_n`
+    (KT: `N(0, σ²/C²)`, GRAPA with its a.s. Bahadur expansion `o(n^{-1/4} log n)`, aGRAPA:
+    `N(0, σ⁻²)`), the `Ω_p(n^{-1/2})` (resp. `Ω_{a.s.}((n log n)^{-1/2})` for hedging) rates and
+    a.s. bankruptcy; KT needs `C ≥ m/2` besides the paper's `C ≥ m(1-m)` (the first bet is
+    invalid otherwise), the hedging variance estimator is any plug-in a.s. consistent one.
+    Theorem 3.1 (`tendsto_mixtureWealth`, `thm:nocash`): the mixture wealth converges a.s. to
+    `π({0})`; Proposition 3.2 (`tendsto_mixtureWealth_betaMixture`,
+    `tendsto_mixtureWealth_robbinsMixture`, `prop:mixture_bankrupt`): the universal portfolio
+    and Robbins' mixture go bankrupt.
+    Theorem 4.1 (`exists_improve`, `thm:improve`): for a strategy predictable for a filtration
+    `ℱ` (observations adapted with a lag) and `ρ ∈ (0,1)`, another `ℱ`-predictable strategy
+    (the `ρ`-opportunistic leverage) has wealth `(W n - ρ)/(1 - ρ)` on the predictably
+    non-bankrupt event, with the paper's four consequences. Stated for filtrations rather than
+    LML algorithms: an LML policy sees only its own actions, from which the original ones cannot
+    be recovered in general.
+    Theorem 5.1 (`tendstoInDistribution_hindsightLogWealth`,
+    `not_bddAbove_logRegret_of_tendsto_wealth_zero`; `thm:chisq_klinf`,
+    `thm:unbounded_regret`): `2 L*_n → χ²₁` in distribution under a non-degenerate null, and
+    null-bankrupt strategies have unbounded regret a.s.
+    Theorems 5.2, 5.3 (`sum_sq_criterion_subgaussian`, `tendsto_subgaussianMixtureTest`;
+    `thm:sos_crit_subg`, `thm:nocash_subg`): the sub-Gaussian criteria (the paper's
+    non-degeneracy hypothesis is not needed and is dropped).
+    Supporting results (lemmas): Lemma B.2 `tendsto_integral_exp_neg_mul` (positivity and
+    monotonicity of `A n` dropped, unused), Lemma B.3 `leverageFraction_mem_Ioo`, Definition B.4
+    `oppLeverage_mem_fractionRange`, `wealth_oppLeverage` (needs `m ∈ [0,1]`, implicit in the
+    paper), Facts 1, 2 `wealth_portfolioFraction`, `wealth_portfolioFraction_short`.
+    Not formalized: Lemma B.1 (Skorokhod space, absent from Mathlib) and the alternative
+    Donsker proof of Corollary 2.3 that uses it; the examples of Appendix C.
+
+    The blueprint (8 chapters) decomposes every proof into labelled lemmas, with the routes
+    that avoid the law of the iterated logarithm, the Hall–Heyde/Fitzsimmons martingale
+    theorems and Niemiro's theorem (exponential supermartingales of conditionally sub-Gaussian
+    sums, a splitting of mixtures at small bets, a one-dimensional analysis of the hindsight
+    log-wealth on an event given by Hoeffding's inequality). The 16 comparator challenges
+    compile (`lake build Comparator`).
+  sorry_count: 22
+  sorry_in_definitions: 0

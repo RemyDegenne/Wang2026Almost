@@ -1,0 +1,127 @@
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+\usepackage{cancel}
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+\geometry{margin = 1.25 in} % for example, change the margins to 2 inches all round
+
+
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage[english]{babel}
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than 
+\usepackage{amssymb}
+\usepackage{bbm}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{makecell}
+
+
+
+\usepackage{epigraph}
+
+
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue
+}
+
+\usepackage{pdflscape}
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+
+%\usepackage{algorithm}
+\usepackage{algorithm2e}
+
+\usepackage{wrapfig}
+\usepackage{subfig}
+\usepackage[capitalize,noabbrev]{cleveref}
+\usepackage{authblk}
+\usepackage{changepage}
+
+\usepackage{tikz-cd}
+\usepackage{xcolor}
+
+\input{bankrupt/macros}
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{ansatz}{Ansatz}
+\newtheorem{fact}{Fact}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{hypothesis}[theorem]{Hypothesis}
+\newtheorem{openproblem}[theorem]{Open Problem}
+\newtheorem{template}[theorem]{Template}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{question}{Question}
+\newtheorem{conjecture}{Conjecture}
+
+\Crefname{fact}{Fact}{Facts}
+\Crefname{assumption}{Assumption}{Assumptions}
+
+
+\title{Almost sure null bankruptcy of %bounded mean
+testing-by-betting strategies\footnote{COLT 2026}}
+
+
+
+\author[1]{Hongjian Wang}
+\author[2]{Shubhada Agrawal}
+\author[3]{Aaditya Ramdas}
+\affil[1]{Carnegie Mellon University \href{mailto:hjnwang@cmu.edu}{\texttt{hjnwang@cmu.edu}}}
+\affil[2]{Indian Institute of Science  \href{mailto:shubhada@iisc.ac.in}{\texttt{shubhada@iisc.ac.in}}}
+\affil[3]{Carnegie Mellon University \href{mailto:aramdas@cmu.edu}{\texttt{aramdas@cmu.edu}}}
+
+
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+    \input{bankrupt/abstract}
+\end{abstract}
+
+%\tableofcontents
+
+\input{bankrupt/main}
+
+
+%\subsubsection*{Generative AI disclosure} \input{bankrupt/genai}
+
+\subsubsection*{Acknowledgments} \input{bankrupt/ack}
+
+
+\bibliography{BibTex}
+
+
+\newpage
+\appendix
+\input{bankrupt/appdx}
+
+
+\end{document}

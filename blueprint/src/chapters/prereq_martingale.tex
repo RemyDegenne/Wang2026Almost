@@ -1,0 +1,130 @@
+\chapter{Supermartingales from independent increments}
+\label{chap:pre_martingale}
+
+Throughout, $(\Omega, \mathcal A, \Prob)$ is a probability space with a filtration $\F$ indexed by
+$\N$. A real process $Y$ has \emph{independent increments along $\F$} if each $Y_n$ is
+$\F_{n+1}$-measurable and independent of $\F_n$.
+
+\section{Freezing and supermartingales}
+
+\begin{lemma}[Freezing lemma]
+  \label{lem:lintegral_comp_indep}
+  Let $Y$ be a random variable independent of a sub-$\sigma$-algebra $\mathcal G$, $Z$ a
+  $\mathcal G$-measurable random variable, $F \ge 0$ measurable and $A \in \mathcal G$. Then
+  $\int_A F(Z, Y) \, d\Prob = \int_A \int F(Z, y) \, d\Prob_Y(y) \, d\Prob$.
+\end{lemma}
+
+\begin{proof}
+  $(Z, \indic_A)$ is $\mathcal G$-measurable, hence independent of $Y$, so the law of
+  $((Z, \indic_A), Y)$ is the product of the marginals. Apply Tonelli's theorem to
+  $((z, a), y) \mapsto a F(z, y)$.
+\end{proof}
+
+\begin{lemma}[Supermartingales with independent increments]
+  \label{lem:supermartingale_of_markov}
+  \uses{lem:lintegral_comp_indep}
+  Let $V$ be an adapted, a.s.\ nonnegative process with $V_0$ integrable, $Y$ with independent
+  increments along $\F$, and for each $n$ an $\F_n$-measurable $Z_n$ and a measurable
+  $\Phi_n \ge 0$ with $V_{n+1} = \Phi_n(Z_n, Y_n)$ a.s.\ and
+  $\int \Phi_n(Z_n, y) \, d\Prob_{Y_n}(y) \le V_n$ a.s. Then $V$ is a supermartingale.
+\end{lemma}
+
+\begin{proof}
+  For $A \in \F_n$, Lemma~\ref{lem:lintegral_comp_indep} gives
+  $\int_A V_{n+1} = \int_A \int \Phi_n(Z_n, y)\,d\Prob_{Y_n}(y) \le \int_A V_n$. With $A = \Omega$
+  and induction, every $V_n$ is integrable. Conclude with the characterization of supermartingales
+  by set integrals (Mathlib's \texttt{supermartingale\_of\_setIntegral\_succ\_le}).
+\end{proof}
+
+\begin{lemma}[Convergence of nonnegative supermartingales]
+  \label{lem:supermartingale_tendsto}
+  A supermartingale $V$ with $V_n \ge 0$ a.s.\ converges almost surely to a finite limit
+  $V_\infty$, and $\E[V_\infty] \le \E[V_0]$.
+\end{lemma}
+
+\begin{proof}
+  $-V$ is a submartingale with $\E\abs{V_n} = \E V_n \le \E V_0$; apply Mathlib's martingale
+  convergence theorem (\texttt{Submartingale.ae\_tendsto\_limitProcess}). Fatou's lemma gives the
+  bound on the expectation.
+\end{proof}
+
+\begin{lemma}[Mixtures of supermartingales]
+  \label{lem:supermartingale_integral}
+  Let $\pi$ be a finite measure on a measurable space $L$ and $(f_\ell)_{\ell \in L}$ a family of
+  a.s.\ nonnegative supermartingales such that $(\ell, \omega) \mapsto f_\ell(n, \omega)$ is
+  $\mathcal B(L) \otimes \F_n$-measurable for each $n$ and $\ell \mapsto \E[f_\ell(0)]$ is
+  $\pi$-integrable. Then $n \mapsto \int f_\ell(n, \cdot)\, d\pi(\ell)$ is a supermartingale.
+\end{lemma}
+
+\begin{proof}
+  For $A \in \F_n$, by Tonelli's theorem,
+  $\int_A \int f_\ell(n+1) \, d\pi \, d\Prob = \int \int_A f_\ell(n+1) \, d\Prob \, d\pi \le \int
+  \int_A f_\ell(n) \, d\Prob \, d\pi = \int_A \int f_\ell(n) \, d\pi \, d\Prob$, and
+  $\E[f_\ell(n)] \le \E[f_\ell(0)]$ gives integrability.
+\end{proof}
+
+\section{Conditionally sub-Gaussian sums}
+
+In this section $Y$ has independent increments along $\F$ and each $Y_n$ is $c$-sub-Gaussian:
+$\E[e^{tY_n}] \le e^{ct^2/2}$ for all $t$. Let $w$ be an adapted real process,
+$T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
+
+\begin{lemma}[Exponential supermartingale]
+  \label{lem:exp_subg_supermartingale}
+  \uses{lem:supermartingale_of_markov}
+  For every $t \in \R$, $U^t_n := \exp(t T_n - c t^2 A_n / 2)$ is a nonnegative supermartingale.
+\end{lemma}
+
+\begin{proof}
+  $U^t_{n+1} = U^t_n \exp(t w_n Y_n - c t^2 w_n^2/2) = \Phi((U^t_n, w_n), Y_n)$ and, for fixed
+  $(u, z)$, $\int \Phi((u, z), y) \, d\Prob_{Y_n}(y) = u e^{-ct^2z^2/2} \E[e^{tzY_n}] \le u$. Apply
+  Lemma~\ref{lem:supermartingale_of_markov}.
+\end{proof}
+
+\begin{lemma}[Convergence on finite quadratic variation]
+  \label{lem:subg_sum_tendsto}
+  \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
+  Almost surely, if $\sum_n w_n^2 < \infty$ then $T_n$ converges.
+\end{lemma}
+
+\begin{proof}
+  By Lemmas~\ref{lem:exp_subg_supermartingale} and~\ref{lem:supermartingale_tendsto}, $U^1$ and
+  $U^{-1}$ converge a.s.\ to finite limits $L_{\pm}$. On $\{A_\infty < \infty\}$:
+  $e^{T_n} = U^1_n e^{cA_n/2} \to L_+ e^{cA_\infty/2}$, and $e^{-T_n} = U^{-1}_n e^{cA_n/2}$ is
+  bounded, so $T_n$ is bounded below and the limit of $e^{T_n}$ is positive; take logarithms.
+\end{proof}
+
+\begin{lemma}[Little-$o$ on infinite quadratic variation]
+  \label{lem:subg_sum_little_o}
+  \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
+  Almost surely, for every $\eps > 0$ there is $C$ with $\abs{T_n} \le C + \eps A_n$ for all $n$.
+\end{lemma}
+
+\begin{proof}
+  For $t > 0$, $U^{\pm t}$ converges a.s., hence is bounded by some $K_t$, so
+  $\pm T_n \le \frac{\log K_t}{t} + \frac{ct}{2} A_n$. Apply this to the countably many
+  $t_j = \frac{2}{c(j+1)}$ and, given $\eps$, choose $j$ with $\frac{1}{j+1} \le \eps$. (If $c = 0$,
+  $T_n$ is a.s.\ constant equal to $0$.)
+\end{proof}
+
+\section{Hoeffding's inequality and almost sure rates}
+
+\begin{lemma}[Hoeffding's lemma]
+  \label{lem:hoeffding_lemma_null}
+  \lean{ProbabilityTheory.hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero}
+  \mathlibok
+  A centered random variable with values in $[a, b]$ is $\frac{(b-a)^2}{4}$-sub-Gaussian.
+\end{lemma}
+
+\begin{lemma}[Almost sure rate of i.i.d.\ sub-Gaussian sums]
+  \label{lem:hoeffding_rate}
+  Let $Y_n$ be independent and $c$-sub-Gaussian. Then almost surely
+  $\sum_{k<n} Y_k = O(\sqrt n \log n)$.
+\end{lemma}
+
+\begin{proof}
+  By Hoeffding's inequality (Mathlib's \texttt{measure\_sum\_range\_ge\_le\_of\_iIndepFun}), applied
+  to $Y$ and $-Y$, $\Prob(\abs{S_n} \ge \sqrt n \log n) \le 2 \exp(-\log^2 n/(2c)) \le 2n^{-2}$ for
+  $n$ large. By the Borel--Cantelli lemma, almost surely $\abs{S_n} < \sqrt n \log n$ for all large
+  $n$.
+\end{proof}

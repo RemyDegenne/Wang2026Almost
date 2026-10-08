@@ -1,0 +1,15 @@
+{
+    "challenge_module": "Challenge_sum_sq_criterion",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.sum_sq_criterion",
+        "Learning.Environment.IsOblivious._proof_1",
+        "Learning.Environment.oblivious._proof_1",
+        "Learning.Environment.oblivious._proof_2"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

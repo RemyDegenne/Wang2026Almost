@@ -1,0 +1,12 @@
+{
+    "challenge_module": "Challenge_tendsto_subgaussianMixtureTest",
+    "solution_module": "Solution",
+    "theorem_names": [
+        "Wang2026Almost.tendsto_subgaussianMixtureTest"
+    ],
+    "permitted_axioms": [
+        "propext",
+        "Quot.sound",
+        "Classical.choice"
+    ]
+}

@@ -1,0 +1,17 @@
+{
+   "sources" : [
+      {
+         "usage" : "toplevel",
+         "filename" : "bankrupt/arxiv.tex"
+      },
+      {
+         "usage" : "ignore",
+         "filename" : "BibTex.bib"
+      }
+   ],
+   "spec_version" : 1,
+   "texlive_version" : "2025",
+   "process" : {
+      "compiler" : "xelatex"
+   }
+}

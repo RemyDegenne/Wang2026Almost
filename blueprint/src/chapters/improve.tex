@@ -1,0 +1,137 @@
+\chapter{Do all good strategies go bankrupt?}
+\label{chap:improve}
+
+\section{Portfolios of two strategies}
+
+\begin{lemma}[Mixture of two predictable plug-ins, long only, Fact 1]
+  \label{fact:mixture_of_two}
+  \lean{Wang2026Almost.wealth_portfolioFraction}
+  \leanok
+  \uses{def:portfolio, lem:wealth_basic}
+  Let $m \in (0,1)$, $\kappa \in [0, 1]$, $\lambda, \nu$ with values in $\Fr$ and observations in
+  $[0,1]$. The portfolio fractions $\beta$ are in $\Fr$ and
+  $W^\beta_n = (1 - \kappa) W^\lambda_n + \kappa W^\nu_n$.
+\end{lemma}
+
+\begin{proof}
+  The denominator $D_n = (1-\kappa)W^\lambda_n + \kappa W^\nu_n$ is a sum of nonnegative terms. If
+  $D_n > 0$, $\beta_n$ is a convex combination of $\lambda_n$ and $\nu_n$; if $D_n = 0$, $\beta_n = 0
+  \in \Fr$. The wealth identity holds by induction:
+  $D_n (1 + \beta_n (X_n - m)) = D_n + ((1-\kappa)W^\lambda_n\lambda_n + \kappa W^\nu_n\nu_n)(X_n -
+  m) = D_{n+1}$ when $D_n > 0$, and both sides vanish when $D_n = 0$ (then both terms of $D_n$, hence
+  of $D_{n+1}$, vanish).
+\end{proof}
+
+\begin{lemma}[Mixture of two predictable plug-ins, short allowed, Fact 2]
+  \label{fact:short}
+  \lean{Wang2026Almost.wealth_portfolioFraction_short}
+  \leanok
+  \uses{def:portfolio, def:paths, lem:wealth_basic}
+  Let $m \in (0,1)$, $\rho \in [0, 1)$, $\kappa \in [-\frac{\rho}{1-\rho}, 1]$, and $\lambda, \nu$
+  predictable strategies on the path space with values in $\Fr$ such that $W^\lambda_n > \rho
+  W^\nu_n$ for all $n$ on every binary path. Then on every binary path, $\beta_n \in \Fr$ and
+  $W^\beta_n = (1-\kappa) W^\lambda_n + \kappa W^\nu_n$.
+\end{lemma}
+
+\begin{proof}
+  On a binary path, $D_n \ge 0$, and $D_n > 0$ unless $\kappa = 1$ and $W^\nu_n = 0$: for
+  $\kappa < 0$, $-\kappa/(1-\kappa) \le \rho$ and $D_n \ge (1-\kappa)(W^\lambda_n - \rho W^\nu_n) >
+  0$; for $\kappa \in [0, 1)$, $D_n \ge (1-\kappa)W^\lambda_n > 0$. The wealth identity follows by
+  induction as in Fact~\ref{fact:mixture_of_two}. For the range: $\beta_n$, $W^\lambda_n$, $W^\nu_n$
+  depend only on $x_0, \dots, x_{n-1}$; replacing $x_n$ by $0$ (resp.\ $1$) gives a binary path on
+  which $D_n (1 + \beta_n(x_n - m)) = D_{n+1} > 0$, so $1 - \beta_n m > 0$ and $1 + \beta_n(1-m) > 0$
+  when $D_n > 0$.
+\end{proof}
+
+\begin{remark}
+  Fact~2 is stated on the path space because its hypothesis quantifies over all binary paths. Its
+  ``in particular'' (borrowing cash, $\nu = 0$) is the case $\kappa = -b$.
+\end{remark}
+
+\section{Opportunistic leverage}
+
+\begin{lemma}[Lemma B.3]
+  \label{lem:leverage_valid}
+  \lean{Wang2026Almost.leverageFraction_mem_Ioo}
+  \leanok
+  \uses{def:leverage}
+  If $m \in (0,1)$ and $\Wh_n > \rho$, then $\beta^\rho_n \in (-\frac{1}{1-m}, \frac1m)$.
+\end{lemma}
+
+\begin{proof}
+  $W_n - \rho = (1-m)(W_n(1 - \lambda_n m) - \rho) + m(W_n(1 + \lambda_n(1-m)) - \rho) > 0$. For
+  $x \in \{0, 1\}$, $1 + \beta^\rho_n (x - m) = \frac{W_n(1 + \lambda_n(x - m)) - \rho}{W_n - \rho} >
+  0$: $x = 0$ gives $\beta^\rho_n < 1/m$, $x = 1$ gives $\beta^\rho_n > -1/(1-m)$.
+\end{proof}
+
+\begin{lemma}[Validity of the opportunistic leverage, Definition B.4]
+  \label{lem:opp_leverage_valid}
+  \lean{Wang2026Almost.oppLeverage_mem_fractionRange}
+  \leanok
+  \uses{lem:leverage_valid}
+  If $m \in (0,1)$ and $\lambda_n \in \Fr$, then $\gamma_n \in \Fr$.
+\end{lemma}
+
+\begin{proof}
+  Lemma~\ref{lem:leverage_valid} on $\{\Wh_n > \rho\}$, and $\gamma_n = \lambda_n$ elsewhere.
+\end{proof}
+
+\begin{lemma}[Wealth of the opportunistic leverage, Definition B.4]
+  \label{lem:wealth_opp_leverage}
+  \lean{Wang2026Almost.wealth_oppLeverage}
+  \leanok
+  \uses{def:leverage, lem:wealth_basic}
+  If $m \in [0, 1]$, $\rho \ne 1$ and $\Wh_k > \rho$ for all $k < n$, then
+  $W^\gamma_n = \frac{W^\lambda_n - \rho}{1 - \rho}$.
+\end{lemma}
+
+\begin{proof}
+  Induction on $n$. As in Lemma~\ref{lem:leverage_valid}, $\Wh_k > \rho$ implies $W_k > \rho$ (a
+  convex combination, here $m \in [0,1]$ is used), and then
+  $\frac{W_k - \rho}{1-\rho}\big(1 + \frac{W_k\lambda_k(X_k - m)}{W_k - \rho}\big) =
+  \frac{W_{k+1} - \rho}{1-\rho}$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:measurable_oppLeverage}
+  \uses{def:leverage, lem:wealth_basic}
+  If $\lambda$ is adapted to $\F$ and each $X_n$ is $\F_{n+1}$-measurable, then the opportunistic
+  leverage $\gamma$ is adapted to $\F$.
+\end{lemma}
+
+\begin{proof}
+  $W_n$, $\Wh_n$, $\beta^\rho_n$ are measurable functions of $\lambda_0, \dots, \lambda_n, X_0,
+  \dots, X_{n-1}$, which are $\F_n$-measurable; $\gamma_n$ is a piecewise definition on the
+  $\F_n$-measurable set $\{\Wh_n > \rho\}$.
+\end{proof}
+
+\begin{theorem}[Improvability on predictably non-bankrupt paths, Theorem 4.1]
+  \label{thm:improve}
+  \lean{Wang2026Almost.exists_improve}
+  \leanok
+  \uses{lem:opp_leverage_valid, lem:wealth_opp_leverage, lem:measurable_oppLeverage}
+  Let $m, \rho \in (0,1)$, $\lambda$ a strategy predictable for $\F$, with each $X_n$
+  $\F_{n+1}$-measurable. There is a strategy $\gamma$ predictable for $\F$, with $\gamma_n \in \Fr$
+  whenever $\lambda_n \in \Fr$, such that on $N^\rho$: $W^\gamma_n = \frac{W_n - \rho}{1-\rho}$ for
+  all $n$; $W^\gamma_n > W_n$ when $W_n > 1$; $W^\gamma_n / W_n \to \frac{1}{1-\rho}$ when
+  $W_n \to \infty$; $W^\gamma_n < W_n$ when $W_n < 1$; and if $W_n \to w < 1$ then $W^\gamma_n \to
+  \frac{w - \rho}{1-\rho} < w$.
+\end{theorem}
+
+\begin{proof}
+  Take $\gamma$ the $\rho$-opportunistic leverage: predictable by
+  Lemma~\ref{lem:measurable_oppLeverage}, valid by Lemma~\ref{lem:opp_leverage_valid}, with the
+  wealth identity by Lemma~\ref{lem:wealth_opp_leverage}. Then
+  $\frac{W - \rho}{1-\rho} > W \iff \rho W > \rho \iff W > 1$ (and symmetrically),
+  $\frac{W_n - \rho}{(1-\rho)W_n} = \frac{1 - \rho/W_n}{1-\rho} \to \frac{1}{1-\rho}$ when
+  $W_n \to \infty$, and the limit when $W_n \to w$ is by continuity.
+\end{proof}
+
+\begin{remark}
+  The paper states the theorem for predictable plug-in strategies. The statement for a general
+  filtration covers them (past filtration) as well as the randomized strategies given by runs of
+  LML algorithms (filtration of the history and the current action). It is not stated as the
+  existence of an LML algorithm: an LML policy only sees its own past actions, from which the
+  original actions cannot be recovered in general (the leveraged fraction of one action can equal
+  another action on a round where the leverage is not applied).
+\end{remark}

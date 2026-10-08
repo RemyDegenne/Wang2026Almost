@@ -1,0 +1,111 @@
+\chapter{Asymptotics in probability}
+\label{chap:pre_asymptotics}
+
+\section{Limit theorems in Mathlib}
+
+\begin{lemma}[Central limit theorem]
+  \label{lem:clt}
+  \lean{ProbabilityTheory.tendstoInDistribution_inv_sqrt_mul_sum_sub}
+  \mathlibok
+  If the $X_n$ are i.i.d.\ and square integrable with mean $\mu$ and variance $v$, then
+  $n^{-1/2}(\sum_{k<n} X_k - n\mu)$ converges in distribution to $\gaussian(0, v)$.
+\end{lemma}
+
+\begin{lemma}[Slutsky's lemma]
+  \label{lem:slutsky}
+  \lean{MeasureTheory.TendstoInDistribution.continuous_comp_prodMk_of_tendstoInMeasure_const}
+  \mathlibok
+  If $X_n \to Z$ in distribution, $Y_n \to c$ in probability and $g$ is continuous, then
+  $g(X_n, Y_n) \to g(Z, c)$ in distribution. Almost sure convergence implies convergence in
+  probability.
+\end{lemma}
+
+\begin{lemma}[Strong law of large numbers]
+  \label{lem:slln}
+  \lean{ProbabilityTheory.strong_law_ae}
+  \mathlibok
+  If the $X_n$ are pairwise independent, identically distributed and integrable, then
+  $\frac1n \sum_{k<n} X_k \to \E X_0$ almost surely.
+\end{lemma}
+
+\section{Landau notation in probability}
+
+\begin{lemma}
+  \label{lem:isBigOmegaInProb_mono}
+  \uses{def:asymp}
+  If $Z_n = \Omp(a_n)$ and $b_n \le K a_n$ for large $n$, with $K > 0$, then $Z_n = \Omp(b_n)$.
+\end{lemma}
+
+\begin{proof}
+  $\{\abs{Z_n} \ge \delta a_n\} \subseteq \{\abs{Z_n} \ge (\delta/K) b_n\}$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:isBigOmegaInProb_sq}
+  \uses{def:asymp}
+  If $Z_n = \Omp(a_n)$ with $a_n \ge 0$, then $Z_n^2 = \Omp(a_n^2)$.
+\end{lemma}
+
+\begin{proof}
+  $\{\abs{Z_n} \ge \delta a_n\} \subseteq \{Z_n^2 \ge \delta^2 a_n^2\}$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:isBigOmegaInProb_of_tendstoInDistribution}
+  \uses{def:asymp}
+  If $a_n > 0$ for large $n$ and $Z_n / a_n$ converges in distribution to a random variable $G$ with
+  $\Prob(G = 0) = 0$, then $Z_n = \Omp(a_n)$.
+\end{lemma}
+
+\begin{proof}
+  For $\delta > 0$, by the portmanteau theorem for the closed set $[-\delta, \delta]$,
+  $\limsup_n \Prob(\abs{Z_n/a_n} \le \delta) \le \Prob(\abs G \le \delta)$, which tends to
+  $\Prob(G = 0) = 0$ as $\delta \to 0$. Given $\eps$, choose $\delta$ with
+  $\Prob(\abs G \le \delta) < \eps$.
+\end{proof}
+
+\section{Series and sequences}
+
+\begin{lemma}[Ces\`aro means of a summable sequence]
+  \label{lem:cesaro_of_summable_div}
+  Let $a_k \in [0, 1]$ with $\sum_{k \ge 1} a_k/k < \infty$. Then $\frac1n \sum_{k<n} a_k \to 0$.
+\end{lemma}
+
+\begin{proof}
+  Given $\eta > 0$ choose $N \ge 1$ with $\sum_{k \ge N} a_k/k < \eta$. For $n > N$,
+  $\frac1n \sum_{k<n} a_k \le \frac Nn + \sum_{N \le k < n} \frac{a_k}{k} < \frac Nn + \eta$, since
+  $\frac1n \le \frac1k$ for $k < n$.
+\end{proof}
+
+\begin{lemma}[Fatou's lemma for sets]
+  \label{lem:measure_liminf_le}
+  For measurable sets $B_n$, $\Prob(\liminf_n B_n) \le \liminf_n \Prob(B_n)$.
+\end{lemma}
+
+\begin{proof}
+  $\liminf_n B_n = \bigcup_N \bigcap_{n \ge N} B_n$ is an increasing union and
+  $\Prob(\bigcap_{n \ge N} B_n) \le \inf_{n \ge N} \Prob(B_n)$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:not_summable_inv_mul_log}
+  $\sum_{n \ge 2} \frac{1}{n \log n} = \infty$.
+\end{lemma}
+
+\begin{proof}
+  Cauchy condensation: $\sum_k 2^k \frac{1}{2^k k \log 2} = \infty$.
+\end{proof}
+
+\section{The square of a standard Gaussian}
+
+\begin{lemma}
+  \label{lem:gaussian_sq}
+  The image of $\gaussian(0, 1)$ by $x \mapsto x^2$ is the $\chi^2_1$ distribution.
+\end{lemma}
+
+\begin{proof}
+  Both measures have moment generating function $t \mapsto (1 - 2t)^{-1/2}$ on $(-\infty, 1/2)$ (a
+  Gaussian integral and the gamma integral), which is an open set containing $0$, and none is
+  integrable for $t \ge 1/2$; measures on $\R$ are determined by such a moment generating function
+  (Mathlib's \texttt{Measure.ext\_of\_mgf\_eq}).
+\end{proof}

@@ -1,0 +1,111 @@
+% In this file you should put the actual content of the blueprint.
+% It will be used both by the web and the print version.
+% It should *not* include the \begin{document}
+
+\part{Almost sure null bankruptcy of testing-by-betting strategies}
+\label{part:main}
+
+\textbf{Overview}
+
+This blueprint guides the Lean formalization of the paper \emph{Almost sure null bankruptcy of
+testing-by-betting strategies} by Hongjian Wang, Shubhada Agrawal and Aaditya Ramdas (COLT 2026,
+\cite{wang2026almost}). The paper studies sequential tests of the mean of i.i.d.\ observations
+$X_0, X_1, \dots \in [0,1]$ by betting: a statistician starting with unit wealth bets before each
+round a fraction $\lambda_n \in \Fr := [-\frac{1}{1-m}, \frac1m]$ of their wealth on $X_n - m$,
+and their wealth $W_n = \prod_{k < n} (1 + \lambda_k (X_k - m))$ is a nonnegative martingale under
+every null distribution (mean $m$). Its results:
+\begin{enumerate}
+  \item[(i)] a characterization of the bankruptcy event of any predictable strategy under a
+        non-degenerate null: $W_n \to 0$ exactly when $\sum_n \lambda_n^2 = \infty$ or an all-in bet
+        is lost (Theorem~\ref{thm:sos_crit});
+  \item[(ii)] the almost sure divergence of every series of nonnegative terms of order
+        $\Omp(n^{-1})$ (Theorem~\ref{thm:sum_of_op}), whence a $n^{-1/2}$ criterion for bankruptcy
+        (Corollary~\ref{cor:sq_crit}) and the almost sure null bankruptcy of the classical
+        strategies KT, GRAPA, aGRAPA and predictable hedging
+        (Propositions~\ref{prop:kt}--\ref{prop:hedge});
+  \item[(iii)] the no-cash criterion for mixture strategies: the mixture wealth converges to the
+        mass $\pi(\{0\})$ that the mixing distribution puts on the zero bet
+        (Theorem~\ref{thm:nocash}, Proposition~\ref{prop:mixture_bankrupt});
+  \item[(iv)] the improvability of any strategy on its predictably non-bankrupt paths, by
+        leveraging (Theorem~\ref{thm:improve});
+  \item[(v)] the $\chi^2_1$ null limit of twice the best-in-hindsight log-wealth $n \klinf$
+        (Theorem~\ref{thm:chisq_klinf}), and sub-Gaussian versions of (i) and (iii)
+        (Theorems~\ref{thm:sos_crit_subg} and~\ref{thm:nocash_subg}).
+\end{enumerate}
+
+\textbf{Goals of the formalization.} First, formalize all the results of the paper. Second, grow
+the library: the betting wealth processes and the classical strategies are added to the
+\emph{Lean Machine Learning} library (LML), on top of its algorithm--environment framework, and
+the probabilistic tools (asymptotic notation in probability, exponential supermartingales of
+conditionally sub-Gaussian sums, freezing lemmas for independent variables, a.s.\ rates from
+Hoeffding's inequality) are written in Mathlib generality.
+
+\textbf{Deviations from the paper.} The blueprint departs from the paper when a statement is
+imprecise or when a different route is simpler to formalize; each point is recorded in a remark
+next to the statement it concerns. The main ones:
+\begin{itemize}
+  \item Proposition~\ref{prop:kt}: the KT constant must satisfy $C \ge m/2$ in addition to
+        $C \ge m(1-m)$, otherwise the first bet $1/(2C)$ leaves $\Fr$ when $m > 1/2$.
+  \item The martingale convergence and divergence theorems of Hall--Heyde and Fitzsimmons used
+        for Theorem~\ref{thm:sos_crit}, the law of the iterated logarithm used for
+        Theorems~\ref{thm:nocash} and~\ref{thm:nocash_subg}, and Niemiro's Bahadur theorem for
+        M-estimators used for Proposition~\ref{prop:grapa} are not in Mathlib. They are replaced by
+        exponential supermartingales of conditionally sub-Gaussian sums
+        (Chapter~\ref{chap:pre_martingale}), by a splitting of the mixture at small bets, and by a
+        direct one-dimensional analysis of the log-wealth on an event of probability one given by
+        Hoeffding's inequality, which yields a stronger remainder.
+  \item Unused hypotheses are dropped: non-degeneracy in Theorems~\ref{thm:sos_crit_subg}
+        and~\ref{thm:nocash_subg}, monotonicity and positivity in Lemma~\ref{lem:exp_regular}.
+        Theorem~\ref{thm:improve} is stated for strategies predictable for an arbitrary
+        filtration.
+  \item Lemma~B.1 of the paper (continuity of $f \mapsto \int f^2$ on the Skorokhod space) and the
+        alternative proof of Corollary~\ref{cor:div_sample_mean} through Donsker's invariance
+        principle are not formalized: Mathlib has no Skorokhod space. The examples of the paper's
+        Appendix~C are not statements and are not formalized.
+\end{itemize}
+
+\textbf{Conventions.} Time is indexed from $0$: $\lambda_n$ is the fraction bet on $X_n$, chosen
+before $X_n$ is revealed, and $W_n = \prod_{k < n}(1 + \lambda_k (X_k - m))$ is the wealth after
+$n$ rounds. The paper's $\lambda_n, X_n$ ($n \ge 1$) are our $\lambda_{n-1}, X_{n-1}$. All random
+objects live on a probability space $(\Omega, \mathcal A, \Prob)$; $P$ is the law of the
+observations. Under the null, $\sigma^2 = \Var_P(X)$.
+
+\textbf{Status.} The formalization proceeds in two phases. Phase~1 states the results of the
+paper in Lean, over definitions written in library generality: each such statement carries a
+\verb+\lean+ tag naming its Lean declaration, and the headline results are standalone challenge
+files for \texttt{leanprover/comparator} (directory \texttt{comparator/}). Phase~2 formalizes the
+proofs, following this document.
+
+\textbf{Blueprint author.} Rémy Degenne. Anyone is welcome to contribute!
+
+\input{chapters/setting.tex}
+\input{chapters/predictable.tex}
+\input{chapters/mixture.tex}
+\input{chapters/improve.tex}
+\input{chapters/odds.tex}
+
+\part{Prerequisites to be added to Mathlib and LML}
+\label{part:prereq}
+
+\textbf{Overview}
+
+The proofs of Part~\ref{part:main} rely on results that are not available in Mathlib or LML.
+This part develops them, at the level of generality of a library.
+\begin{itemize}
+  \item Chapter~\ref{chap:pre_martingale}: freezing lemmas for independent variables,
+        supermartingales built from independent increments, convergence of nonnegative
+        supermartingales, mixtures of supermartingales, and the exponential supermartingales of
+        conditionally sub-Gaussian sums with their two consequences (convergence when the
+        quadratic variation is finite, little-$o$ otherwise); almost sure rates from Hoeffding's
+        inequality.
+  \item Chapter~\ref{chap:pre_asymptotics}: Landau notation in probability, Ces\`aro means,
+        Fatou's lemma for sets, the divergence of $\sum 1/(n \log n)$, and the square of a
+        standard Gaussian.
+  \item Chapter~\ref{chap:pre_betting}: inequalities for the logarithm, Bernoulli domination of
+        wealths, the wealth supermartingale, and the deterministic analysis of the hindsight
+        log-wealth behind Proposition~\ref{prop:grapa} and Theorem~\ref{thm:chisq_klinf}.
+\end{itemize}
+
+\input{chapters/prereq_martingale.tex}
+\input{chapters/prereq_asymptotics.tex}
+\input{chapters/prereq_betting.tex}
