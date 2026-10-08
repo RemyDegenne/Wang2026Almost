@@ -5,6 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.KTLimit
+public import Wang2026Almost.LeanMachineLearning.Betting.PlugIn
+public import Wang2026Almost.LeanMachineLearning.Betting.StrategyBounds
 public import Wang2026Almost.LeanMachineLearning.Betting.Strategies
 public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
@@ -47,6 +50,15 @@ theorem kt_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x,
         (fun _ ↦ P') (gaussianReal 0 (Var[id; P] / C ^ 2).toNNReal) ∧
       IsBigOmegaInProb P' (ktFraction C m X) (fun n ↦ (n : ℝ) ^ (-1 / 2 : ℝ)) ∧
       ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m (ktFraction C m X) X n ω) atTop (𝓝 0) := by
-  sorry
+  have hm01 := mem_Ioo_of_variance_pos hP hm hvar
+  have hC : 0 < C := lt_of_lt_of_le (mul_pos hm01.1 (sub_pos.2 hm01.2)) hC₁
+  have hL2 := memLp_two_id_of_mem_Icc hP
+  have hΩ := isBigOmegaInProb_ktFraction hC hm hL2 hvar hindep hlaw
+  refine ⟨tendstoInDistribution_sqrt_mul_ktFraction hC hm hL2 hindep hlaw, hΩ, ?_⟩
+  have hX01 := ae_forall_mem_Icc_of_hasLaw hP hlaw
+  refine tendsto_wealth_zero_of_isBigOmega_of_isPlugIn hP hm (ne_dirac_of_variance_pos hvar) hX
+    hindep hlaw (isPlugIn_ktFraction C m X) (fun n ↦ ?_) (Or.inl hΩ)
+  filter_upwards [hX01] with ω hω
+  exact ktFraction_mem_fractionRange hm01 hC₁ hC₂ fun k _ ↦ hω k
 
 end Wang2026Almost

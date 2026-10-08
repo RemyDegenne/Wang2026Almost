@@ -5,7 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.SumSquares
 public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.LeanMachineLearning.SequentialLearning.ConstEnvFiltration
 public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
@@ -39,7 +41,9 @@ theorem tendsto_wealth_zero_of_isBigOmega (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 
     (hlam : ∀ n, ∀ᵐ ω ∂P', lam n ω ∈ fractionRange m)
     (hrate : IsBigOmegaInProb P' lam (fun n ↦ (n : ℝ) ^ (-1 / 2 : ℝ)) ∨
       IsBigOmegaAE P' lam (fun n ↦ ((n : ℝ) * Real.log n) ^ (-1 / 2 : ℝ))) :
-    ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0) := by
-  sorry
+    ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0) :=
+  tendsto_wealth_zero_of_isBigOmega_of_indep hP hm hnd h.measurable_feedback_filtrationAction_succ
+    h.indep_feedback_filtrationAction_const h.hasLaw_feedback_const
+    h.adapted_action_filtrationAction hlam hrate
 
 end Wang2026Almost

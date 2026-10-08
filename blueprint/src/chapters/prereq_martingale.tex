@@ -9,12 +9,15 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 
 \begin{lemma}[Freezing lemma]
   \label{lem:lintegral_comp_indep}
+  \lean{ProbabilityTheory.setLIntegral_comp_of_indep}
+  \leanok
   Let $Y$ be a random variable independent of a sub-$\sigma$-algebra $\mathcal G$, $Z$ a
   $\mathcal G$-measurable random variable, $F \ge 0$ measurable and $A \in \mathcal G$. Then
   $\int_A F(Z, Y) \, d\Prob = \int_A \int F(Z, y) \, d\Prob_Y(y) \, d\Prob$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $(Z, \indic_A)$ is $\mathcal G$-measurable, hence independent of $Y$, so the law of
   $((Z, \indic_A), Y)$ is the product of the marginals. Apply Tonelli's theorem to
   $((z, a), y) \mapsto a F(z, y)$.
@@ -22,6 +25,8 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 
 \begin{lemma}[Supermartingales with independent increments]
   \label{lem:supermartingale_of_markov}
+  \lean{MeasureTheory.supermartingale_of_lintegral_le}
+  \leanok
   \uses{lem:lintegral_comp_indep}
   Let $V$ be an adapted, a.s.\ nonnegative process with $V_0$ integrable, $Y$ with independent
   increments along $\F$, and for each $n$ an $\F_n$-measurable $Z_n$ and a measurable
@@ -30,6 +35,7 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   For $A \in \F_n$, Lemma~\ref{lem:lintegral_comp_indep} gives
   $\int_A V_{n+1} = \int_A \int \Phi_n(Z_n, y)\,d\Prob_{Y_n}(y) \le \int_A V_n$. With $A = \Omega$
   and induction, every $V_n$ is integrable. Conclude with the characterization of supermartingales
@@ -38,11 +44,14 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 
 \begin{lemma}[Convergence of nonnegative supermartingales]
   \label{lem:supermartingale_tendsto}
+  \lean{MeasureTheory.Supermartingale.exists_ae_tendsto_of_nonneg}
+  \leanok
   A supermartingale $V$ with $V_n \ge 0$ a.s.\ converges almost surely to a finite limit
   $V_\infty$, and $\E[V_\infty] \le \E[V_0]$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $-V$ is a submartingale with $\E\abs{V_n} = \E V_n \le \E V_0$; apply Mathlib's martingale
   convergence theorem (\texttt{Submartingale.ae\_tendsto\_limitProcess}). Fatou's lemma gives the
   bound on the expectation.
@@ -50,13 +59,17 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 
 \begin{lemma}[Mixtures of supermartingales]
   \label{lem:supermartingale_integral}
-  Let $\pi$ be a finite measure on a measurable space $L$ and $(f_\ell)_{\ell \in L}$ a family of
-  a.s.\ nonnegative supermartingales such that $(\ell, \omega) \mapsto f_\ell(n, \omega)$ is
+  \lean{MeasureTheory.supermartingale_integral_of_integrable, MeasureTheory.supermartingale_integral}
+  \leanok
+  Let $\pi$ be an s-finite measure on a measurable space $L$ and $(f_\ell)_{\ell \in L}$ a family of
+  nonnegative supermartingales such that $(\ell, \omega) \mapsto f_\ell(n, \omega)$ is
   $\mathcal B(L) \otimes \F_n$-measurable for each $n$ and $\ell \mapsto \E[f_\ell(0)]$ is
-  $\pi$-integrable. Then $n \mapsto \int f_\ell(n, \cdot)\, d\pi(\ell)$ is a supermartingale.
+  $\pi$-integrable (for instance $\pi$ finite and $\E[f_\ell(0)] \le C$ for all $\ell$). Then
+  $n \mapsto \int f_\ell(n, \cdot)\, d\pi(\ell)$ is a supermartingale.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   For $A \in \F_n$, by Tonelli's theorem,
   $\int_A \int f_\ell(n+1) \, d\pi \, d\Prob = \int \int_A f_\ell(n+1) \, d\Prob \, d\pi \le \int
   \int_A f_\ell(n) \, d\Prob \, d\pi = \int_A \int f_\ell(n) \, d\pi \, d\Prob$, and
@@ -71,11 +84,14 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Exponential supermartingale]
   \label{lem:exp_subg_supermartingale}
+  \lean{ProbabilityTheory.supermartingale_exp_sum_mul}
+  \leanok
   \uses{lem:supermartingale_of_markov}
   For every $t \in \R$, $U^t_n := \exp(t T_n - c t^2 A_n / 2)$ is a nonnegative supermartingale.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $U^t_{n+1} = U^t_n \exp(t w_n Y_n - c t^2 w_n^2/2) = \Phi((U^t_n, w_n), Y_n)$ and, for fixed
   $(u, z)$, $\int \Phi((u, z), y) \, d\Prob_{Y_n}(y) = u e^{-ct^2z^2/2} \E[e^{tzY_n}] \le u$. Apply
   Lemma~\ref{lem:supermartingale_of_markov}.
@@ -83,11 +99,14 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Convergence on finite quadratic variation]
   \label{lem:subg_sum_tendsto}
+  \lean{ProbabilityTheory.ae_exists_tendsto_sum_mul}
+  \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
   Almost surely, if $\sum_n w_n^2 < \infty$ then $T_n$ converges.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   By Lemmas~\ref{lem:exp_subg_supermartingale} and~\ref{lem:supermartingale_tendsto}, $U^1$ and
   $U^{-1}$ converge a.s.\ to finite limits $L_{\pm}$. On $\{A_\infty < \infty\}$:
   $e^{T_n} = U^1_n e^{cA_n/2} \to L_+ e^{cA_\infty/2}$, and $e^{-T_n} = U^{-1}_n e^{cA_n/2}$ is
@@ -96,15 +115,18 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Little-$o$ on infinite quadratic variation]
   \label{lem:subg_sum_little_o}
+  \lean{ProbabilityTheory.ae_forall_abs_sum_mul_le}
+  \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
   Almost surely, for every $\eps > 0$ there is $C$ with $\abs{T_n} \le C + \eps A_n$ for all $n$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   For $t > 0$, $U^{\pm t}$ converges a.s., hence is bounded by some $K_t$, so
   $\pm T_n \le \frac{\log K_t}{t} + \frac{ct}{2} A_n$. Apply this to the countably many
-  $t_j = \frac{2}{c(j+1)}$ and, given $\eps$, choose $j$ with $\frac{1}{j+1} \le \eps$. (If $c = 0$,
-  $T_n$ is a.s.\ constant equal to $0$.)
+  $t_j = \frac{1}{j+1}$ and, given $\eps$, choose $j$ with $\frac{c}{2(j+1)} \le \eps$; conclude with
+  $A_n \ge 0$.
 \end{proof}
 
 \section{Hoeffding's inequality and almost sure rates}
@@ -118,11 +140,15 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Almost sure rate of i.i.d.\ sub-Gaussian sums]
   \label{lem:hoeffding_rate}
+  \lean{ProbabilityTheory.ae_isBigO_sum_range_sqrt_mul_log}
+  \leanok
   Let $Y_n$ be independent and $c$-sub-Gaussian. Then almost surely
   $\sum_{k<n} Y_k = O(\sqrt n \log n)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
+  Each $Y_n$ is also $(c+1)$-sub-Gaussian, so we may assume $c > 0$.
   By Hoeffding's inequality (Mathlib's \texttt{measure\_sum\_range\_ge\_le\_of\_iIndepFun}), applied
   to $Y$ and $-Y$, $\Prob(\abs{S_n} \ge \sqrt n \log n) \le 2 \exp(-\log^2 n/(2c)) \le 2n^{-2}$ for
   $n$ large. By the Borel--Cantelli lemma, almost surely $\abs{S_n} < \sqrt n \log n$ for all large

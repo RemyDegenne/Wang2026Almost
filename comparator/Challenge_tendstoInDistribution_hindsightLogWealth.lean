@@ -25,6 +25,30 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Analysis.Calculus.LocalExtr.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.Topology.Algebra.Order.Archimedean
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.Order.Filter.Extr
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.Martingale.BorelCantelli
+public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.MeasureTheory.Measure.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.CentralLimitTheorem
+public import Mathlib.Probability.StrongLaw
+public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Analysis.PSeries
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Probability.Moments.ComplexMGF
+public import Mathlib.Probability.Process.Adapted
+public import Mathlib.Topology.Order.Compact
 
 /-! # Standalone extraction for `Wang2026Almost.tendstoInDistribution_hindsightLogWealth`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -41,6 +65,8 @@ namespace MeasureTheory
 end MeasureTheory
 namespace Learning.Betting
 end Learning.Betting
+namespace Real
+end Real
 namespace ProbabilityTheory
 end ProbabilityTheory
 namespace Learning

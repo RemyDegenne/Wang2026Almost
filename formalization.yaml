@@ -127,5 +127,26 @@ status:
     sums, a splitting of mixtures at small bets, a one-dimensional analysis of the hindsight
     log-wealth on an event given by Hoeffding's inequality). The 16 comparator challenges
     compile (`lake build Comparator`).
-  sorry_count: 22
+
+    Phase 2 complete on 2026-10-08: every result of the paper listed above is proved, with no
+    `sorry` in the library, and the 16 headline theorems depend only on the axioms `propext`,
+    `Classical.choice`, `Quot.sound`. `lake build Wang2026Almost --wfail`,
+    `lake exe runLinter Wang2026Almost` and `lake exe checkdecls blueprint/lean_decls` pass; every
+    blueprint statement and proof is `\leanok`. The statements and the definitions in their closure
+    are unchanged since phase 1: the regenerated comparator challenges differ only in their import
+    lists, namespace stubs, `open` lines and two linter attributes, and `lake build Comparator`
+    passes; the full comparator run (`scripts/comparator-verify.sh`) has not been done yet.
+    Proof routes that differ from the paper (no law of the iterated logarithm, no martingale
+    divergence theorem, no M-estimation theory): exponential supermartingales of conditionally
+    sub-Gaussian sums for Theorems 2.1 and 5.2; the mixtures split at small bets, with Bernoulli
+    domination of the large bets and a supermartingale bound for the small ones, for Theorems 3.1
+    and 5.3; Theorem 2.2 for any non-summable rate by weighted failure counts; a pathwise
+    analysis of the hindsight log-wealth on an event of probability one given by Hoeffding's
+    inequality for the GRAPA Bahadur expansion (with the stronger remainder `O(log² n / √n)`) and
+    the χ² limit of Theorem 5.1. Findings: the KT constant needs `C ≥ m/2`; the hedging
+    fractions `-λ^PrH` may leave the range of bets when `C (1 - m) > m` (the statement still
+    holds, through an eventually-in-range form of the n^{-1/2} criterion); the blueprint's
+    first proof of `log(1+x) ≥ x - x²` on `|x| ≤ 1/2` was wrong and was replaced. Library
+    material to upstream: `notes/upstreaming-candidates.md`.
+  sorry_count: 0
   sorry_in_definitions: 0

@@ -10,10 +10,11 @@ library (LML, branch `rename`). The development is blueprint-driven:
 [blueprint](https://remydegenne.github.io/Wang2026Almost/blueprint/),
 [dependency graph](https://remydegenne.github.io/Wang2026Almost/blueprint/dep_graph_document.html).
 
-**Status: phase 1 (statements).** Every result of the paper is stated in Lean with its proof
-`sorry`ed; the headline results are listed in [`formalization.yaml`](formalization.yaml) and are
-standalone challenges for [comparator](https://github.com/leanprover/comparator) in
-[`comparator/`](comparator/). Phase 2 proves them, following the blueprint.
+**Status: complete.** Every result of the paper (except Lemma B.1, see below) is stated and
+proved in Lean, with no `sorry`; the 16 headline theorems depend only on the standard axioms
+`propext`, `Classical.choice`, `Quot.sound`. They are listed in
+[`formalization.yaml`](formalization.yaml) and are standalone challenges for
+[comparator](https://github.com/leanprover/comparator) in [`comparator/`](comparator/).
 
 ## Layout
 
@@ -22,11 +23,19 @@ standalone challenges for [comparator](https://github.com/leanprover/comparator)
   (`Leverage.lean`: predictably non-bankrupt events, leverage, portfolios; `Mixtures.lean`: the
   universal portfolio and Robbins' mixing distributions).
 * `Wang2026Almost/LeanMachineLearning/`: material for LML: the i.i.d. environment
-  `Environment.const` (`SequentialLearning/ObliviousEnv.lean`), the betting wealth processes
-  (`Betting/Wealth.lean`) and the classical strategies KT, GRAPA, aGRAPA, hedging
-  (`Betting/Strategies.lean`).
-* `Wang2026Almost/Mathlib/`: material for Mathlib: Landau notation in probability
-  (`Probability/AsymptoticsInProbability.lean`), the gamma and chi-squared distributions.
+  `Environment.const` and its runs (`SequentialLearning/`), the betting wealth processes
+  (`Betting/Wealth.lean`), the classical strategies KT, GRAPA, aGRAPA, hedging
+  (`Betting/Strategies.lean`) and their asymptotics (`Betting/*Limit.lean`, `Betting/HedgeRate.lean`),
+  the sum-of-squares criteria for strategies predictable for a filtration
+  (`Betting/SumSquares*.lean`, `Betting/PlugIn.lean`), mixtures (`Betting/Mixture.lean`), and the
+  analysis of the hindsight log-wealth (`Betting/Hindsight.lean`).
+* `Wang2026Almost/Mathlib/`: material for Mathlib: Landau notation in probability and the
+  divergence of `Σ Ω_p(a_n)` (`Probability/AsymptoticsInProbability.lean`,
+  `Probability/SumBigOmegaInProb.lean`), supermartingales with independent increments, their
+  convergence and mixtures, exponential supermartingales of sub-Gaussian sums
+  (`Probability/Martingale/`), a.s. rates from Hoeffding's inequality, CLT/SLLN/Slutsky
+  wrappers, the gamma and chi-squared distributions and the square of a Gaussian, inequalities
+  for `log (1 + x)`.
 * `blueprint/src/`: the blueprint (Part I follows the paper, Part II the prerequisites);
   `notes/blueprint-outline.md`: the outline it was written from (labels, proof routes, modelling
   decisions); `source/`: the paper's LaTeX source.

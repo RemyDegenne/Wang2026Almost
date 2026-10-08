@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.WAR2026.Leverage
+public import Wang2026Almost.WAR2026.LemmaB_3
 
 /-!
 # Definition B.4: opportunistic leveraging
@@ -30,7 +30,10 @@ variable {Ω : Type*}
 lemma oppLeverage_mem_fractionRange {m ρ : ℝ} (hm : m ∈ Set.Ioo 0 1) {lam X : ℕ → Ω → ℝ}
     {n : ℕ} {ω : Ω} (hlam : lam n ω ∈ fractionRange m) :
     oppLeverage m ρ lam X n ω ∈ fractionRange m := by
-  sorry
+  rw [oppLeverage]
+  split_ifs with h
+  · exact Set.Ioo_subset_Icc_self (leverageFraction_mem_Ioo hm h)
+  · exact hlam
 
 /-- **Definition B.4, wealth** (Wang, Agrawal, Ramdas 2026): on the event
 `⋂_{k < n} {nextWealthMin m lam X k > ρ}`, the wealth of the `ρ`-opportunistic leverage of `lam`
@@ -40,6 +43,15 @@ lemma wealth_oppLeverage {m ρ : ℝ} (hm : m ∈ Set.Icc 0 1) (hρ : ρ ≠ 1) 
     {ω : Ω}
     (h : ∀ k < n, ρ < nextWealthMin m lam X k ω) :
     wealth m (oppLeverage m ρ lam X) X n ω = (wealth m lam X n ω - ρ) / (1 - ρ) := by
-  sorry
+  have hρ' : 1 - ρ ≠ 0 := sub_ne_zero.2 hρ.symm
+  induction n with
+  | zero => simp [div_self hρ']
+  | succ n ih =>
+    have hn : ρ < nextWealthMin m lam X n ω := h n n.lt_succ_self
+    have hW := (sub_pos_of_lt_nextWealthMin hm hn).ne'
+    rw [wealth_succ, wealth_succ, ih fun k hk ↦ h k (hk.trans n.lt_succ_self), oppLeverage,
+      ite_eq_left hn, leverageFraction]
+    field_simp
+    ring
 
 end Wang2026Almost

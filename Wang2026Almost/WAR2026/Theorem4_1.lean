@@ -6,6 +6,8 @@ Authors: Rémy Degenne
 module
 
 public import Wang2026Almost.WAR2026.Leverage
+public import Wang2026Almost.WAR2026.DefinitionB_4
+public import Wang2026Almost.WAR2026.LeverageMeasurable
 public import Mathlib.Probability.Process.Adapted
 
 /-!
@@ -55,6 +57,25 @@ theorem exists_improve {ℱ : Filtration ℕ mΩ} {m ρ : ℝ} (hm : m ∈ Set.I
         ∀ w, Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 w) → w < 1 →
           Tendsto (fun n ↦ wealth m gam X n ω) atTop (𝓝 ((w - ρ) / (1 - ρ))) ∧
             (w - ρ) / (1 - ρ) < w := by
-  sorry
+  refine ⟨oppLeverage m ρ lam X, adapted_oppLeverage hlam hX,
+    fun n ω h ↦ oppLeverage_mem_fractionRange hm h, fun ω hω ↦ ?_⟩
+  have hρ1 : 0 < 1 - ρ := sub_pos.2 hρ.2
+  have hW : ∀ n, wealth m (oppLeverage m ρ lam X) X n ω = (wealth m lam X n ω - ρ) / (1 - ρ) :=
+    fun n ↦ wealth_oppLeverage (Set.Ioo_subset_Icc_self hm) hρ.2.ne fun k _ ↦ hω k
+  refine ⟨hW, fun n hn ↦ ?_, fun hlim ↦ ?_, fun n hn ↦ ?_, fun w hw hw1 ↦ ⟨?_, ?_⟩⟩
+  · rw [hW, lt_div_iff₀ hρ1]
+    nlinarith [hρ.1]
+  · have h := ((tendsto_const_nhds (x := ρ)).div_atTop hlim).const_sub 1 |>.div_const (1 - ρ)
+    rw [sub_zero] at h
+    refine h.congr' ?_
+    filter_upwards [hlim.eventually_gt_atTop 0] with n hn
+    rw [hW]
+    field_simp
+  · rw [hW, div_lt_iff₀ hρ1]
+    nlinarith [hρ.1]
+  · simp_rw [hW]
+    exact (hw.sub_const ρ).div_const _
+  · rw [div_lt_iff₀ hρ1]
+    nlinarith [hρ.1]
 
 end Wang2026Almost

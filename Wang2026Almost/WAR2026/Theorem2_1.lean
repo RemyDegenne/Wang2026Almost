@@ -5,7 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.SumSquares
 public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.LeanMachineLearning.SequentialLearning.ConstEnvFiltration
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 
@@ -45,7 +47,9 @@ theorem sum_sq_criterion (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : �
     (hlam : ∀ n, ∀ᵐ ω ∂P', lam n ω ∈ fractionRange m) :
     ∃ W : Ω → ℝ, (∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 (W ω))) ∧
       (∀ᵐ ω ∂P', W ω = 0 ↔ ¬ Summable (fun n ↦ lam n ω ^ 2) ∨ ∃ n, lam n ω * (X n ω - m) = -1) ∧
-      (∀ᵐ ω ∂P', 0 < W ω ↔ Summable (fun n ↦ lam n ω ^ 2) ∧ ∀ n, -1 < lam n ω * (X n ω - m)) := by
-  sorry
+      (∀ᵐ ω ∂P', 0 < W ω ↔ Summable (fun n ↦ lam n ω ^ 2) ∧ ∀ n, -1 < lam n ω * (X n ω - m)) :=
+  sum_sq_criterion_of_indep hP hm hnd h.measurable_feedback_filtrationAction_succ
+    h.indep_feedback_filtrationAction_const h.hasLaw_feedback_const
+    h.adapted_action_filtrationAction hlam
 
 end Wang2026Almost

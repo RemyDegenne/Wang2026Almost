@@ -3,20 +3,42 @@
 
 \section{Portfolios of two strategies}
 
+\begin{lemma}[Wealth of a portfolio]
+  \label{lem:wealth_portfolio}
+  \lean{Wang2026Almost.mul_portfolioFraction, Wang2026Almost.wealth_portfolioFraction_eq,
+    Wang2026Almost.portfolioFraction_mem_fractionRange}
+  \leanok
+  \uses{def:portfolio, lem:wealth_basic}
+  Let $D_k = (1-\kappa)W^\lambda_k + \kappa W^\nu_k$ and $N_k = (1-\kappa)W^\lambda_k\lambda_k +
+  \kappa W^\nu_k\nu_k$ (so that $\beta_k = N_k / D_k$, with $\beta_k = 0$ if $D_k = 0$). If
+  $D_k = 0 \Rightarrow N_k = 0$ for all $k < n$, then $W^\beta_n = D_n$. If $m \in [0,1]$,
+  $\lambda_n, \nu_n \in \Fr$, $(1-\kappa)W^\lambda_n \ge 0$ and $\kappa W^\nu_n \ge 0$, then
+  $\beta_n \in \Fr$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  If $D_k = 0 \Rightarrow N_k = 0$, then $D_k \beta_k = N_k$ and
+  $D_k (1 + \beta_k (X_k - m)) = D_k + N_k (X_k - m) = D_{k+1}$: induction on $n$. For the range:
+  if $D_n = 0$, $\beta_n = 0 \in \Fr$; otherwise $D_n > 0$ and $\beta_n$ is a convex combination
+  of $\lambda_n$ and $\nu_n$.
+\end{proof}
+
 \begin{lemma}[Mixture of two predictable plug-ins, long only, Fact 1]
   \label{fact:mixture_of_two}
   \lean{Wang2026Almost.wealth_portfolioFraction}
   \leanok
-  \uses{def:portfolio, lem:wealth_basic}
+  \uses{def:portfolio, lem:wealth_basic, lem:wealth_portfolio}
   Let $m \in (0,1)$, $\kappa \in [0, 1]$, $\lambda, \nu$ with values in $\Fr$ and observations in
   $[0,1]$. The portfolio fractions $\beta$ are in $\Fr$ and
   $W^\beta_n = (1 - \kappa) W^\lambda_n + \kappa W^\nu_n$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The denominator $D_n = (1-\kappa)W^\lambda_n + \kappa W^\nu_n$ is a sum of nonnegative terms. If
   $D_n > 0$, $\beta_n$ is a convex combination of $\lambda_n$ and $\nu_n$; if $D_n = 0$, $\beta_n = 0
-  \in \Fr$. The wealth identity holds by induction:
+  \in \Fr$. The wealth identity holds by induction (Lemma~\ref{lem:wealth_portfolio}):
   $D_n (1 + \beta_n (X_n - m)) = D_n + ((1-\kappa)W^\lambda_n\lambda_n + \kappa W^\nu_n\nu_n)(X_n -
   m) = D_{n+1}$ when $D_n > 0$, and both sides vanish when $D_n = 0$ (then both terms of $D_n$, hence
   of $D_{n+1}$, vanish).
@@ -26,7 +48,7 @@
   \label{fact:short}
   \lean{Wang2026Almost.wealth_portfolioFraction_short}
   \leanok
-  \uses{def:portfolio, def:paths, lem:wealth_basic}
+  \uses{def:portfolio, def:paths, lem:wealth_basic, lem:wealth_portfolio}
   Let $m \in (0,1)$, $\rho \in [0, 1)$, $\kappa \in [-\frac{\rho}{1-\rho}, 1]$, and $\lambda, \nu$
   predictable strategies on the path space with values in $\Fr$ such that $W^\lambda_n > \rho
   W^\nu_n$ for all $n$ on every binary path. Then on every binary path, $\beta_n \in \Fr$ and
@@ -34,13 +56,15 @@
 \end{lemma}
 
 \begin{proof}
-  On a binary path, $D_n \ge 0$, and $D_n > 0$ unless $\kappa = 1$ and $W^\nu_n = 0$: for
+  \leanok
+  On a binary path, $D_n \ge 0$, and $N_n = 0$ when $D_n = 0$: for
   $\kappa < 0$, $-\kappa/(1-\kappa) \le \rho$ and $D_n \ge (1-\kappa)(W^\lambda_n - \rho W^\nu_n) >
-  0$; for $\kappa \in [0, 1)$, $D_n \ge (1-\kappa)W^\lambda_n > 0$. The wealth identity follows by
-  induction as in Fact~\ref{fact:mixture_of_two}. For the range: $\beta_n$, $W^\lambda_n$, $W^\nu_n$
-  depend only on $x_0, \dots, x_{n-1}$; replacing $x_n$ by $0$ (resp.\ $1$) gives a binary path on
-  which $D_n (1 + \beta_n(x_n - m)) = D_{n+1} > 0$, so $1 - \beta_n m > 0$ and $1 + \beta_n(1-m) > 0$
-  when $D_n > 0$.
+  0$; for $\kappa \in [0, 1]$, $D_n$ is the sum of the nonnegative terms $(1-\kappa)W^\lambda_n$ and
+  $\kappa W^\nu_n$, which both vanish when $D_n = 0$. The wealth identity follows by
+  Lemma~\ref{lem:wealth_portfolio}. For the range: if $D_n = 0$, $\beta_n = 0 \in \Fr$. Otherwise
+  $D_n > 0$; $\beta_n$, $W^\lambda_n$, $W^\nu_n$ depend only on $x_0, \dots, x_{n-1}$; replacing
+  $x_n$ by $0$ (resp.\ $1$) gives a binary path on which $D_n (1 + \beta_n(x_n - m)) = D_{n+1} \ge
+  0$, so $1 - \beta_n m \ge 0$ and $1 + \beta_n(1-m) \ge 0$.
 \end{proof}
 
 \begin{remark}
@@ -52,13 +76,14 @@
 
 \begin{lemma}[Lemma B.3]
   \label{lem:leverage_valid}
-  \lean{Wang2026Almost.leverageFraction_mem_Ioo}
+  \lean{Wang2026Almost.leverageFraction_mem_Ioo, Wang2026Almost.sub_pos_of_lt_nextWealthMin}
   \leanok
   \uses{def:leverage}
   If $m \in (0,1)$ and $\Wh_n > \rho$, then $\beta^\rho_n \in (-\frac{1}{1-m}, \frac1m)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $W_n - \rho = (1-m)(W_n(1 - \lambda_n m) - \rho) + m(W_n(1 + \lambda_n(1-m)) - \rho) > 0$. For
   $x \in \{0, 1\}$, $1 + \beta^\rho_n (x - m) = \frac{W_n(1 + \lambda_n(x - m)) - \rho}{W_n - \rho} >
   0$: $x = 0$ gives $\beta^\rho_n < 1/m$, $x = 1$ gives $\beta^\rho_n > -1/(1-m)$.
@@ -73,6 +98,7 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Lemma~\ref{lem:leverage_valid} on $\{\Wh_n > \rho\}$, and $\gamma_n = \lambda_n$ elsewhere.
 \end{proof}
 
@@ -86,6 +112,7 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Induction on $n$. As in Lemma~\ref{lem:leverage_valid}, $\Wh_k > \rho$ implies $W_k > \rho$ (a
   convex combination, here $m \in [0,1]$ is used), and then
   $\frac{W_k - \rho}{1-\rho}\big(1 + \frac{W_k\lambda_k(X_k - m)}{W_k - \rho}\big) =
@@ -94,12 +121,16 @@
 
 \begin{lemma}
   \label{lem:measurable_oppLeverage}
+  \lean{Wang2026Almost.adapted_oppLeverage, Wang2026Almost.adapted_nextWealthMin,
+    Wang2026Almost.adapted_leverageFraction, Learning.Betting.adapted_wealth}
+  \leanok
   \uses{def:leverage, lem:wealth_basic}
   If $\lambda$ is adapted to $\F$ and each $X_n$ is $\F_{n+1}$-measurable, then the opportunistic
   leverage $\gamma$ is adapted to $\F$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $W_n$, $\Wh_n$, $\beta^\rho_n$ are measurable functions of $\lambda_0, \dots, \lambda_n, X_0,
   \dots, X_{n-1}$, which are $\F_n$-measurable; $\gamma_n$ is a piecewise definition on the
   $\F_n$-measurable set $\{\Wh_n > \rho\}$.
@@ -119,6 +150,7 @@
 \end{theorem}
 
 \begin{proof}
+  \leanok
   Take $\gamma$ the $\rho$-opportunistic leverage: predictable by
   Lemma~\ref{lem:measurable_oppLeverage}, valid by Lemma~\ref{lem:opp_leverage_valid}, with the
   wealth identity by Lemma~\ref{lem:wealth_opp_leverage}. Then

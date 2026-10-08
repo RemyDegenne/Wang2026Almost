@@ -20,6 +20,7 @@ public import Mathlib.Analysis.Normed.Ring.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.Probability.Kernel.Composition.MapComap
 public import Mathlib.Probability.Process.Adapted
+public import Mathlib.Topology.Order.Compact
 
 /-! # Standalone extraction for `Wang2026Almost.exists_improve`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.

@@ -70,11 +70,10 @@ $n$ rounds. The paper's $\lambda_n, X_n$ ($n \ge 1$) are our $\lambda_{n-1}, X_{
 objects live on a probability space $(\Omega, \mathcal A, \Prob)$; $P$ is the law of the
 observations. Under the null, $\sigma^2 = \Var_P(X)$.
 
-\textbf{Status.} The formalization proceeds in two phases. Phase~1 states the results of the
-paper in Lean, over definitions written in library generality: each such statement carries a
-\verb+\lean+ tag naming its Lean declaration, and the headline results are standalone challenge
-files for \texttt{leanprover/comparator} (directory \texttt{comparator/}). Phase~2 formalizes the
-proofs, following this document.
+\textbf{Status.} The formalization is complete: every statement of this document is formalized
+and proved in Lean (with no \texttt{sorry}), except the paper's Lemma~B.1, which is not stated
+(see above). The headline results are standalone challenge files for
+\texttt{leanprover/comparator} (directory \texttt{comparator/}).
 
 \textbf{Blueprint author.} Rémy Degenne. Anyone is welcome to contribute!
 

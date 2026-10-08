@@ -5,7 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.SumSquaresSubgaussian
 public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.LeanMachineLearning.SequentialLearning.ConstEnvFiltration
 public import Mathlib.Probability.Moments.SubGaussian
 
 /-!
@@ -38,7 +40,9 @@ theorem sum_sq_criterion_subgaussian (hP : HasSubgaussianMGF (fun x ↦ x - m) 1
     (h : IsAlgEnvSeq (fun _ _ ↦ ()) lam X alg (Environment.const P) P') :
     ∃ M : Ω → ℝ, (∀ᵐ ω ∂P', Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 (M ω))) ∧
       (∀ᵐ ω ∂P', M ω = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
-      (∀ᵐ ω ∂P', 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
-  sorry
+      (∀ᵐ ω ∂P', 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) :=
+  sum_sq_criterion_subgaussian_of_indep hP h.measurable_feedback_filtrationAction_succ
+    h.indep_feedback_filtrationAction_const h.hasLaw_feedback_const
+    h.adapted_action_filtrationAction
 
 end Wang2026Almost

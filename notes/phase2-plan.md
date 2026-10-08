@@ -240,3 +240,44 @@ Proofs of `WAR2026/Proposition2_5.lean` … `Proposition2_8.lean` and the first 
 Proofs of `WAR2026/Theorem3_1.lean`, `Proposition3_2.lean`, `Theorem5_3.lean`; helper files
 `Wang2026Almost/LeanMachineLearning/Betting/Mixture.lean`, `WAR2026/MixturesProb.lean`
 (probability and atomlessness of `betaMixture`, `robbinsMixture`).
+
+## Progress log
+
+* 2026-10-08, during wave 1 (done by the coordinator, not by agents):
+  `Betting/PastFiltration.lean` (`pastFiltration`, `measurable_pastFiltration_succ`,
+  `measurable_pastFiltration_of_lt`, `IsPlugIn.adapted_pastFiltration`, `indep_pastFiltration`),
+  `SequentialLearning/ConstEnvFiltration.lean` (`IsAlgEnvSeq.indep_feedback_filtrationAction_const`,
+  `IsAlgEnvSeq.measurable_feedback_filtrationAction_succ`; LML already has
+  `adapted_action_filtrationAction`), `Betting/Null.lean` (`mem_Ioo_of_ne_dirac`,
+  `variance_pos_of_ne_dirac`, `mem_Ioo_of_variance_pos`, `ne_dirac_of_variance_pos`,
+  `eq_dirac_of_ae_eq`, `memLp_two_id_of_mem_Icc`), `Betting/StrategyBounds.lean`
+  (`ktFraction_mem_fractionRange`, `empVar_add_sq_empMean_sub`,
+  `agrapaFraction_mem_fractionRange`, `hedgeFraction_mem_fractionRange`). Blueprint tags for
+  `lem:kt_mem`, `lem:empVar_add_sq` still to add (predictable.tex was being edited by B).
+* `WAR2026/MixturesProb.lean` (coordinator): `Icc_subset_fractionRange`,
+  `isProbabilityMeasure_betaMixture`, `ae_mem_Icc_betaMixture`, `betaMixture_singleton_zero`,
+  `isProbabilityMeasure_robbinsMixture`, `ae_mem_Icc_robbinsMixture`,
+  `robbinsMixture_singleton_zero` (Robbins mass via the antiderivative `1 / log log (C / l)` and
+  `integral_comp_abs`). Blueprint tags for `lem:betaMixture_prob`, `lem:robbins_prob` still to
+  add (mixture.tex was being edited by C1).
+* Coordinator, during waves 1–2 (package E material): `Mathlib/Probability/LimitTheorems.lean`
+  (`TendstoInDistribution.of_map_eq`, `TendstoInDistribution.mul_add_of_tendsto`,
+  `tendstoInDistribution_sum_sub_div_sqrt` (CLT with `HasLaw`), `ae_tendsto_sum_comp_div`
+  (SLLN for `f (X k)`)), `Betting/KTLimit.lean` (`gaussianReal_map_inv_mul`,
+  `tendstoInDistribution_sqrt_mul_ktFraction`), `Betting/AGrapaLimit.lean`
+  (`ae_tendsto_sum_sub_div`, `ae_tendsto_sum_sub_sq_div`, `measurable_agrapaFraction`,
+  `tendstoInDistribution_sqrt_mul_agrapaFraction`), `Betting/HedgeRate.lean`
+  (`isBigO_rpow_hedgeFraction`: `(n log n)^{-1/2} = O(hedge fraction)` when `v n → σ² > 0`).
+* Wave 1 results: A done (all interfaces; extra `supermartingale_integral_of_integrable`,
+  `ae_exists_tendsto_exp_sum_mul`); C1 done (+ `Betting/WealthLemmas.lean`,
+  `WAR2026/LeverageMeasurable.lean`). Package D launched after A.
+* Wave 1 complete: B (Thm 2.2 in library form for any non-summable rate, Cor 2.3, Gaussian
+  square law, `IsBigOmegaInProb` API), C2 (log inequalities, Bernoulli domination, hindsight
+  analysis; fixed a wrong blueprint step in `lem:log_ge_sub_sq`).
+* Wave 2 complete: D (Thms 2.1, 5.2, Cor 2.4 and their filtration forms; pathwise limit route).
+* Coordinator: `Betting/GoodEvent.lean`, `Betting/ChiSquareLimit.lean`, `Betting/GrapaLimit.lean`
+  (pathwise Bahadur bound `O(log² n / √n)`, a.s. `o(n^{-1/4} log n)`, CLT, `Ω_p`),
+  `Betting/PlugIn.lean` (criterion for plug-in strategies; eventually-in-range a.s. variant,
+  needed for hedging since `-λ^PrH` may leave the range when `C (1 - m) > m`), proofs of
+  Props 2.5–2.8 and of Thm 5.1 (χ²). Package E is thus done by the coordinator.
+* Wave 3: F (Thms 3.1, 5.3, Prop 3.2) launched.

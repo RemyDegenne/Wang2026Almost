@@ -21,6 +21,27 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.Probability.Kernel.Composition.MapComap
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Probability.Martingale.Convergence
+public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.MeasureTheory.Integral.Prod
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.MeasureTheory.Measure.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Analysis.PSeries
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Probability.Process.Adapted
+public import Mathlib.Topology.Order.Compact
+public import Mathlib.Order.Filter.Extr
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.Martingale.BorelCantelli
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-! # Standalone extraction for `Wang2026Almost.tendsto_subgaussianMixtureTest`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -71,10 +92,12 @@ open scoped Topology
 namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P'] {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
+set_option linter.unusedSectionVars false in
 /-- **Theorem 5.3** (no-cash criterion II, Wang, Agrawal, Ramdas 2026): for i.i.d. observations
 `X` of a `1`-sub-Gaussian law `P` with mean `m`, and a probability measure `π` on `ℝ`, the
 mixture test process `∫ exp (∑_{k < n} ((X k - m)² - (X k - l)²) / 2) ∂π(l)` converges almost
 surely to `π({m})`. The paper assumes `P` non-degenerate; the proof does not use it. -/
+@[nolint unusedArguments]
 theorem tendsto_subgaussianMixtureTest (hP : HasSubgaussianMGF (fun x ↦ x - m) 1 P)
     {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
     (hindep : iIndepFun X P')

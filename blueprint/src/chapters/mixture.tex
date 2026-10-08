@@ -10,6 +10,7 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   For $\gamma$-a.e.\ $x$ ($x \ge 0$), $e^{-x A_n} \to \indic\{x = 0\}$, and $0 \le e^{-xA_n} \le 1$
   as soon as $A_n \ge 0$, which holds for large $n$. Dominated convergence.
 \end{proof}
@@ -22,12 +23,17 @@
 
 \begin{lemma}[Large bets are dominated]
   \label{lem:mixture_large}
-  \uses{lem:fixedWealth_le_rpow, thm:sos_crit_filtration}
+  \lean{Learning.Betting.ae_exists_bound_fixedWealth_of_le_abs}
+  \leanok
+  \uses{lem:fixedWealth_le_rpow, thm:sos_crit_filtration, lem:iid_of_plug_in, lem:null_basic}
   Let $P$ be a non-degenerate null distribution, $X_n$ i.i.d.\ with law $P$, and $\eps > 0$ with
   $\pm\eps \in \Fr$. Almost surely, $\sup_{\lambda \in \Fr, \abs\lambda \ge \eps} W^\lambda_n \to 0$.
+  More precisely, almost surely, $0 \le W^\lambda_n \le G_n := \max(W^\eps_n, W^{-\eps}_n)$ for all
+  $\lambda \in \Fr$ with $\abs\lambda \ge \eps$ and all $n$ large enough, and $G_n \to 0$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The fixed-fraction wealths $W^{\eps}_n$ and $W^{-\eps}_n$ tend to $0$ a.s.\ by
   Theorem~\ref{thm:sos_crit_filtration} (constant strategies, $\sum \eps^2 = \infty$). For
   $\lambda \ge \eps$ in $\Fr$, Lemma~\ref{lem:fixedWealth_le_rpow} gives
@@ -37,41 +43,86 @@
 
 \begin{lemma}[Small bets have a small limit]
   \label{lem:mixture_small}
-  \uses{lem:supermartingale_integral, lem:supermartingale_tendsto, lem:wealth_supermartingale}
-  Let $X_n$ be i.i.d.\ with a null law $P$, $\pi$ a finite measure on $\Fr$ and $B \subseteq \Fr$
-  measurable. Then $n \mapsto \int_B W^\lambda_n \, d\pi(\lambda)$ converges a.s.\ to a limit $L_B
-  \ge 0$ with $\E[L_B] \le \pi(B)$.
+  \lean{Learning.Betting.exists_ae_tendsto_setIntegral_of_supermartingale,
+    Learning.Betting.exists_ae_tendsto_setIntegral_fixedWealth}
+  \leanok
+  \uses{lem:supermartingale_integral, lem:supermartingale_tendsto, lem:wealth_supermartingale,
+    lem:iid_of_plug_in}
+  Let $X_n$ be i.i.d.\ with a law $P$ on $[0,1]$ with mean $m \in (0,1)$, $\pi$ a finite measure on
+  $\Fr$ and $B \subseteq \Fr$. Then $n \mapsto \int_B W^\lambda_n \, d\pi(\lambda)$ converges a.s.\
+  to a limit $L_B \ge 0$ with $\E[L_B] \le \pi(B)$. More generally, the same holds for
+  $\int_B f_\lambda(n) \, d\pi(\lambda)$, for any family $(f_\lambda)$ of everywhere nonnegative
+  supermartingales with $f_\lambda(0) = 1$, jointly measurable in $(\lambda, \omega)$ as in
+  Lemma~\ref{lem:supermartingale_integral}, and any finite measure $\pi$.
 \end{lemma}
 
 \begin{proof}
-  Each $W^\lambda$, $\lambda \in \Fr$, is a nonnegative supermartingale for the past filtration
-  (Lemma~\ref{lem:wealth_supermartingale}), jointly measurable in $(\lambda, \omega)$; so is the
-  mixture (Lemma~\ref{lem:supermartingale_integral}). It converges a.s.\ and its limit has
-  expectation at most $\E[\int_B W^\lambda_0 \, d\pi] = \pi(B)$
+  \leanok
+  General form: the mixture $n \mapsto \int f_\lambda(n) \, d\pi|_B(\lambda)$ is a nonnegative
+  supermartingale (Lemma~\ref{lem:supermartingale_integral}, $\E f_\lambda(0) = 1$). It converges
+  a.s.\ and its limit has expectation at most $\E[\int_B f_\lambda(0) \, d\pi] = \pi(B)$
   (Lemma~\ref{lem:supermartingale_tendsto}).
+
+  Betting form: each $W^\lambda$, $\lambda \in \Fr$, is a supermartingale for the past filtration
+  (Lemmas~\ref{lem:wealth_supermartingale} and~\ref{lem:iid_of_plug_in}), jointly measurable in
+  $(\lambda, \omega)$. To get a family indexed by all $\lambda \in \R$ and nonnegative everywhere,
+  apply the general form to $f_\lambda(n) = \max(0, W^{p(\lambda)}_n)$, with $p$ the projection of
+  $\R$ onto $\Fr$: it is a supermartingale since it equals $W^{p(\lambda)}_n$ a.s., and
+  $f_\lambda(n) = W^\lambda_n$ for all $n$, for $\pi$-a.e.\ $\lambda$ and a.e.\ $\omega$ (where all
+  $X_k \in [0,1]$).
+\end{proof}
+
+\begin{lemma}[No-cash criterion, abstract form]
+  \label{lem:nocash_abstract}
+  \lean{Learning.Betting.ae_tendsto_integral_of_ball,
+    Learning.Betting.tendsto_integral_of_tendsto_setIntegral_ball,
+    Learning.Betting.ae_tendsto_of_forall_exists_lintegral_le}
+  \leanok
+  Let $\pi$ be a finite measure on $\R$, $c \in \R$ and $(F^\lambda_n)_{\lambda \in \R, n \in \N}$
+  random variables with $F^c_n = 1$ and $\lambda \mapsto F^\lambda_n$ $\pi$-integrable for all $n$,
+  a.s. Assume that for every $\eps \in (0, 1]$:
+  \begin{itemize}
+    \item (large parameters) almost surely there is a sequence $G_n \to 0$ with
+      $\abs{F^\lambda_n} \le G_n$ for $\pi$-a.e.\ $\lambda$ with $\abs{\lambda - c} \ge \eps$ and all
+      $n$ large enough;
+    \item (small parameters) $\int_{0 < \abs{\lambda - c} < \eps} F^\lambda_n \, d\pi(\lambda)$
+      converges a.s.\ to a limit $L_\eps \ge 0$ with $\E[L_\eps] \le \pi(\{0 < \abs{\lambda - c} <
+      \eps\})$.
+  \end{itemize}
+  Then $\int F^\lambda_n \, d\pi(\lambda) \to \pi(\{c\})$ almost surely.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Fix $\eps$ and $\omega$ in the events above. For every $n$,
+  $\int F^\lambda_n \, d\pi = \pi(\{c\}) + \int_{0 < \abs{\lambda - c} < \eps} F^\lambda_n \, d\pi
+  + \int_{\abs{\lambda - c} \ge \eps} F^\lambda_n \, d\pi$. The last term is at most $G_n
+  \pi(\R)$ in absolute value for $n$ large, hence tends to $0$, and the middle one tends to
+  $L_\eps$: the mixture converges to $\pi(\{c\}) + L_\eps$. Hence a.s., for all $j$, with $\eps_j =
+  1/(j+1)$, the mixture converges to $\pi(\{c\}) + L_{\eps_j}$, so all the $L_{\eps_j}$ are a.s.\
+  equal to $L_{\eps_0}$, and $\E[L_{\eps_0}] \le \pi(\{0 < \abs{\lambda - c} < \eps_j\}) \to 0$
+  (continuity from above, the sets decrease to $\emptyset$). So $L_{\eps_0} = 0$ a.s.
 \end{proof}
 
 \begin{theorem}[No-cash criterion, Theorem 3.1]
   \label{thm:nocash}
   \lean{Wang2026Almost.tendsto_mixtureWealth}
   \leanok
-  \uses{lem:mixture_large, lem:mixture_small, lem:null_basic}
+  \uses{lem:mixture_large, lem:mixture_small, lem:nocash_abstract, lem:null_basic}
   Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$, $X_n$ i.i.d.\ with law $P$, and
   $\pi$ a probability measure on $\Fr$. Then $W^\pi_n \to \pi(\{0\})$ almost surely. In particular
   $W^\pi_n \to 0$ a.s.\ if and only if $\pi(\{0\}) = 0$.
 \end{theorem}
 
 \begin{proof}
-  Since $W^0_n = 1$, for every $\eps > 0$,
-  $W^\pi_n = \pi(\{0\}) + \int_{0 < \abs\lambda < \eps} W^\lambda_n \, d\pi
-  + \int_{\abs\lambda \ge \eps} W^\lambda_n \, d\pi$. The last term is at most
-  $\sup_{\abs\lambda \ge \eps} W^\lambda_n \to 0$ (Lemma~\ref{lem:mixture_large}); the middle one
-  converges to $L_\eps \ge 0$ with $\E L_\eps \le \pi(\{0 < \abs\lambda < \eps\})$
-  (Lemma~\ref{lem:mixture_small}). Hence a.s., for all $j$, with $\eps_j = 1/(j+1)$ (small enough
-  for $\pm\eps_j \in \Fr$),
-  $\pi(\{0\}) \le \liminf W^\pi_n \le \limsup W^\pi_n \le \pi(\{0\}) + L_{\eps_j}$. Finally
-  $\E[\inf_j L_{\eps_j}] \le \inf_j \pi(\{0 < \abs\lambda < \eps_j\}) = 0$, so $\inf_j L_{\eps_j} =
-  0$ a.s. The last claim follows from the uniqueness of limits.
+  \leanok
+  Lemma~\ref{lem:nocash_abstract} with $c = 0$ and $F^\lambda_n = W^\lambda_n$: $W^0_n = 1$, and
+  $\lambda \mapsto W^\lambda_n$ is continuous, hence $\pi$-integrable since $\pi$ is concentrated on
+  the compact $\Fr$. For $\eps \in (0, 1]$, $\pm\eps \in [-1, 1] \subseteq \Fr$ (as $m \in (0,1)$,
+  Lemma~\ref{lem:null_basic}), so the large bets $\abs\lambda \ge \eps$ are dominated by
+  Lemma~\ref{lem:mixture_large} ($\pi$ is concentrated on $\Fr$), and the small bets $0 <
+  \abs\lambda < \eps$ have a small limit by Lemma~\ref{lem:mixture_small}. The last claim follows
+  from the uniqueness of limits ($\pi(\{0\}) = 0$ iff its real value is $0$, $\pi$ being finite).
 \end{proof}
 
 \begin{remark}
@@ -83,24 +134,32 @@
 
 \begin{lemma}[The universal portfolio mixture]
   \label{lem:betaMixture_prob}
+  \lean{Wang2026Almost.isProbabilityMeasure_betaMixture, Wang2026Almost.ae_mem_Icc_betaMixture,
+    Wang2026Almost.betaMixture_singleton_zero}
+  \leanok
   \uses{def:mixtures}
   For $a, b > 0$, $\pi_{a,b}$ is a probability measure concentrated on $[-1,1]$ with
   $\pi_{a,b}(\{0\}) = 0$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The Beta distribution is a probability measure on $[0,1]$ with a density, hence without atoms,
   and $x \mapsto 2x - 1$ is injective.
 \end{proof}
 
 \begin{lemma}[Robbins' mixture]
   \label{lem:robbins_prob}
+  \lean{Wang2026Almost.isProbabilityMeasure_robbinsMixture, Wang2026Almost.ae_mem_Icc_robbinsMixture,
+    Wang2026Almost.robbinsMixture_singleton_zero, Wang2026Almost.integral_robbinsDeriv}
+  \leanok
   \uses{def:mixtures}
   Robbins' mixing distribution is a probability measure concentrated on $[-1,1]$ with
   $\pi(\{0\}) = 0$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   The density vanishes outside $[-1,1]$ and is nonnegative ($C/\abs\lambda \ge C > e$, so
   $\log\log(C/\abs\lambda) > 0$). On $(0, 1]$, $F(\lambda) = 1/\log\log(C/\lambda)$ has derivative
   $\frac{1}{\lambda\log(C/\lambda)(\log\log(C/\lambda))^2}$, with $F(0^+) = 0$ and
@@ -118,6 +177,50 @@
 \end{proposition}
 
 \begin{proof}
+  \leanok
   $[-1, 1] \subseteq \Fr$ since $m \in (0,1)$; apply Theorem~\ref{thm:nocash} with
   Lemmas~\ref{lem:betaMixture_prob} and~\ref{lem:robbins_prob}.
+\end{proof}
+
+\section{Sub-Gaussian mixtures}
+
+The two lemmas used for the sub-Gaussian no-cash criterion (Theorem~\ref{thm:nocash_subg}), with
+the notation of Chapter~\ref{chap:odds}: $M^\lambda_n = \exp(\sum_{k<n} ((X_k - m)^2 - (X_k -
+\lambda)^2)/2)$ for a constant alternative $\lambda \in \R$.
+
+\begin{lemma}[Large alternatives are dominated]
+  \label{lem:mixture_large_subg}
+  \lean{Learning.Betting.ae_exists_bound_subgaussianTest_of_le_abs}
+  \leanok
+  \uses{lem:subgTest_le_rpow, thm:sos_crit_subg_filtration, lem:iid_of_plug_in}
+  Let $P$ be such that $X - m$ is $1$-sub-Gaussian under $P$, $X_n$ i.i.d.\ with law $P$, and
+  $\eps > 0$. Almost surely, $0 \le M^\lambda_n \le \max(M^{m+\eps}_n, M^{m-\eps}_n) \to 0$ for all
+  $\lambda$ with $\abs{\lambda - m} \ge \eps$ and all $n$ large enough.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $M^{m\pm\eps}_n \to 0$ a.s.\ by Theorem~\ref{thm:sos_crit_subg_filtration} (constant
+  strategies, $\sum \eps^2 = \infty$), so both are eventually at most $1$, and then
+  Lemma~\ref{lem:subgTest_le_rpow} applies.
+\end{proof}
+
+\begin{lemma}[Small alternatives have a small limit]
+  \label{lem:mixture_small_subg}
+  \lean{Learning.Betting.exists_ae_tendsto_setIntegral_subgaussianTest,
+    Learning.Betting.integrable_subgaussianTest, Learning.Betting.subgaussianTest_le_exp_sq}
+  \leanok
+  \uses{lem:mixture_small, lem:exp_subg_supermartingale, lem:iid_of_plug_in}
+  In the setting of Lemma~\ref{lem:mixture_large_subg}, let $\pi$ be a finite measure on $\R$ and
+  $B \subseteq \R$. Then $\lambda \mapsto M^\lambda_n$ is $\pi$-integrable (it is continuous and
+  bounded by $\exp(S_n^2/2)$, $S_n = \sum_{k<n} (X_k - m)$), and $\int_B M^\lambda_n \,
+  d\pi(\lambda)$ converges a.s.\ to a limit $L_B \ge 0$ with $\E[L_B] \le \pi(B)$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\log M^\lambda_n = (\lambda - m) S_n - n (\lambda - m)^2 / 2 \le S_n^2/2$. Each $M^\lambda$ is a
+  positive supermartingale for the past filtration with $M^\lambda_0 = 1$
+  (Lemma~\ref{lem:exp_subg_supermartingale}), jointly measurable in $(\lambda, \omega)$; apply the
+  general form of Lemma~\ref{lem:mixture_small}.
 \end{proof}

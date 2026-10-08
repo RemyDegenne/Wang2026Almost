@@ -5,6 +5,8 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.AGrapaLimit
+public import Wang2026Almost.LeanMachineLearning.Betting.PlugIn
 public import Wang2026Almost.LeanMachineLearning.Betting.Strategies
 public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
@@ -44,6 +46,11 @@ theorem agrapa_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : �
         (fun _ ↦ P') (gaussianReal 0 ((Var[id; P])⁻¹).toNNReal) ∧
       IsBigOmegaInProb P' (agrapaFraction C m X) (fun n ↦ (n : ℝ) ^ (-1 / 2 : ℝ)) ∧
       ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m (agrapaFraction C m X) X n ω) atTop (𝓝 0) := by
-  sorry
+  have hm01 := mem_Ioo_of_variance_pos hP hm hvar
+  have hΩ := isBigOmegaInProb_agrapaFraction hP hm hvar hC.1 hX hindep hlaw
+  refine ⟨tendstoInDistribution_sqrt_mul_agrapaFraction hP hm hvar hC.1 hX hindep hlaw, hΩ, ?_⟩
+  exact tendsto_wealth_zero_of_isBigOmega_of_isPlugIn hP hm (ne_dirac_of_variance_pos hvar) hX
+    hindep hlaw (isPlugIn_agrapaFraction C m X) (fun n ↦ ae_of_all _ fun ω ↦
+      agrapaFraction_mem_fractionRange hm01 ⟨hC.1.le, hC.2.le⟩ X n ω) (Or.inl hΩ)
 
 end Wang2026Almost

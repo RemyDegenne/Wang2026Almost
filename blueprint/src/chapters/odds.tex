@@ -5,46 +5,100 @@
 
 \begin{lemma}
   \label{lem:measurable_hindsightLogWealth}
+  \lean{Learning.Betting.measurable_hindsightLogWealth, Learning.Betting.ciSup_Icc_eq_ciSup_rat}
+  \leanok
   \uses{def:hindsight}
   If $m \in (0,1)$ and the $X_k$ are measurable, $L^*_n$ is measurable.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\lambda \mapsto W^\lambda_n$ is continuous (a polynomial), so its supremum over the interval
   $\Fr$ (with nonempty interior) equals its supremum over the countable dense subset
   $\Fr \cap \mathbb Q$, a countable supremum of measurable functions.
+\end{proof}
+
+\begin{lemma}[$\chi^2$ limit of $S_n^2/V_n$]
+  \label{lem:chisq_sq_div}
+  \lean{Learning.Betting.tendstoInDistribution_sq_sum_sub_div,
+    Learning.Betting.gaussianReal_map_sq_mul_inv}
+  \leanok
+  \uses{lem:clt_hasLaw, lem:slln_hasLaw, lem:slutsky, lem:gaussian_sq, lem:null_basic}
+  Under a null distribution on $[0,1]$ with $\sigma^2 > 0$, $S_n^2/V_n \to \chi^2_1$ in
+  distribution.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $S_n^2/V_n = (S_n/\sqrt n)^2 \cdot (n / V_n)$; the CLT, $n/V_n \to \sigma^{-2}$ a.s.\ (strong law),
+  Slutsky's lemma with the continuous map $(x, y) \mapsto x^2 y$, and the image of
+  $\gaussian(0, \sigma^2)$ by $x \mapsto x^2/\sigma^2$ is $\chi^2_1$ (Lemma~\ref{lem:gaussian_sq}).
 \end{proof}
 
 \begin{theorem}[$\chi^2$ limit, Theorem 5.1]
   \label{thm:chisq_klinf}
   \lean{Wang2026Almost.tendstoInDistribution_hindsightLogWealth}
   \leanok
-  \uses{lem:good_event, lem:hindsight_value, lem:measurable_hindsightLogWealth, lem:clt, lem:slutsky,
-    lem:slln, lem:gaussian_sq, lem:null_basic}
+  \uses{lem:good_event, lem:hindsight_value, lem:measurable_hindsightLogWealth, lem:chisq_sq_div,
+    lem:slutsky, lem:null_basic}
   Let $P$ be a non-degenerate distribution on $[0,1]$ with mean $m$ and $X_n$ i.i.d.\ with law $P$.
   Then $2 L^*_n$ converges in distribution to $\chi^2_1$.
 \end{theorem}
 
 \begin{proof}
+  \leanok
   On the event of Lemma~\ref{lem:good_event} (probability one), Lemma~\ref{lem:hindsight_value}
-  gives $2L^*_n - S_n^2/V_n \to 0$. Write $S_n^2/V_n = (S_n/(\sigma\sqrt n))^2 \cdot
-  \frac{n\sigma^2}{V_n}$: the CLT, the continuous map $x \mapsto x^2$ and
-  Lemma~\ref{lem:gaussian_sq} give $(S_n/(\sigma\sqrt n))^2 \to \chi^2_1$ in distribution; by the
-  strong law $V_n/(n\sigma^2) \to 1$ a.s.; Slutsky's lemma (twice) concludes.
+  gives $2L^*_n - S_n^2/V_n \to 0$; almost sure convergence implies convergence in probability, and
+  Lemma~\ref{lem:chisq_sq_div} with Slutsky's lemma concludes.
+\end{proof}
+
+\begin{lemma}[The best-in-hindsight log-wealth is nonnegative]
+  \label{lem:hindsight_nonneg}
+  \lean{Learning.Betting.bddAbove_fixedWealth, Learning.Betting.one_le_iSup_fixedWealth,
+    Learning.Betting.hindsightLogWealth_nonneg, Learning.Betting.neg_log_wealth_le_logRegret}
+  \leanok
+  \uses{def:hindsight, def:fraction_range}
+  Let $m \in [0,1]$. For all $n$, $\lambda \mapsto W^\lambda_n$ is bounded above on $\Fr$ and
+  $\sup_{\lambda \in \Fr} W^\lambda_n \ge W^0_n = 1$. Hence $L^*_n \ge 0$ and, for every strategy,
+  $R_n \ge -\log W_n$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\lambda \mapsto W^\lambda_n$ is a polynomial, hence continuous, on the compact interval $\Fr$,
+  which contains $0$ since $m \in [0, 1]$.
+\end{proof}
+
+\begin{lemma}[Unbounded regret, pathwise]
+  \label{lem:unbounded_regret_pathwise}
+  \lean{Learning.Betting.tendsto_logRegret_atTop,
+    Learning.Betting.not_bddAbove_logRegret_of_tendsto_zero}
+  \leanok
+  \uses{lem:hindsight_nonneg}
+  Let $m \in [0,1]$ and $\omega$ such that $W_n(\omega) \to 0$. Either $W_n(\omega) = 0$ for some
+  $n$, or $R_n(\omega) \to \infty$; in particular $(R_n(\omega))_n$ is unbounded.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  If $W_n(\omega) \ne 0$ for all $n$, then $\log W_n(\omega) \to -\infty$ and
+  $R_n(\omega) \ge -\log W_n(\omega)$ by Lemma~\ref{lem:hindsight_nonneg}.
 \end{proof}
 
 \begin{theorem}[Unbounded regret, Theorem 5.1]
   \label{thm:unbounded_regret}
   \lean{Wang2026Almost.not_bddAbove_logRegret_of_tendsto_wealth_zero}
   \leanok
-  \uses{def:hindsight}
+  \uses{def:hindsight, lem:unbounded_regret_pathwise}
   Let $m \in (0,1)$. If $W_n \to 0$ almost surely, then almost surely either $W_n = 0$ for some $n$,
   or the regret $R_n = L^*_n - \log W_n$ is unbounded.
 \end{theorem}
 
 \begin{proof}
-  Pathwise: $\lambda \mapsto W^\lambda_n$ is continuous on the compact $\Fr$, hence bounded, and
-  $W^0_n = 1$, so $L^*_n \ge 0$. If $W_n > 0$ for all $n$ and $W_n \to 0$, then $\log W_n \to
+  \leanok
+  Pathwise (Lemma~\ref{lem:unbounded_regret_pathwise}): $\lambda \mapsto W^\lambda_n$ is
+  continuous on the compact $\Fr$, hence bounded, and
+  $W^0_n = 1$, so $L^*_n \ge 0$. If $W_n \ne 0$ for all $n$ and $W_n \to 0$, then $\log W_n \to
   -\infty$ and $R_n \ge -\log W_n \to \infty$.
 \end{proof}
 
@@ -57,6 +111,9 @@
 
 \begin{theorem}[Sum-of-squares criterion II, filtration form]
   \label{thm:sos_crit_subg_filtration}
+  \lean{Learning.Betting.sum_sq_criterion_subgaussian_of_indep,
+    Learning.Betting.supermartingale_subgaussianTest, Learning.Betting.subgaussianTest_eq}
+  \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto, lem:subg_sum_tendsto,
     lem:subg_sum_little_o}
   Let $P$ be such that $X - m$ is $1$-sub-Gaussian under $P$, $X$ i.i.d.\ along $\F$ with law $P$,
@@ -66,6 +123,7 @@
 \end{theorem}
 
 \begin{proof}
+  \leanok
   Since $(x - m)^2 - (x - \lambda)^2 = 2(\lambda - m)(x - m) - (\lambda - m)^2$,
   $\log M^\lambda_n = T_n - A_n/2$ with $T_n = \sum_{k<n} (\lambda_k - m)(X_k - m)$ and $A_n =
   \sum_{k<n} (\lambda_k - m)^2$. By Lemma~\ref{lem:exp_subg_supermartingale} ($t = 1$, $c = 1$),
@@ -88,13 +146,15 @@
 \end{theorem}
 
 \begin{proof}
+  \leanok
   Theorem~\ref{thm:sos_crit_subg_filtration} with Lemma~\ref{lem:iid_of_run}.
 \end{proof}
 
 \begin{remark}
   The paper assumes $P$ non-degenerate; the proof does not use it. The paper's proof uses the
   martingale strong law of large numbers on $\{A_\infty = \infty\}$; the exponential
-  supermartingale with $t = 1/2$ gives the needed upper bound directly.
+  bound of Lemma~\ref{lem:subg_sum_little_o} with $\eps = 1/4$, a consequence of the exponential
+  supermartingales, gives the needed upper bound directly.
 \end{remark}
 
 \begin{theorem}[No-cash criterion II, Theorem 5.3]
@@ -102,13 +162,17 @@
   \lean{Wang2026Almost.tendsto_subgaussianMixtureTest}
   \leanok
   \uses{thm:sos_crit_subg_filtration, lem:subgTest_le_rpow, lem:supermartingale_integral,
-    lem:supermartingale_tendsto, lem:exp_subg_supermartingale}
+    lem:supermartingale_tendsto, lem:exp_subg_supermartingale, lem:nocash_abstract,
+    lem:mixture_large_subg, lem:mixture_small_subg}
   Let $P$ be a $1$-sub-Gaussian distribution with mean $m$, $X_n$ i.i.d.\ with law $P$, and $\pi$ a
   probability measure on $\R$. Then $M^\pi_n \to \pi(\{m\})$ almost surely.
 \end{theorem}
 
 \begin{proof}
-  As for Theorem~\ref{thm:nocash}, with $M^m_n = 1$: for $\abs{\lambda - m} \ge \eps$,
+  \leanok
+  Lemma~\ref{lem:nocash_abstract} with $c = m$ and $F^\lambda_n = M^\lambda_n$ ($M^m_n = 1$), with
+  Lemmas~\ref{lem:mixture_large_subg} and~\ref{lem:mixture_small_subg}. In detail: as for
+  Theorem~\ref{thm:nocash}, with $M^m_n = 1$: for $\abs{\lambda - m} \ge \eps$,
   $M^\lambda_n \le M^{m \pm \eps}_n$ once $M^{m \pm \eps}_n \le 1$ (Lemma~\ref{lem:subgTest_le_rpow}),
   and $M^{m\pm\eps}_n \to 0$ a.s.\ by Theorem~\ref{thm:sos_crit_subg_filtration} (constant
   strategies); the mixture over $\{0 < \abs{\lambda - m} < \eps\}$ is a nonnegative supermartingale

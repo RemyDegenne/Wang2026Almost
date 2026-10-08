@@ -4,9 +4,10 @@ Machine-checkable verification, with [leanprover/comparator](https://github.com/
 that this repository proves the headline results claimed in [`formalization.yaml`](../formalization.yaml)
 without having to read or trust the Lean development in `Wang2026Almost/`.
 
-**Status.** Phase 1 (2026-10-08): the 16 challenges are generated and compile
-(`lake build Comparator`); the headline theorems are still `sorry` in the project, so comparator
-fails on `sorryAx` until phase 2 proves them.
+**Status.** Phase 2 complete (2026-10-08): the project proves the 16 headline theorems with no
+`sorry` and the standard axioms only; the challenges, regenerated after phase 2, compile
+(`lake build Comparator`). The full comparator run (`scripts/comparator-verify.sh`) remains to be
+done.
 
 Each challenge is one self-contained file whose transitive imports resolve to Mathlib and Lean
 core only, the shape the [Palomar registry](https://palomar-registry.org/) enforces: no LML, no

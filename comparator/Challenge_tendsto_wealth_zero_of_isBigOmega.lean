@@ -20,9 +20,26 @@ public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.MeasureTheory.Measure.Portmanteau
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
+public import Mathlib.Probability.HasLaw
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Probability.Martingale.Convergence
+public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.Analysis.PSeries
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Probability.Process.Adapted
+public import Mathlib.Topology.Order.Compact
+public import Mathlib.Order.Filter.Extr
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.Martingale.BorelCantelli
+public import Mathlib.Probability.Moments.Variance
 
 /-! # Standalone extraction for `Wang2026Almost.tendsto_wealth_zero_of_isBigOmega`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -39,6 +56,8 @@ namespace MeasureTheory
 end MeasureTheory
 namespace ProbabilityTheory
 end ProbabilityTheory
+namespace Real
+end Real
 namespace Learning
 end Learning
 namespace Learning.Betting
@@ -210,6 +229,7 @@ end
 -- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
+open scoped Topology
 namespace ProbabilityTheory
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} (P : Measure Ω)
 

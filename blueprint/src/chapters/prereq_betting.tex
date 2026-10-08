@@ -5,31 +5,40 @@
 
 \begin{lemma}
   \label{lem:log_taylor}
+  \lean{Real.abs_log_one_add_sub_le}
+  \leanok
   For $\abs x \le 1/2$, $\abs{\log(1+x) - x + x^2/2} \le 2\abs x^3$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Mathlib's \texttt{Real.abs\_log\_sub\_add\_sum\_range\_le} with two terms gives the bound
   $\abs x^3/(1 - \abs x)$.
 \end{proof}
 
 \begin{lemma}
   \label{lem:log_ge_sub_sq}
-  \uses{lem:log_taylor}
+  \lean{Real.sub_sq_le_log_one_add}
+  \leanok
   For $\abs x \le 1/2$, $\log(1 + x) \ge x - x^2$.
 \end{lemma}
 
 \begin{proof}
-  By Lemma~\ref{lem:log_taylor}, $\log(1+x) \ge x - x^2/2 - 2\abs x^3 \ge x - x^2$ since
-  $2\abs x \le 1$.
+  \leanok
+  $g(x) = \log(1+x) - x + x^2$ satisfies $g(0) = 0$ and $g'(x) = \frac{x(1 + 2x)}{1 + x}$, of the
+  sign of $x$ on $[-1/2, 1/2]$. (Lemma~\ref{lem:log_taylor} alone is not enough: it gives
+  $\log(1+x) \ge x - x^2/2 - 2\abs x^3$, which is $\ge x - x^2$ only for $\abs x \le 1/4$.)
 \end{proof}
 
 \begin{lemma}
   \label{lem:log_le_sub_mul_sq}
+  \lean{Real.log_one_add_le_sub_mul_sq}
+  \leanok
   For $M \ge 0$ and $-1 < x \le M$, $\log(1+x) \le x - \frac{x^2}{2(1+M)}$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $g(x) = x - \frac{x^2}{2(1+M)} - \log(1+x)$ satisfies $g(0) = 0$ and
   $g'(x) = \frac{x(M - x)}{(1+x)(1+M)}$, of the sign of $x$ on $(-1, M]$.
 \end{proof}
@@ -38,6 +47,10 @@
 
 \begin{lemma}[Bernoulli domination of fixed-fraction wealths]
   \label{lem:fixedWealth_le_rpow}
+  \lean{Learning.Betting.prod_one_add_mul_le_rpow, Learning.Betting.fixedWealth_le_rpow,
+    Learning.Betting.fixedWealth_le_rpow_of_le_neg, Learning.Betting.fixedWealth_le_of_le_one,
+    Learning.Betting.fixedWealth_le_of_le_one_of_le_neg}
+  \leanok
   Let $0 < \eps \le \lambda$ and reals $y_k$ with $1 + \lambda y_k \ge 0$ and $\eps y_k \ge -1$ for
   $k < n$. Then $\prod_{k<n}(1 + \lambda y_k) \le \big(\prod_{k<n} (1 + \eps y_k)\big)^{\lambda/\eps}$.
   In particular, for $x_k \in [0, 1]$ and $\lambda \in \Fr$, $W^\lambda_n \le (W^\eps_n)^{\lambda/\eps}
@@ -45,18 +58,27 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Bernoulli's inequality $1 + p s \le (1+s)^p$ for $s \ge -1$, $p \ge 1$ (Mathlib's
   \texttt{one\_add\_mul\_self\_le\_rpow\_one\_add}) with $s = \eps y_k$, $p = \lambda/\eps$, factor
-  by factor; then $u^p \le u$ for $u \in [0, 1]$, $p \ge 1$.
+  by factor; then $u^p \le u$ for $u \in [0, 1]$, $p \ge 1$. In the betting form, $y_k = x_k - m$
+  and $\eps \in \Fr$ since $0 < \eps \le \lambda$; the negative case is the positive one for
+  $-y_k$.
 \end{proof}
 
 \begin{lemma}[Domination of sub-Gaussian test processes]
   \label{lem:subgTest_le_rpow}
+  \lean{Learning.Betting.subgaussianTest_const, Learning.Betting.subgaussianTest_le_rpow,
+    Learning.Betting.subgaussianTest_le_rpow_of_le_sub,
+    Learning.Betting.subgaussianTest_le_of_le_one,
+    Learning.Betting.subgaussianTest_le_of_le_one_of_le_sub}
+  \leanok
   For $u \ge \eps > 0$, $M^{m+u}_n \le (M^{m+\eps}_n)^{u/\eps}$, hence $M^{m+u}_n \le M^{m+\eps}_n$
   when $M^{m+\eps}_n \le 1$; symmetrically for $u \le -\eps$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\log M^{m+u}_n = u S_n - n u^2/2 \le \frac u\eps (\eps S_n - n\eps^2/2)$ since $u \ge \eps$.
 \end{proof}
 
@@ -64,6 +86,8 @@
 
 \begin{lemma}
   \label{lem:wealth_supermartingale}
+  \lean{Learning.Betting.supermartingale_wealth}
+  \leanok
   \uses{lem:supermartingale_of_markov, lem:wealth_basic}
   Let $X$ be i.i.d.\ along $\F$ with a law $P$ on $[0,1]$ with mean $m \in (0,1)$, and $\lambda$
   adapted to $\F$ with values in $\Fr$ a.s. Then $W^\lambda$ is a nonnegative supermartingale (in
@@ -71,6 +95,7 @@
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $W_{n+1} = W_n (1 + \lambda_n(X_n - m))$ a.s.\ with a nonnegative factor, and
   $\int W_n(1 + \lambda_n(x - m)) \, dP(x) = W_n$. Apply Lemma~\ref{lem:supermartingale_of_markov}.
 \end{proof}
@@ -84,58 +109,97 @@ n\sigma^2 = O(\sqrt n \log n)$, and let $\delta_n = n^{-1/3}$.
 
 \begin{lemma}[Quadratic expansion]
   \label{lem:hindsight_quadratic}
+  \lean{Learning.Betting.abs_sum_log_one_add_mul_sub_le,
+    Learning.Betting.prod_one_add_mul_pos_and_log_eq}
+  \leanok
   \uses{lem:log_taylor}
   If $\abs\lambda \le 1/2$, then $\abs{f_n(\lambda) - \lambda S_n + \lambda^2 V_n/2} \le 2 n
-  \abs\lambda^3$.
+  \abs\lambda^3$. If $\abs\lambda < 1$, then $F_n(\lambda) > 0$ and $\log F_n(\lambda) =
+  f_n(\lambda)$.
 \end{lemma}
 
 \begin{proof}
-  Lemma~\ref{lem:log_taylor} term by term, with $\abs{y_k} \le 1$.
+  \leanok
+  Lemma~\ref{lem:log_taylor} term by term, with $\abs{y_k} \le 1$. For $\abs\lambda < 1$, every
+  factor $1 + \lambda y_k \ge 1 - \abs\lambda$ is positive.
 \end{proof}
 
 \begin{lemma}[Large bets lose in hindsight]
   \label{lem:hindsight_neg}
+  \lean{Learning.Betting.eventually_prod_one_add_mul_lt_one,
+    Learning.Betting.eventually_fixedWealth_lt_one}
+  \leanok
   \uses{lem:hindsight_quadratic, lem:fixedWealth_le_rpow}
   For all large $n$, $F_n(\lambda) < 1$ for every $\lambda \in \Fr$ with $\abs\lambda \ge \delta_n$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   By Lemma~\ref{lem:hindsight_quadratic},
   $f_n(\pm\delta_n) \le \delta_n \abs{S_n} - \delta_n^2 V_n/2 + 2 n\delta_n^3$, and with the
   assumptions $\delta_n\abs{S_n} = O(n^{1/6}\log n)$, $\delta_n^2 V_n \sim \sigma^2 n^{1/3}$, $n
   \delta_n^3 = 1$; so $F_n(\pm\delta_n) < 1$ for large $n$. For $\lambda \ge \delta_n$ in $\Fr$,
   Lemma~\ref{lem:fixedWealth_le_rpow} gives $F_n(\lambda) \le F_n(\delta_n)^{\lambda/\delta_n} < 1$,
-  and symmetrically.
+  and symmetrically. (In Lean, the computations are done in the variables $t = n^{1/6} \to \infty$
+  and $b = \log n / t \to 0$, for which $n = t^6$, $\sqrt n = t^3$, $\delta_n = t^{-2}$,
+  $\log n = bt$, $\abs{S_n} \le C b t^4$ and $\abs{V_n - t^6 \sigma^2} \le C b t^4$.)
+\end{proof}
+
+\begin{lemma}[First-order condition]
+  \label{lem:hindsight_first_order}
+  \lean{Learning.Betting.exists_abs_le_mul_eq_of_forall_prod_le}
+  \leanok
+  \uses{lem:hindsight_quadratic}
+  Let $\abs{y_k} \le 1$ for $k < n$ and $\abs g < 1/2$ with $F_n(\lambda) \le F_n(g)$ for all
+  $\abs\lambda < 1/2$. Then $g V_n = S_n + g^2 R$ for some $\abs R \le 2n$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  On $(-1/2, 1/2)$, $F_n > 0$ and $\log F_n = f_n$ (Lemma~\ref{lem:hindsight_quadratic}), so $g$
+  is a local maximum of the differentiable $f_n$ and
+  $0 = f_n'(g) = \sum_{k<n} \frac{y_k}{1 + g y_k} = S_n - g V_n + g^2 R$ with
+  $R = \sum_{k<n} \frac{y_k^3}{1 + gy_k}$; $\abs R \le 2n$ since $1 + g y_k \ge 1/2$.
 \end{proof}
 
 \begin{lemma}[Location of the hindsight maximizer]
   \label{lem:grapa_location}
-  \uses{lem:hindsight_neg}
-  There is $K$ such that for all large $n$, every maximizer $g$ of $F_n$ on $\Fr$ satisfies
-  $\abs{g} < \delta_n$, $\abs g \le K \log n / \sqrt n$ and $\abs{g - S_n/V_n} \le K \log^2 n / n$.
+  \lean{Learning.Betting.eventually_abs_le_of_isMaxOn,
+    Learning.Betting.eventually_abs_sub_div_le_of_isMaxOn,
+    Learning.Betting.eventually_abs_le_of_isMaxOn_fixedWealth,
+    Learning.Betting.eventually_abs_sub_div_le_of_isMaxOn_fixedWealth}
+  \leanok
+  \uses{lem:hindsight_neg, lem:hindsight_first_order}
+  There is $K$ such that for all large $n$, every maximizer $g$ of $F_n$ on $\Fr$ is in the
+  interior of $\Fr$ and satisfies $\abs{g} < \delta_n$, $\abs g \le K \log n / \sqrt n$ and
+  $\abs{g - S_n/V_n} \le K \log^2 n / n$.
 \end{lemma}
 
 \begin{proof}
-  $F_n(g) \ge F_n(0) = 1$, so $\abs g < \delta_n$ by Lemma~\ref{lem:hindsight_neg}; $g$ is an interior
-  local maximum of the differentiable $F_n > 0$ near $g$, so
-  $0 = \sum_{k<n} \frac{y_k}{1 + g y_k} = S_n - g V_n + g^2 R_n$ with
-  $R_n = \sum_k \frac{y_k^3}{1 + gy_k}$, $\abs{R_n} \le 2n$. Hence
-  $\abs g (V_n - 2n\delta_n) \le \abs{S_n}$, so $\abs g = O(\log n/\sqrt n)$, and
+  \leanok
+  $F_n(g) \ge F_n(0) = 1$, so $\abs g < \delta_n$ by Lemma~\ref{lem:hindsight_neg}; for large $n$,
+  $\delta_n \le 1/2$ and $[-1, 1]$ is in the interior of $\Fr$, so
+  Lemma~\ref{lem:hindsight_first_order} gives $g V_n = S_n + g^2 R_n$ with $\abs{R_n} \le 2n$.
+  Hence $\abs g (V_n - 2n\delta_n) \le \abs{S_n}$, so $\abs g = O(\log n/\sqrt n)$, and
   $\abs{g - S_n/V_n} \le 2n g^2/V_n = O(\log^2 n / n)$.
 \end{proof}
 
 \begin{lemma}[Value of the hindsight log-wealth]
   \label{lem:hindsight_value}
-  \uses{lem:hindsight_quadratic, lem:hindsight_neg}
+  \lean{Learning.Betting.tendsto_two_mul_log_iSup_sub,
+    Learning.Betting.tendsto_two_mul_hindsightLogWealth_sub}
+  \leanok
+  \uses{lem:hindsight_quadratic, lem:grapa_location}
   $2 \log \sup_{\lambda \in \Fr} F_n(\lambda) - S_n^2/V_n \to 0$.
 \end{lemma}
 
 \begin{proof}
-  Upper bound: by Lemma~\ref{lem:hindsight_neg} the supremum is attained in $(-\delta_n,
-  \delta_n)$, where by Lemma~\ref{lem:hindsight_quadratic}
-  $f_n(\lambda) \le \lambda S_n - \lambda^2 (V_n/2 - 2n\delta_n) \le \frac{S_n^2}{2(V_n -
-  4n\delta_n)}$, and $\frac{S_n^2}{V_n - 4n\delta_n} - \frac{S_n^2}{V_n} = O(\log^2 n \cdot
-  n^{-1/3})$. Lower bound: $\lambda^* = S_n/V_n = O(\log n/\sqrt n)$ is in $\Fr$ for large $n$ and
-  $f_n(\lambda^*) \ge \frac{S_n^2}{2V_n} - 2n\abs{\lambda^*}^3 = \frac{S_n^2}{2V_n} - O(\log^3 n /
-  \sqrt n)$.
+  \leanok
+  $F_n$ is continuous on the compact $\Fr$, so the supremum is $F_n(g)$ for a maximizer $g$, and
+  $\abs g \le K \log n / \sqrt n$ for large $n$ by Lemma~\ref{lem:grapa_location}; also
+  $\lambda^* = S_n/V_n = O(\log n/\sqrt n)$ is in $\Fr$ for large $n$. By
+  Lemma~\ref{lem:hindsight_quadratic}, upper bound:
+  $f_n(g) \le g S_n - g^2 V_n/2 + 2n\abs g^3 \le \frac{S_n^2}{2V_n} + O(\log^3 n / \sqrt n)$
+  (since $(S_n - g V_n)^2 \ge 0$); lower bound: $f_n(g) \ge f_n(\lambda^*) \ge \frac{S_n^2}{2V_n}
+  - 2n\abs{\lambda^*}^3 = \frac{S_n^2}{2V_n} - O(\log^3 n / \sqrt n)$.
 \end{proof}

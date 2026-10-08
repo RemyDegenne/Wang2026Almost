@@ -25,6 +25,30 @@ public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Distributions.Gamma
+public import Mathlib.Analysis.Calculus.LocalExtr.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.Topology.Algebra.Order.Archimedean
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.Order.Filter.Extr
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Probability.Martingale.BorelCantelli
+public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.MeasureTheory.Measure.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.Probability.CentralLimitTheorem
+public import Mathlib.Probability.StrongLaw
+public import Mathlib.Probability.Moments.SubGaussian
+public import Mathlib.Analysis.PSeries
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Probability.Moments.ComplexMGF
+public import Mathlib.Probability.Process.Adapted
+public import Mathlib.Topology.Order.Compact
 
 /-! # Standalone extraction for `Wang2026Almost.not_bddAbove_logRegret_of_tendsto_wealth_zero`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -86,10 +110,12 @@ open scoped Topology
 namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P'] {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
+set_option linter.unusedSectionVars false in
 /-- **Theorem 5.1, unbounded regret** (Wang, Agrawal, Ramdas 2026): a null-bankrupt betting
 strategy has unbounded regret against the best-in-hindsight wealth on almost all paths:
 `sup_n (L*_n - log W_n) = ∞` (the wealth may also vanish after finitely many rounds, in which
 case the regret is infinite from that round on). -/
+@[nolint unusedArguments]
 theorem not_bddAbove_logRegret_of_tendsto_wealth_zero (hm : m ∈ Set.Ioo 0 1)
     {lam X : ℕ → Ω → ℝ} (h : ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0)) :
     ∀ᵐ ω ∂P', (∃ n, wealth m lam X n ω = 0) ∨

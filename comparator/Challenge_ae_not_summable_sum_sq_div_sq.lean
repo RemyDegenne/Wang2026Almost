@@ -1,8 +1,18 @@
 module
 
+public import Mathlib.Probability.CentralLimitTheorem
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
+public import Mathlib.Analysis.PSeries
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
+public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import Mathlib.Analysis.Asymptotics.Defs
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+public import Mathlib.MeasureTheory.Measure.Portmanteau
+public import Mathlib.MeasureTheory.Measure.Real
 
 /-! # Standalone extraction for `Wang2026Almost.ae_not_summable_sum_sq_div_sq`
 Definitions are copied verbatim; theorem proofs are replaced by `sorry`.
@@ -25,7 +35,7 @@ end Wang2026Almost
 -- ═══ Wang2026Almost.WAR2026.Corollary2_3 ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory Filter
-open scoped ProbabilityTheory
+open scoped ProbabilityTheory NNReal
 namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
 

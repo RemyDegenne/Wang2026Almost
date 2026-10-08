@@ -20,6 +20,14 @@
   probability.
 \end{lemma}
 
+\begin{lemma}[Portmanteau theorem, closed sets]
+  \label{lem:portmanteau_closed}
+  \lean{MeasureTheory.ProbabilityMeasure.limsup_measure_closed_le_of_tendsto}
+  \mathlibok
+  If the probability measures $\mu_n$ converge weakly to $\mu$ and $F$ is closed, then
+  $\limsup_n \mu_n(F) \le \mu(F)$.
+\end{lemma}
+
 \begin{lemma}[Strong law of large numbers]
   \label{lem:slln}
   \lean{ProbabilityTheory.strong_law_ae}
@@ -28,82 +36,237 @@
   $\frac1n \sum_{k<n} X_k \to \E X_0$ almost surely.
 \end{lemma}
 
+\begin{lemma}[Central limit theorem, law form]
+  \label{lem:clt_hasLaw}
+  \lean{ProbabilityTheory.tendstoInDistribution_sum_sub_div_sqrt}
+  \leanok
+  \uses{lem:clt}
+  If the $X_n$ are i.i.d.\ with a square integrable law $P$, then
+  $\frac{1}{\sqrt n}\sum_{k<n}(X_k - \E_P X)$ converges in distribution to $\gaussian(0, \Var_P)$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Lemma~\ref{lem:clt}, with the mean and variance of $X_0$ computed from its law.
+\end{proof}
+
+\begin{lemma}[Slutsky's lemma, deterministic factors]
+  \label{lem:slutsky_det}
+  \lean{MeasureTheory.TendstoInDistribution.mul_add_of_tendsto,
+    MeasureTheory.TendstoInDistribution.of_map_eq}
+  \leanok
+  \uses{lem:slutsky}
+  If $X_n \to Z$ in distribution, $a_n \to a$ and $b_n \to b$, then $a_n X_n + b_n \to aZ + b$ in
+  distribution. Convergence in distribution only depends on the law of the limit.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Lemma~\ref{lem:slutsky} with the deterministic pair $(a_n, b_n)$, which converges in probability.
+\end{proof}
+
+\begin{lemma}[Strong law, law form]
+  \label{lem:slln_hasLaw}
+  \lean{ProbabilityTheory.ae_tendsto_sum_comp_div}
+  \leanok
+  \uses{lem:slln}
+  If the $X_n$ are i.i.d.\ with law $P$ and $f$ is $P$-integrable, then
+  $\frac1n \sum_{k<n} f(X_k) \to \E_P f$ almost surely.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Lemma~\ref{lem:slln} for the i.i.d.\ variables $f(X_k)$.
+\end{proof}
+
 \section{Landau notation in probability}
 
 \begin{lemma}
   \label{lem:isBigOmegaInProb_mono}
+  \lean{ProbabilityTheory.IsBigOmegaInProb.mono}
+  \leanok
   \uses{def:asymp}
   If $Z_n = \Omp(a_n)$ and $b_n \le K a_n$ for large $n$, with $K > 0$, then $Z_n = \Omp(b_n)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\{\abs{Z_n} \ge \delta a_n\} \subseteq \{\abs{Z_n} \ge (\delta/K) b_n\}$.
 \end{proof}
 
 \begin{lemma}
   \label{lem:isBigOmegaInProb_sq}
+  \lean{ProbabilityTheory.IsBigOmegaInProb.sq}
+  \leanok
   \uses{def:asymp}
-  If $Z_n = \Omp(a_n)$ with $a_n \ge 0$, then $Z_n^2 = \Omp(a_n^2)$.
+  If $Z_n = \Omp(a_n)$ with $a_n \ge 0$ for large $n$, then $Z_n^2 = \Omp(a_n^2)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\{\abs{Z_n} \ge \delta a_n\} \subseteq \{Z_n^2 \ge \delta^2 a_n^2\}$.
 \end{proof}
 
 \begin{lemma}
-  \label{lem:isBigOmegaInProb_of_tendstoInDistribution}
+  \label{lem:isBigOmegaInProb_comp}
+  \lean{ProbabilityTheory.IsBigOmegaInProb.comp_tendsto,
+    ProbabilityTheory.IsBigOmegaInProb.congr_ae}
+  \leanok
   \uses{def:asymp}
+  If $Z_n = \Omp(a_n)$ and $f(n) \to \infty$, then $Z_{f(n)} = \Omp(a_{f(n)})$. If $Z_n = \Omp(a_n)$
+  and $Z_n = Z'_n$ almost surely for every $n$, then $Z'_n = \Omp(a_n)$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  An eventual property along $n \to \infty$ holds along $f(n) \to \infty$; the events
+  $\{\abs{Z_n} \ge \delta a_n\}$ and $\{\abs{Z'_n} \ge \delta a_n\}$ have the same probability.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:isBigOmegaInProb_of_tendstoInDistribution}
+  \lean{ProbabilityTheory.isBigOmegaInProb_of_tendstoInDistribution}
+  \leanok
+  \uses{def:asymp, lem:portmanteau_closed}
   If $a_n > 0$ for large $n$ and $Z_n / a_n$ converges in distribution to a random variable $G$ with
   $\Prob(G = 0) = 0$, then $Z_n = \Omp(a_n)$.
 \end{lemma}
 
 \begin{proof}
-  For $\delta > 0$, by the portmanteau theorem for the closed set $[-\delta, \delta]$,
+  \leanok
+  For $\delta > 0$, by the portmanteau theorem (Lemma~\ref{lem:portmanteau_closed}) for the closed
+  set $[-\delta, \delta]$,
   $\limsup_n \Prob(\abs{Z_n/a_n} \le \delta) \le \Prob(\abs G \le \delta)$, which tends to
-  $\Prob(G = 0) = 0$ as $\delta \to 0$. Given $\eps$, choose $\delta$ with
-  $\Prob(\abs G \le \delta) < \eps$.
+  $\Prob(G = 0) = 0$ as $\delta \to 0$ (continuity from above along $\delta = 1/(k+1)$). Given
+  $\eps$, choose $\delta$ with $\Prob(\abs G \le \delta) < \eps$; then for large $n$,
+  $\Prob(\abs{Z_n} < \delta a_n) \le \Prob(\abs{Z_n/a_n} \le \delta) < \eps$.
 \end{proof}
 
 \section{Series and sequences}
 
 \begin{lemma}[Ces\`aro means of a summable sequence]
   \label{lem:cesaro_of_summable_div}
+  \lean{tendsto_cesaro_zero_of_summable_div}
+  \leanok
   Let $a_k \in [0, 1]$ with $\sum_{k \ge 1} a_k/k < \infty$. Then $\frac1n \sum_{k<n} a_k \to 0$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   Given $\eta > 0$ choose $N \ge 1$ with $\sum_{k \ge N} a_k/k < \eta$. For $n > N$,
   $\frac1n \sum_{k<n} a_k \le \frac Nn + \sum_{N \le k < n} \frac{a_k}{k} < \frac Nn + \eta$, since
   $\frac1n \le \frac1k$ for $k < n$.
 \end{proof}
 
+\begin{remark}
+  Lemma~\ref{lem:cesaro_of_summable_div} is the special case of Kronecker's lemma used in the
+  paper's proof of Theorem~\ref{thm:sum_of_op}. The formal proof
+  (Lemma~\ref{lem:ae_not_summable_of_isBigOmegaInProb}) uses weighted averages instead and does not
+  need it.
+\end{remark}
+
 \begin{lemma}[Fatou's lemma for sets]
   \label{lem:measure_liminf_le}
-  For measurable sets $B_n$, $\Prob(\liminf_n B_n) \le \liminf_n \Prob(B_n)$.
+  \lean{MeasureTheory.measure_liminf_atTop_le_liminf}
+  \leanok
+  For any sets $B_n$ (measurable or not), $\Prob(\liminf_n B_n) \le \liminf_n \Prob(B_n)$.
 \end{lemma}
 
 \begin{proof}
+  \leanok
   $\liminf_n B_n = \bigcup_N \bigcap_{n \ge N} B_n$ is an increasing union and
   $\Prob(\bigcap_{n \ge N} B_n) \le \inf_{n \ge N} \Prob(B_n)$.
 \end{proof}
 
 \begin{lemma}
   \label{lem:not_summable_inv_mul_log}
+  \lean{Real.not_summable_inv_mul_log}
+  \leanok
   $\sum_{n \ge 2} \frac{1}{n \log n} = \infty$.
 \end{lemma}
 
 \begin{proof}
-  Cauchy condensation: $\sum_k 2^k \frac{1}{2^k k \log 2} = \infty$.
+  \leanok
+  Cauchy condensation (the terms are nonnegative and nonincreasing for $n \ge 2$):
+  $\sum_k 2^k \frac{1}{2^k k \log 2} = \infty$.
+\end{proof}
+
+\section{Divergence of series of nonnegative random variables}
+
+\begin{lemma}[Theorem~\ref{thm:sum_of_op} for general weights]
+  \label{lem:ae_not_summable_of_isBigOmegaInProb}
+  \lean{ProbabilityTheory.ae_not_summable_of_isBigOmegaInProb}
+  \leanok
+  \uses{def:asymp, lem:measure_liminf_le, lem:isBigOmegaInProb_comp}
+  Let $a_n \ge 0$ with $\sum_n a_n = \infty$, and let $(Z_n)$ be a.s.\ nonnegative (a.e.-measurable)
+  random variables with $Z_n = \Omp(a_n)$. Then $\sum_n Z_n = \infty$ almost surely.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Replacing each $Z_n$ by a measurable version (Lemma~\ref{lem:isBigOmegaInProb_comp}), we may
+  assume the $Z_n$ measurable. Let $S_n = \sum_{k<n} a_k$, so $S_n \to \infty$, and
+  $C = \{\sum_n Z_n < \infty\}$. Let $\eps > 0$; there are $\delta > 0$ and $N$ with
+  $\Prob(A_k) \ge 1 - \eps$ for $k \ge N$, where $A_k = \{\abs{Z_k} \ge \delta a_k\}$. Let
+  $U_n = \sum_{k<n} a_k \indic_{A_k^c}$ and $B_n = \{U_n \ge S_n/2\}$.
+
+  On $C$ (and a.s.\ $Z_k \ge 0$), $a_k \indic_{A_k} \le Z_k/\delta$, so
+  $T := \sum_k a_k \indic_{A_k} < \infty$; for $n$ large enough that $S_n \ge 2T$,
+  $U_n = S_n - \sum_{k<n} a_k \indic_{A_k} \ge S_n - T \ge S_n/2$. Hence
+  $C \subseteq \liminf_n B_n$ up to a null set.
+
+  For $n \ge N$, $\E[U_n] = \sum_{k<n} a_k \Prob(A_k^c) \le S_N + \eps S_n$, so by Markov's
+  inequality, when $S_n > 0$,
+  $\Prob(B_n) \le \frac{2 \E[U_n]}{S_n} \le \frac{2 S_N}{S_n} + 2\eps \to 2 \eps$. By
+  Lemma~\ref{lem:measure_liminf_le}, $\Prob(C) \le \liminf_n \Prob(B_n) \le 2\eps$. Since $\eps$ is
+  arbitrary, $\Prob(C) = 0$.
 \end{proof}
 
 \section{The square of a standard Gaussian}
 
-\begin{lemma}
-  \label{lem:gaussian_sq}
-  The image of $\gaussian(0, 1)$ by $x \mapsto x^2$ is the $\chi^2_1$ distribution.
+\begin{lemma}[Moment generating functions determine distributions]
+  \label{lem:mgf_ext}
+  \lean{MeasureTheory.Measure.ext_of_mgf_eq, MeasureTheory.Measure.ext_of_eqOn_mgf}
+  \leanok
+  If two real random variables $X$, $Y$ have moment generating functions that are finite on a
+  neighbourhood of $0$ and agree there, then $X$ and $Y$ have the same law.
 \end{lemma}
 
 \begin{proof}
+  \leanok
+  The complex moment generating functions $z \mapsto \E[e^{zX}]$ and $z \mapsto \E[e^{zY}]$ are
+  analytic on a common vertical strip containing the imaginary axis (Mathlib), and agree on a real
+  neighbourhood of $0$, hence on the whole (connected) strip by the identity theorem. On the
+  imaginary axis they are the characteristic functions, which determine the law (Mathlib).
+\end{proof}
+
+\begin{lemma}
+  \label{lem:gaussian_sq_mgf}
+  \lean{ProbabilityTheory.integral_exp_mul_sq_gaussianReal_zero_one,
+    ProbabilityTheory.not_integrable_exp_mul_sq_gaussianReal}
+  \leanok
+  For $G \sim \gaussian(0, 1)$: if $t < 1/2$, $\E[e^{t G^2}] = (1 - 2t)^{-1/2}$; if $t \ge 1/2$,
+  $e^{tG^2}$ is not integrable.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\frac{1}{\sqrt{2\pi}} e^{-x^2/2} e^{t x^2} = \frac{1}{\sqrt{2\pi}} e^{-(1/2 - t)x^2}$; for
+  $t < 1/2$ this is a Gaussian integral, $\frac{1}{\sqrt{2\pi}} \sqrt{\pi / (1/2 - t)}$, and for
+  $t \ge 1/2$ the integrand is at least $\frac{1}{\sqrt{2\pi}}$.
+\end{proof}
+
+\begin{lemma}
+  \label{lem:gaussian_sq}
+  \lean{ProbabilityTheory.gaussianReal_map_sq}
+  \leanok
+  \uses{lem:mgf_ext, lem:gaussian_sq_mgf}
+  The image of $\gaussian(0, 1)$ by $x \mapsto x^2$ is the $\chi^2_1$ distribution (in Lean,
+  \texttt{chiSquareMeasure 1}, the gamma distribution with shape $1/2$ and rate $1/2$).
+\end{lemma}
+
+\begin{proof}
+  \leanok
   Both measures have moment generating function $t \mapsto (1 - 2t)^{-1/2}$ on $(-\infty, 1/2)$ (a
   Gaussian integral and the gamma integral), which is an open set containing $0$, and none is
   integrable for $t \ge 1/2$; measures on $\R$ are determined by such a moment generating function
