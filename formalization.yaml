@@ -177,5 +177,11 @@ status:
     `Learning.Betting.ae_tendsto_subgaussianMixtureTest_of_hasCondSubgaussianMGF`). Headline
     statements unchanged (the challenges differ only in two imports; `lake build Comparator`
     passes, standard axioms).
+
+    Linter cleanup, 2026-10-09: the library has no `set_option` and no `@[nolint]`. The
+    regret statement of Theorem 5.1 (`not_bddAbove_logRegret_of_tendsto_wealth_zero`) no longer
+    assumes `P'` a probability measure, and Theorem 5.3 (`tendsto_subgaussianMixtureTest`) no
+    longer assumes `P` a probability measure (it is the law of `X n` under `P'`). Both
+    statements are strictly stronger; their challenges are regenerated.
   sorry_count: 0
   sorry_in_definitions: 0

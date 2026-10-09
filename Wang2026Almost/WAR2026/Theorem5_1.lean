@@ -66,14 +66,12 @@ theorem tendstoInDistribution_hindsightLogWealth (hP : ∀ᵐ x ∂P, x ∈ Set.
   exact (hmeas n).sub (((Finset.measurable_sum _ fun k _ ↦ (hX k).sub_const m).pow_const 2).div
     (Finset.measurable_sum _ fun k _ ↦ ((hX k).sub_const m).pow_const 2))
 
--- The statement (frozen by its comparator challenge) includes the section instance
--- `[IsProbabilityMeasure P']`, which the pathwise proof does not use: silence the linters.
-set_option linter.unusedSectionVars false in
+omit [IsProbabilityMeasure P'] in
 /-- **Theorem 5.1, unbounded regret** (Wang, Agrawal, Ramdas 2026): a null-bankrupt betting
 strategy has unbounded regret against the best-in-hindsight wealth on almost all paths:
 `sup_n (L*_n - log W_n) = ∞` (the wealth may also vanish after finitely many rounds, in which
-case the regret is infinite from that round on). -/
-@[nolint unusedArguments]
+case the regret is infinite from that round on). The measure `P'` need not be a probability
+measure. -/
 theorem not_bddAbove_logRegret_of_tendsto_wealth_zero (hm : m ∈ Set.Ioo 0 1)
     {lam X : ℕ → Ω → ℝ} (h : ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0)) :
     ∀ᵐ ω ∂P', (∃ n, wealth m lam X n ω = 0) ∨

@@ -6,8 +6,10 @@ without having to read or trust the Lean development in `Wang2026Almost/`.
 
 **Status.** Phase 2 complete (2026-10-08): the project proves the 16 headline theorems with no
 `sorry` and the standard axioms only; the challenges, regenerated after phase 2, compile
-(`lake build Comparator`). The full comparator run (`scripts/comparator-verify.sh`) remains to be
-done.
+(`lake build Comparator`). In the linter cleanup (2026-10-09) the statements of Theorems 5.1 (regret
+part) and 5.3 were strengthened by dropping unused probability-measure instances, and their
+challenges were regenerated. The full comparator run (`scripts/comparator-verify.sh`) remains to
+be done.
 
 Each challenge is one self-contained file whose transitive imports resolve to Mathlib and Lean
 core only, the shape the [Palomar registry](https://palomar-registry.org/) enforces: no LML, no

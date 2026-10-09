@@ -34,14 +34,12 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
--- The statement (frozen by its comparator challenge) includes the section instance
--- `[IsProbabilityMeasure P]`, which the proof does not use: silence the linters.
-set_option linter.unusedSectionVars false in
+omit [IsProbabilityMeasure P] in
 /-- **Theorem 5.3** (no-cash criterion II, Wang, Agrawal, Ramdas 2026): for i.i.d. observations
 `X` of a `1`-sub-Gaussian law `P` with mean `m`, and a probability measure `π` on `ℝ`, the
 mixture test process `∫ exp (∑_{k < n} ((X k - m)² - (X k - l)²) / 2) ∂π(l)` converges almost
-surely to `π({m})`. The paper assumes `P` non-degenerate; the proof does not use it. -/
-@[nolint unusedArguments]
+surely to `π({m})`. The paper assumes `P` non-degenerate; the proof does not use it. (`P` is a
+probability measure, being the law of `X n` under `P'`.) -/
 theorem tendsto_subgaussianMixtureTest (hP : HasSubgaussianMGF (fun x ↦ x - m) 1 P)
     {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
     (hindep : iIndepFun X P')

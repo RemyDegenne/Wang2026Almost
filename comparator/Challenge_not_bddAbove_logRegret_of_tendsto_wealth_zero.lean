@@ -110,12 +110,12 @@ open scoped Topology
 namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P'] {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-set_option linter.unusedSectionVars false in
+omit [IsProbabilityMeasure P'] in
 /-- **Theorem 5.1, unbounded regret** (Wang, Agrawal, Ramdas 2026): a null-bankrupt betting
 strategy has unbounded regret against the best-in-hindsight wealth on almost all paths:
 `sup_n (L*_n - log W_n) = ∞` (the wealth may also vanish after finitely many rounds, in which
-case the regret is infinite from that round on). -/
-@[nolint unusedArguments]
+case the regret is infinite from that round on). The measure `P'` need not be a probability
+measure. -/
 theorem not_bddAbove_logRegret_of_tendsto_wealth_zero (hm : m ∈ Set.Ioo 0 1)
     {lam X : ℕ → Ω → ℝ} (h : ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0)) :
     ∀ᵐ ω ∂P', (∃ n, wealth m lam X n ω = 0) ∨
