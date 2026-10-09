@@ -43,7 +43,7 @@
 
 \begin{lemma}[Small bets have a small limit]
   \label{lem:mixture_small}
-  \lean{Learning.Betting.exists_ae_tendsto_setIntegral_of_supermartingale,
+  \lean{MeasureTheory.exists_ae_tendsto_setIntegral_of_supermartingale,
     Learning.Betting.exists_ae_tendsto_setIntegral_fixedWealth}
   \leanok
   \uses{lem:supermartingale_integral, lem:supermartingale_tendsto, lem:wealth_supermartingale,
@@ -74,9 +74,9 @@
 
 \begin{lemma}[No-cash criterion, abstract form]
   \label{lem:nocash_abstract}
-  \lean{Learning.Betting.ae_tendsto_integral_of_ball,
-    Learning.Betting.tendsto_integral_of_tendsto_setIntegral_ball,
-    Learning.Betting.ae_tendsto_of_forall_exists_lintegral_le}
+  \lean{MeasureTheory.ae_tendsto_integral_of_ball,
+    MeasureTheory.tendsto_integral_of_tendsto_setIntegral_ball,
+    MeasureTheory.ae_tendsto_of_forall_exists_lintegral_le}
   \leanok
   Let $\pi$ be a finite measure on $\R$, $c \in \R$ and $(F^\lambda_n)_{\lambda \in \R, n \in \N}$
   random variables with $F^c_n = 1$ and $\lambda \mapsto F^\lambda_n$ $\pi$-integrable for all $n$,
@@ -190,24 +190,30 @@ the notation of Chapter~\ref{chap:odds}: $M^\lambda_n = \exp(\sum_{k<n} ((X_k - 
 
 \begin{lemma}[Large alternatives are dominated]
   \label{lem:mixture_large_subg}
-  \lean{Learning.Betting.ae_exists_bound_subgaussianTest_of_le_abs}
+  \lean{Learning.Betting.ae_exists_bound_subgaussianTest_of_le_abs,
+    Learning.Betting.exists_bound_subgaussianTest_of_le_abs,
+    Learning.Betting.ae_exists_bound_subgaussianTest_of_le_abs_of_hasCondSubgaussianMGF}
   \leanok
-  \uses{lem:subgTest_le_rpow, thm:sos_crit_subg_filtration, lem:iid_of_plug_in}
+  \uses{lem:subgTest_le_rpow, thm:sos_crit_subg_filtration, thm:sos_crit_subg_cond,
+    lem:iid_of_plug_in}
   Let $P$ be such that $X - m$ is $1$-sub-Gaussian under $P$, $X_n$ i.i.d.\ with law $P$, and
   $\eps > 0$. Almost surely, $0 \le M^\lambda_n \le \max(M^{m+\eps}_n, M^{m-\eps}_n) \to 0$ for all
-  $\lambda$ with $\abs{\lambda - m} \ge \eps$ and all $n$ large enough.
+  $\lambda$ with $\abs{\lambda - m} \ge \eps$ and all $n$ large enough. The same holds when
+  $\Omega$ is standard Borel, $X_n$ is $\F_{n+1}$-measurable and $X_n - m$ is conditionally
+  $1$-sub-Gaussian given $\F_n$.
 \end{lemma}
 
 \begin{proof}
   \leanok
   $M^{m\pm\eps}_n \to 0$ a.s.\ by Theorem~\ref{thm:sos_crit_subg_filtration} (constant
-  strategies, $\sum \eps^2 = \infty$), so both are eventually at most $1$, and then
-  Lemma~\ref{lem:subgTest_le_rpow} applies.
+  strategies, $\sum \eps^2 = \infty$), resp.\ Theorem~\ref{thm:sos_crit_subg_cond}, so both are
+  eventually at most $1$, and then Lemma~\ref{lem:subgTest_le_rpow} applies.
 \end{proof}
 
 \begin{lemma}[Small alternatives have a small limit]
   \label{lem:mixture_small_subg}
   \lean{Learning.Betting.exists_ae_tendsto_setIntegral_subgaussianTest,
+    Learning.Betting.exists_ae_tendsto_setIntegral_subgaussianTest_of_hasCondSubgaussianMGF,
     Learning.Betting.integrable_subgaussianTest, Learning.Betting.subgaussianTest_le_exp_sq}
   \leanok
   \uses{lem:mixture_small, lem:exp_subg_supermartingale, lem:iid_of_plug_in}

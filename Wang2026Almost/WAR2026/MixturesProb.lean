@@ -24,8 +24,7 @@ For Robbins' mixture, the total mass is computed with the antiderivative
 
 * `isProbabilityMeasure_betaMixture`, `ae_mem_Icc_betaMixture`, `betaMixture_singleton_zero`;
 * `isProbabilityMeasure_robbinsMixture`, `ae_mem_Icc_robbinsMixture`,
-  `robbinsMixture_singleton_zero`;
-* `Icc_subset_fractionRange`: `[-1, 1] ⊆ fractionRange m` for `m ∈ (0, 1)`.
+  `robbinsMixture_singleton_zero`.
 -/
 
 @[expose] public section
@@ -34,17 +33,6 @@ open MeasureTheory ProbabilityTheory Real Set Filter
 open scoped ENNReal Topology
 
 namespace Wang2026Almost
-
-/-- For `m ∈ (0, 1)`, the interval `[-1, 1]` is contained in the range of the bet fractions. -/
-lemma Icc_subset_fractionRange {m : ℝ} (hm : m ∈ Ioo 0 1) :
-    Icc (-1 : ℝ) 1 ⊆ Learning.Betting.fractionRange m := by
-  intro x hx
-  have h1m : 0 < 1 - m := sub_pos.2 hm.2
-  refine ⟨?_, ?_⟩
-  · rw [div_le_iff₀ h1m]
-    nlinarith [mul_nonneg (by linarith [hx.1] : (0 : ℝ) ≤ x + 1) h1m.le, hm.1]
-  · rw [le_div_iff₀ hm.1]
-    nlinarith [mul_nonneg (by linarith [hx.2] : (0 : ℝ) ≤ 1 - x) hm.1.le, hm.2]
 
 /-! ### The universal portfolio -/
 

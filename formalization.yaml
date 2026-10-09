@@ -148,5 +148,34 @@ status:
     holds, through an eventually-in-range form of the n^{-1/2} criterion); the blueprint's
     first proof of `log(1+x) ≥ x - x²` on `|x| ≤ 1/2` was wrong and was replaced. Library
     material to upstream: `notes/upstreaming-candidates.md`.
+
+    Library review, 2026-10-08 (after phase 2): the library files were made more Mathlib-like
+    without touching the headline statements or the definitions in their closure (the
+    regenerated challenges differ only in their import lists; `lake build Comparator` passes,
+    the 16 headline theorems still depend only on the standard axioms). Generic lemmas moved to
+    Mathlib-shaped files (`Probability/HasLaw.lean`, `MeasureTheory/Integral/MixtureLimit.lean`,
+    the mixture-convergence lemma in `Probability/Martingale/Mixture.lean`); five private copies
+    of `fractionRange` facts replaced by a public API in `Betting/Wealth.lean`; hypotheses
+    dropped or weakened: `m ∈ (0,1)` removed wherever it follows from the null hypothesis or
+    `m ∈ [0,1]` suffices, `X` measurable dropped from the Hoeffding rates, the strong law for
+    pairwise independent variables, Slutsky along any countably generated filter, `log (1 + x)
+    ≥ x - x²` for all `x ≥ -1/2`, the KT asymptotics for any `C ≠ 0`, the hedging rate for
+    `α ∈ (0, 2)`, `L^p` membership for every `p`, the Hoeffding a.s. bound at any level `b n`
+    with `Σ exp(-b n² / (2 n c)) < ∞`; the unused Cesàro lemma deleted.
+
+    Conditionally sub-Gaussian generalization, 2026-10-08: the martingale strong law of
+    `Probability/Martingale/SubgaussianSum.lean` (exponential supermartingale, convergence on
+    finite quadratic variation, little-`o` otherwise) now holds for increments `Y n` that are
+    conditionally `c`-sub-Gaussian given `ℱ n` (Mathlib's `HasCondSubgaussianMGF`, standard Borel
+    space), besides independent sub-Gaussian increments on any space (`_of_indep`); both derive
+    from a moment bound at `ℱ n`-measurable parameters, proved with a new freezing lemma for the
+    conditional expectation kernel (`lintegral_comp_condExpKernel`). Also
+    `HasSubgaussianMGF.hasCondSubgaussianMGF_of_indep`. Consequence beyond the paper: Theorems
+    5.2 and 5.3 hold for observations with `X n - m` conditionally `1`-sub-Gaussian given `ℱ n`,
+    not necessarily independent nor identically distributed
+    (`Learning.Betting.sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF`,
+    `Learning.Betting.ae_tendsto_subgaussianMixtureTest_of_hasCondSubgaussianMGF`). Headline
+    statements unchanged (the challenges differ only in two imports; `lake build Comparator`
+    passes, standard axioms).
   sorry_count: 0
   sorry_in_definitions: 0

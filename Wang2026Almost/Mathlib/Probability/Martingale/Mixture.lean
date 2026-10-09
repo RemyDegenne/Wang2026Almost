@@ -5,6 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.Mathlib.Probability.Martingale.Nonneg
 public import Mathlib.Probability.Martingale.Basic
 public import Mathlib.MeasureTheory.Integral.Prod
 
@@ -21,11 +22,15 @@ respect to a measure `π` on the parameter space is a supermartingale, as soon a
   mixing measure `π` and `l ↦ ∫ f l 0 ∂μ` integrable.
 * `MeasureTheory.supermartingale_integral`: the case of a finite mixing measure and initial
   expectations bounded uniformly in `l`.
+* `MeasureTheory.exists_ae_tendsto_setIntegral_of_supermartingale`: the mixture over a set `B` of
+  nonnegative supermartingales starting at `1` converges almost surely to a limit of expectation
+  at most `π B`.
 -/
 
 @[expose] public section
 
-open scoped ENNReal
+open Filter
+open scoped ENNReal Topology
 
 namespace MeasureTheory
 
@@ -102,5 +107,24 @@ lemma supermartingale_integral [IsFiniteMeasure μ] [IsFiniteMeasure π]
     hm.stronglyMeasurable.integral_prod_right'.aestronglyMeasurable (ae_of_all _ fun l ↦ ?_)
   rw [Real.norm_of_nonneg (integral_nonneg (hf_nonneg l 0))]
   exact hC l
+
+/-- **Mixtures of supermartingales over a set of parameters converge.** Let `f l`, `l ∈ Λ`, be a
+family of nonnegative supermartingales starting at `1`, jointly measurable in `(l, ω)`, and `π`
+a finite measure on `Λ`. For every set `B ⊆ Λ`, the mixture `∫_B f l n ∂π(l)` converges almost
+surely to a nonnegative limit `L` with `∫⁻ L ≤ π B`. -/
+lemma exists_ae_tendsto_setIntegral_of_supermartingale {Λ : Type*} {mΛ : MeasurableSpace Λ}
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {ℱ : Filtration ℕ mΩ} {π : Measure Λ}
+    [IsFiniteMeasure π] {f : Λ → ℕ → Ω → ℝ} (hf : ∀ l, Supermartingale (f l) ℱ μ)
+    (hf_nonneg : ∀ l n ω, 0 ≤ f l n ω)
+    (hmeas : ∀ n, Measurable[mΛ.prod (ℱ n)] (fun p : Λ × Ω ↦ f p.1 n p.2))
+    (hf0 : ∀ l ω, f l 0 ω = 1) (B : Set Λ) :
+    ∃ L : Ω → ℝ, Measurable L ∧ 0 ≤ᵐ[μ] L ∧ ∫⁻ ω, ENNReal.ofReal (L ω) ∂μ ≤ π B ∧
+      ∀ᵐ ω ∂μ, Tendsto (fun n ↦ ∫ l in B, f l n ω ∂π) atTop (𝓝 (L ω)) := by
+  have hV := supermartingale_integral (π := π.restrict B) hf hf_nonneg hmeas
+    ⟨1, fun l ↦ by simp [hf0]⟩
+  obtain ⟨L, hLm, hL, hL0, hLint⟩ := hV.exists_ae_tendsto_of_nonneg fun n ↦
+    ae_of_all _ fun ω ↦ integral_nonneg fun l ↦ hf_nonneg l n ω
+  refine ⟨L, hLm, hL0, hLint.trans_eq ?_, hL⟩
+  simp [hf0]
 
 end MeasureTheory

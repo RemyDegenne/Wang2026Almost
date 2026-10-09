@@ -87,9 +87,9 @@ lemma wealth_portfolioFraction {m κ : ℝ} (hm : m ∈ Set.Ioo 0 1) (hκ : κ �
         (1 - κ) * wealth m lam X n ω + κ * wealth m nu X n ω := by
   have hmI : m ∈ Set.Icc 0 1 := Set.Ioo_subset_Icc_self hm
   have ha : ∀ n ω, 0 ≤ (1 - κ) * wealth m lam X n ω := fun n ω ↦
-    mul_nonneg (sub_nonneg.2 hκ.2) (wealth_nonneg hm (fun k _ ↦ hlam k ω) fun k _ ↦ hX k ω)
+    mul_nonneg (sub_nonneg.2 hκ.2) (wealth_nonneg hmI (fun k _ ↦ hlam k ω) fun k _ ↦ hX k ω)
   have hb : ∀ n ω, 0 ≤ κ * wealth m nu X n ω := fun n ω ↦
-    mul_nonneg hκ.1 (wealth_nonneg hm (fun k _ ↦ hnu k ω) fun k _ ↦ hX k ω)
+    mul_nonneg hκ.1 (wealth_nonneg hmI (fun k _ ↦ hnu k ω) fun k _ ↦ hX k ω)
   refine ⟨fun n ω ↦ portfolioFraction_mem_fractionRange hmI (hlam n ω) (hnu n ω) (ha n ω)
     (hb n ω), fun n ω ↦ wealth_portfolioFraction_eq fun k _ hD ↦ ?_⟩
   have ha0 : (1 - κ) * wealth m lam X k ω = 0 := by linarith [ha k ω, hb k ω]

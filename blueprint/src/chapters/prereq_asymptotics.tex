@@ -53,7 +53,7 @@
 \begin{lemma}[Slutsky's lemma, deterministic factors]
   \label{lem:slutsky_det}
   \lean{MeasureTheory.TendstoInDistribution.mul_add_of_tendsto,
-    MeasureTheory.TendstoInDistribution.of_map_eq}
+    MeasureTheory.TendstoInDistribution.of_map_eq, MeasureTheory.tendstoInMeasure_const_of_tendsto}
   \leanok
   \uses{lem:slutsky}
   If $X_n \to Z$ in distribution, $a_n \to a$ and $b_n \to b$, then $a_n X_n + b_n \to aZ + b$ in
@@ -143,27 +143,6 @@
 \end{proof}
 
 \section{Series and sequences}
-
-\begin{lemma}[Ces\`aro means of a summable sequence]
-  \label{lem:cesaro_of_summable_div}
-  \lean{tendsto_cesaro_zero_of_summable_div}
-  \leanok
-  Let $a_k \in [0, 1]$ with $\sum_{k \ge 1} a_k/k < \infty$. Then $\frac1n \sum_{k<n} a_k \to 0$.
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Given $\eta > 0$ choose $N \ge 1$ with $\sum_{k \ge N} a_k/k < \eta$. For $n > N$,
-  $\frac1n \sum_{k<n} a_k \le \frac Nn + \sum_{N \le k < n} \frac{a_k}{k} < \frac Nn + \eta$, since
-  $\frac1n \le \frac1k$ for $k < n$.
-\end{proof}
-
-\begin{remark}
-  Lemma~\ref{lem:cesaro_of_summable_div} is the special case of Kronecker's lemma used in the
-  paper's proof of Theorem~\ref{thm:sum_of_op}. The formal proof
-  (Lemma~\ref{lem:ae_not_summable_of_isBigOmegaInProb}) uses weighted averages instead and does not
-  need it.
-\end{remark}
 
 \begin{lemma}[Fatou's lemma for sets]
   \label{lem:measure_liminf_le}

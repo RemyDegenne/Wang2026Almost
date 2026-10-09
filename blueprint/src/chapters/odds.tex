@@ -112,7 +112,8 @@
 \begin{theorem}[Sum-of-squares criterion II, filtration form]
   \label{thm:sos_crit_subg_filtration}
   \lean{Learning.Betting.sum_sq_criterion_subgaussian_of_indep,
-    Learning.Betting.supermartingale_subgaussianTest, Learning.Betting.subgaussianTest_eq}
+    Learning.Betting.supermartingale_subgaussianTest, Learning.Betting.subgaussianTest_eq,
+    Learning.Betting.sum_sq_criterion_subgaussian_of_ae}
   \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto, lem:subg_sum_tendsto,
     lem:subg_sum_little_o}
@@ -132,6 +133,28 @@
   (Lemma~\ref{lem:subg_sum_tendsto}) and $M_\infty = e^{T_\infty - A_\infty/2} > 0$. On
   $\{A_\infty = \infty\}$, Lemma~\ref{lem:subg_sum_little_o} with $\eps = 1/4$ gives $T_n \le C +
   A_n/4$, so $\log M^\lambda_n \le C - A_n/4 \to -\infty$ and $M_\infty = 0$.
+\end{proof}
+
+\begin{theorem}[Sum-of-squares criterion II, conditionally sub-Gaussian observations]
+  \label{thm:sos_crit_subg_cond}
+  \lean{Learning.Betting.sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF,
+    Learning.Betting.supermartingale_subgaussianTest_of_hasCondSubgaussianMGF,
+    Learning.Betting.ae_tendsto_subgaussianTest_zero_of_hasCondSubgaussianMGF}
+  \leanok
+  \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto, lem:subg_sum_tendsto,
+    lem:subg_sum_little_o, lem:subg_moment_bound}
+  Let $\Omega$ be standard Borel, $X_n$ be $\F_{n+1}$-measurable with $X_n - m$ conditionally
+  $1$-sub-Gaussian given $\F_n$ (not necessarily independent nor identically distributed), and
+  $\lambda$ a predictable real process. Then the conclusion of
+  Theorem~\ref{thm:sos_crit_subg_filtration} holds. In particular, for a constant alternative
+  $\lambda \ne m$, $M^\lambda_n \to 0$ almost surely.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The proof of Theorem~\ref{thm:sos_crit_subg_filtration}, with the conditionally sub-Gaussian
+  forms of Lemmas~\ref{lem:exp_subg_supermartingale}, \ref{lem:subg_sum_tendsto}
+  and~\ref{lem:subg_sum_little_o}.
 \end{proof}
 
 \begin{theorem}[Sum-of-squares criterion II, Theorem 5.2]
@@ -185,3 +208,21 @@
   $M^\lambda_n = e^{-n(\lambda - m)^2/2}$ and the claim is dominated convergence). The paper's proof
   uses the law of the iterated logarithm, as for Theorem~\ref{thm:nocash}.
 \end{remark}
+
+\begin{theorem}[No-cash criterion II, conditionally sub-Gaussian observations]
+  \label{thm:nocash_subg_cond}
+  \lean{Learning.Betting.ae_tendsto_subgaussianMixtureTest_of_hasCondSubgaussianMGF}
+  \leanok
+  \uses{thm:sos_crit_subg_cond, lem:nocash_abstract, lem:mixture_large_subg,
+    lem:mixture_small_subg}
+  Let $\Omega$ be standard Borel, $X_n$ be $\F_{n+1}$-measurable with $X_n - m$ conditionally
+  $1$-sub-Gaussian given $\F_n$, and $\pi$ a finite measure on $\R$. Then $M^\pi_n \to \pi(\{m\})$
+  almost surely.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  The proof of Theorem~\ref{thm:nocash_subg}, with the conditionally sub-Gaussian forms of
+  Lemmas~\ref{lem:mixture_large_subg} and~\ref{lem:mixture_small_subg}, which rest on
+  Theorem~\ref{thm:sos_crit_subg_cond}.
+\end{proof}

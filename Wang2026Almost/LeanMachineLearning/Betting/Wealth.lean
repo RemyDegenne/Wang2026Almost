@@ -44,8 +44,10 @@ Under a null distribution, all these processes are nonnegative martingales.
 
 ## Main results
 
+* the range of the bet fractions: `zero_mem_fractionRange`, `Icc_neg_one_one_subset_fractionRange`,
+  `abs_le_of_mem_fractionRange`, `mem_fractionRange_of_mem_uIcc`, `interior_fractionRange`;
 * `wealth_zero`, `wealth_succ`, `wealth_nonneg` (for bet fractions in `fractionRange m` and
-  observations in `[0, 1]`), `measurable_wealth`.
+  observations in `[0, 1]`, for every `m ∈ [0, 1]`), `measurable_wealth`.
 -/
 
 @[expose] public section
@@ -59,6 +61,60 @@ variable {Ω : Type*}
 /-- The range `[-1 / (1 - m), 1 / m]` of the bet fractions for which the wealth stays
 nonnegative when the observations are in `[0, 1]`. -/
 def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
+
+section FractionRange
+
+variable {m l : ℝ}
+
+lemma isCompact_fractionRange (m : ℝ) : IsCompact (fractionRange m) := isCompact_Icc
+
+instance (m : ℝ) : (fractionRange m).OrdConnected := Set.ordConnected_Icc
+
+lemma interior_fractionRange (m : ℝ) :
+    interior (fractionRange m) = Set.Ioo (-1 / (1 - m)) (1 / m) := interior_Icc
+
+/-- The null bet `0` is a valid bet fraction. -/
+lemma zero_mem_fractionRange (hm : m ∈ Set.Icc 0 1) : 0 ∈ fractionRange m :=
+  ⟨div_nonpos_of_nonpos_of_nonneg (by norm_num) (sub_nonneg.2 hm.2), div_nonneg zero_le_one hm.1⟩
+
+/-- For `m ∈ (0, 1)`, the range of the bet fractions has nonempty interior. -/
+lemma neg_one_div_one_sub_lt_one_div (hm : m ∈ Set.Ioo 0 1) : -1 / (1 - m) < 1 / m :=
+  (div_neg_of_neg_of_pos (by norm_num) (sub_pos.2 hm.2)).trans (one_div_pos.2 hm.1)
+
+/-- The range of the bet fractions contains every fraction between `0` and a valid fraction. -/
+lemma mem_fractionRange_of_mem_uIcc (hm : m ∈ Set.Icc 0 1) (hl : l ∈ fractionRange m) {l' : ℝ}
+    (hl' : l' ∈ Set.uIcc 0 l) : l' ∈ fractionRange m :=
+  Set.OrdConnected.uIcc_subset inferInstance (zero_mem_fractionRange hm) hl hl'
+
+/-- For `m ∈ (0, 1)`, every fraction in `[-1, 1]` is in the interior of the range of the bet
+fractions. -/
+lemma Icc_neg_one_one_subset_interior_fractionRange (hm : m ∈ Set.Ioo 0 1) :
+    Set.Icc (-1) 1 ⊆ interior (fractionRange m) := by
+  intro x hx
+  rw [interior_fractionRange]
+  have h1m : 0 < 1 - m := sub_pos.2 hm.2
+  constructor
+  · rw [div_lt_iff₀ h1m]
+    nlinarith [mul_nonneg (by linarith [hx.1] : (0 : ℝ) ≤ x + 1) h1m.le, hm.1]
+  · rw [lt_div_iff₀ hm.1]
+    nlinarith [mul_nonneg (by linarith [hx.2] : (0 : ℝ) ≤ 1 - x) hm.1.le, hm.2]
+
+/-- For `m ∈ (0, 1)`, every fraction in `[-1, 1]` is a valid bet fraction. -/
+lemma Icc_neg_one_one_subset_fractionRange (hm : m ∈ Set.Ioo 0 1) :
+    Set.Icc (-1) 1 ⊆ fractionRange m :=
+  (Icc_neg_one_one_subset_interior_fractionRange hm).trans interior_subset
+
+/-- The valid bet fractions are bounded by `max (1 / m) (1 / (1 - m))`. -/
+lemma abs_le_of_mem_fractionRange (hl : l ∈ fractionRange m) :
+    |l| ≤ max (1 / m) (1 / (1 - m)) := by
+  rw [abs_le]
+  refine ⟨?_, hl.2.trans (le_max_left _ _)⟩
+  have := hl.1
+  rw [neg_le]
+  calc -l ≤ 1 / (1 - m) := by rw [neg_div] at this; linarith
+    _ ≤ max (1 / m) (1 / (1 - m)) := le_max_right _ _
+
+end FractionRange
 
 /-- The wealth after `n` rounds of the predictable plug-in betting strategy `lam` on the
 observations `X`, testing the null mean `m`: `∏_{k < n} (1 + lam k (X k - m))`. -/
@@ -75,17 +131,23 @@ lemma wealth_succ (m : ℝ) (lam X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
 
 /-- For an observation `x ∈ [0, 1]` and a bet fraction `l ∈ fractionRange m`, the wealth factor
 `1 + l (x - m)` is nonnegative. -/
-lemma one_add_mul_sub_nonneg {m l x : ℝ} (hm : m ∈ Set.Ioo 0 1) (hl : l ∈ fractionRange m)
+lemma one_add_mul_sub_nonneg {m l x : ℝ} (hm : m ∈ Set.Icc 0 1) (hl : l ∈ fractionRange m)
     (hx : x ∈ Set.Icc 0 1) : 0 ≤ 1 + l * (x - m) := by
-  have h1 : l * m ≤ 1 := (le_div_iff₀ hm.1).1 (by simpa using hl.2)
-  have h2 : -1 ≤ l * (1 - m) := (div_le_iff₀ (sub_pos.2 hm.2)).1 hl.1
+  have h1 : l * m ≤ 1 := by
+    rcases hm.1.eq_or_lt with rfl | h
+    · simp
+    · exact (le_div_iff₀ h).1 (by simpa using hl.2)
+  have h2 : -1 ≤ l * (1 - m) := by
+    rcases hm.2.eq_or_lt with rfl | h
+    · simp
+    · exact (div_le_iff₀ (sub_pos.2 h)).1 hl.1
   have h3 : 0 ≤ (1 - x) * (1 - l * m) := mul_nonneg (sub_nonneg.2 hx.2) (sub_nonneg.2 h1)
   have h4 : 0 ≤ x * (1 + l * (1 - m)) := mul_nonneg hx.1 (by linarith)
   nlinarith
 
 /-- The wealth of a strategy betting fractions in `fractionRange m` on observations in `[0, 1]`
 is nonnegative. -/
-lemma wealth_nonneg {m : ℝ} {lam X : ℕ → Ω → ℝ} {n : ℕ} {ω : Ω} (hm : m ∈ Set.Ioo 0 1)
+lemma wealth_nonneg {m : ℝ} {lam X : ℕ → Ω → ℝ} {n : ℕ} {ω : Ω} (hm : m ∈ Set.Icc 0 1)
     (hlam : ∀ k < n, lam k ω ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1) :
     0 ≤ wealth m lam X n ω :=
   prod_nonneg fun k hk ↦ one_add_mul_sub_nonneg hm (hlam k (mem_range.1 hk)) (hX k (mem_range.1 hk))
@@ -97,6 +159,13 @@ lemma measurable_wealth [MeasurableSpace Ω] {m : ℝ} {lam X : ℕ → Ω → �
 
 /-- The wealth of the fixed-fraction strategy betting the fraction `l` at every round. -/
 noncomputable def fixedWealth (m l : ℝ) (X : ℕ → Ω → ℝ) : ℕ → Ω → ℝ := wealth m (fun _ _ ↦ l) X
+
+/-- The wealth of a fixed fraction in `fractionRange m` on observations in `[0, 1]` is
+nonnegative. -/
+lemma fixedWealth_nonneg {m l : ℝ} {X : ℕ → Ω → ℝ} {n : ℕ} {ω : Ω} (hm : m ∈ Set.Icc 0 1)
+    (hl : l ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1) :
+    0 ≤ fixedWealth m l X n ω :=
+  wealth_nonneg hm (fun _ _ ↦ hl) hX
 
 /-- The wealth of the mixture strategy with mixing distribution `π` on the bet fractions:
 `∫ fixedWealth m l X n ∂π(l)`. -/

@@ -51,7 +51,7 @@ theorem hedged_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : �
   set lam : ℕ → Ω → ℝ := fun n ω ↦ hedgeFraction C α m (v n ω) n with hlam
   have hrate : IsBigOmegaAE P' lam (fun n ↦ ((n : ℝ) * Real.log n) ^ (-1 / 2 : ℝ)) := by
     filter_upwards [hcons] with ω hω
-    exact isBigO_rpow_hedgeFraction hC.1 hm01 hα hvar hω
+    exact isBigO_rpow_hedgeFraction hC.1 hm01 ⟨hα.1, hα.2.trans one_lt_two⟩ hvar hω
   have hmeas : ∀ n, Measurable (fun x : ℝ ↦ hedgeFraction C α m x n) := fun n ↦ by
     unfold hedgeFraction
     fun_prop

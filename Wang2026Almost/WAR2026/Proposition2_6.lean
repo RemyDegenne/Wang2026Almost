@@ -52,7 +52,7 @@ theorem grapa_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫
       IsBigOmegaInProb P' gr (fun n ↦ (n : ℝ) ^ (-1 / 2 : ℝ)) ∧
       ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m gr X n ω) atTop (𝓝 0) := by
   have hΩ := isBigOmegaInProb_grapa hP hm hvar hX hindep hlaw hgr
-  refine ⟨ae_isLittleO_grapa hP hm hvar hX hindep hlaw hgr,
+  refine ⟨ae_isLittleO_grapa hP hm hvar hindep hlaw hgr,
     tendstoInDistribution_sqrt_mul_grapa hP hm hvar hX hindep hlaw hgr, hΩ, ?_⟩
   exact tendsto_wealth_zero_of_isBigOmega_of_isPlugIn hP hm (ne_dirac_of_variance_pos hvar) hX
     hindep hlaw hgr.1 (fun n ↦ ae_of_all _ fun ω ↦ (hgr.2 n ω).1) (Or.inl hΩ)

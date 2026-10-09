@@ -43,7 +43,7 @@ omit [IsProbabilityMeasure P'] [IsProbabilityMeasure P] in
 /-- Observations with a law on `[0, 1]` are all in `[0, 1]` almost surely. -/
 lemma ae_forall_mem_Icc_of_hasLaw (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
     (hlaw : ∀ n, HasLaw (X n) P P') : ∀ᵐ ω ∂P', ∀ n, X n ω ∈ Set.Icc (0 : ℝ) 1 :=
-  ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw hP (hlaw n)
+  ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP
 
 /-- **The `n^{-1/2}` criterion for plug-in strategies**: under a non-degenerate null
 distribution on `[0, 1]`, a plug-in strategy on i.i.d. observations with bet fractions in

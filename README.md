@@ -32,10 +32,12 @@ proved in Lean, with no `sorry`; the 16 headline theorems depend only on the sta
 * `Wang2026Almost/Mathlib/`: material for Mathlib: Landau notation in probability and the
   divergence of `Σ Ω_p(a_n)` (`Probability/AsymptoticsInProbability.lean`,
   `Probability/SumBigOmegaInProb.lean`), supermartingales with independent increments, their
-  convergence and mixtures, exponential supermartingales of sub-Gaussian sums
-  (`Probability/Martingale/`), a.s. rates from Hoeffding's inequality, CLT/SLLN/Slutsky
-  wrappers, the gamma and chi-squared distributions and the square of a Gaussian, inequalities
-  for `log (1 + x)`.
+  convergence and mixtures, exponential supermartingales of sums of conditionally sub-Gaussian
+  increments (`Probability/Martingale/`, with the freezing lemma for the conditional expectation
+  kernel in `Probability/Kernel/Condexp.lean`), a.s. limits of mixtures concentrating at a point
+  (`MeasureTheory/Integral/MixtureLimit.lean`), a.s. rates from Hoeffding's inequality,
+  CLT/SLLN/Slutsky wrappers, small `HasLaw` API lemmas, the gamma and chi-squared distributions
+  and the square of a Gaussian, inequalities for `log (1 + x)`.
 * `blueprint/src/`: the blueprint (Part I follows the paper, Part II the prerequisites);
   `notes/blueprint-outline.md`: the outline it was written from (labels, proof routes, modelling
   decisions); `source/`: the paper's LaTeX source.
@@ -56,8 +58,8 @@ proved in Lean, with no `sorry`; the 16 headline theorems depend only on the sta
 | Proposition 3.2 | `tendsto_mixtureWealth_betaMixture`, `tendsto_mixtureWealth_robbinsMixture` | |
 | Theorem 4.1 (improvability) | `exists_improve` | strategies predictable for a filtration |
 | Theorem 5.1 | `tendstoInDistribution_hindsightLogWealth`, `not_bddAbove_logRegret_of_tendsto_wealth_zero` | |
-| Theorem 5.2 | `sum_sq_criterion_subgaussian` | non-degeneracy not needed |
-| Theorem 5.3 | `tendsto_subgaussianMixtureTest` | non-degeneracy not needed |
+| Theorem 5.2 | `sum_sq_criterion_subgaussian` | non-degeneracy not needed; also for conditionally sub-Gaussian observations (`Learning.Betting.sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF`) |
+| Theorem 5.3 | `tendsto_subgaussianMixtureTest` | non-degeneracy not needed; also for conditionally sub-Gaussian observations (`Learning.Betting.ae_tendsto_subgaussianMixtureTest_of_hasCondSubgaussianMGF`) |
 | Lemma B.1 (Skorokhod continuity) | — | not formalized: no Skorokhod space in Mathlib |
 | Lemma B.2 | `tendsto_integral_exp_neg_mul` | monotonicity and positivity not needed |
 | Lemma B.3 | `leverageFraction_mem_Ioo` | |

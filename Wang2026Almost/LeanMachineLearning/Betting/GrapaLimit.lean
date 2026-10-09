@@ -177,24 +177,24 @@ variable {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
 /-- **Bahadur expansion of GRAPA**, `O` form: almost surely
 `√n gr_n - S_n / (σ² √n) = O(log² n / √n)`. -/
 lemma ae_isBigO_grapa (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hvar : 0 < Var[id; P]) (hX : ∀ n, Measurable (X n)) (hindep : iIndepFun X μ)
+    (hvar : 0 < Var[id; P]) (hindep : iIndepFun X μ)
     (hlaw : ∀ n, HasLaw (X n) P μ) (hgr : IsGrapa m X gr) :
     ∀ᵐ ω ∂μ, (fun n : ℕ ↦ √n * gr n ω - (∑ k ∈ range n, (X k ω - m)) / (Var[id; P] * √n))
       =O[atTop] (fun n : ℕ ↦ Real.log n ^ 2 / √n) := by
   have hm01 := mem_Ioo_of_variance_pos hP hm hvar
-  filter_upwards [ae_all_iff.2 fun k ↦ ae_mem_Icc_of_hasLaw hP (hlaw k),
-    ae_isBigO_sum_sub hP hm hX hindep hlaw, ae_isBigO_sum_sq_sub hP hm hX hindep hlaw]
+  filter_upwards [ae_all_iff.2 fun k ↦ (hlaw k).ae_comp hP,
+    ae_isBigO_sum_sub hP hm hindep hlaw, ae_isBigO_sum_sq_sub hP hm hindep hlaw]
     with ω hω hS hV
   exact isBigO_sqrt_mul_sub_of_isMaxOn hm01 hvar hω hS hV fun n ↦ hgr.2 n ω
 
 /-- **Bahadur expansion of GRAPA**: almost surely
 `√n gr_n = S_n / (σ² √n) + o(n^{-1/4} log n)`. -/
 lemma ae_isLittleO_grapa (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hvar : 0 < Var[id; P]) (hX : ∀ n, Measurable (X n)) (hindep : iIndepFun X μ)
+    (hvar : 0 < Var[id; P]) (hindep : iIndepFun X μ)
     (hlaw : ∀ n, HasLaw (X n) P μ) (hgr : IsGrapa m X gr) :
     ∀ᵐ ω ∂μ, (fun n : ℕ ↦ √n * gr n ω - (∑ k ∈ range n, (X k ω - m)) / (Var[id; P] * √n))
       =o[atTop] (fun n : ℕ ↦ (n : ℝ) ^ (-1 / 4 : ℝ) * Real.log n) := by
-  filter_upwards [ae_isBigO_grapa hP hm hvar hX hindep hlaw hgr] with ω hω
+  filter_upwards [ae_isBigO_grapa hP hm hvar hindep hlaw hgr] with ω hω
   exact hω.trans_isLittleO isLittleO_log_sq_div_sqrt
 
 /-- **Asymptotic normality of GRAPA**: `√n gr_n → N(0, σ⁻²)` in distribution. -/
@@ -204,7 +204,7 @@ lemma tendstoInDistribution_sqrt_mul_grapa (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0
     TendstoInDistribution (fun (n : ℕ) ω ↦ √n * gr n ω) atTop (id : ℝ → ℝ) (fun _ ↦ μ)
       (gaussianReal 0 (Var[id; P])⁻¹.toNNReal) := by
   set σ2 := Var[id; P] with hσ2
-  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_two_id_of_mem_Icc hP)
+  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_id_of_mem_Icc hP 2)
   rw [hm] at hclt
   have h1 := hclt.mul_add_of_tendsto (tendsto_const_nhds (x := σ2⁻¹))
     (tendsto_const_nhds (x := (0 : ℝ)))
@@ -223,7 +223,7 @@ lemma tendstoInDistribution_sqrt_mul_grapa (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0
       simp
   have hdiff : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ ↦ √n * gr n ω -
       (∑ k ∈ range n, (X k ω - m)) / (σ2 * √n)) atTop (𝓝 0) := by
-    filter_upwards [ae_isBigO_grapa hP hm hvar hX hindep hlaw hgr] with ω hω
+    filter_upwards [ae_isBigO_grapa hP hm hvar hindep hlaw hgr] with ω hω
     exact hω.trans_tendsto tendsto_log_sq_div_sqrt
   have hgr_meas := hgr.1.measurable hX
   refine tendstoInDistribution_of_tendstoInMeasure_sub _ _ h2 ?_

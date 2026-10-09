@@ -41,10 +41,11 @@ lemma add_one_mul_log_add_two_le {n : ℕ} (hn : 2 ≤ n) :
   have hlog0 : 0 ≤ Real.log ((n + 2 : ℕ) : ℝ) := Real.log_nonneg (by norm_cast; omega)
   nlinarith [Real.log_nonneg (by linarith : (1 : ℝ) ≤ n)]
 
-/-- **Rate of the predictable hedging fractions**: if `v n → σ² > 0`, then
+/-- **Rate of the predictable hedging fractions**: if `v n → σ² > 0` and `α ∈ (0, 2)` (so that
+`log (2 / α) > 0`), then
 `(n log n)^{-1/2} = O(hedgeFraction C α m (v n) n)`. -/
 lemma isBigO_rpow_hedgeFraction {C α m σ2 : ℝ} (hC : 0 < C) (hm : m ∈ Set.Ioo 0 1)
-    (hα : α ∈ Set.Ioo 0 1) (hσ : 0 < σ2) {v : ℕ → ℝ} (hv : Tendsto v atTop (𝓝 σ2)) :
+    (hα : α ∈ Set.Ioo 0 2) (hσ : 0 < σ2) {v : ℕ → ℝ} (hv : Tendsto v atTop (𝓝 σ2)) :
     (fun n : ℕ ↦ ((n : ℝ) * Real.log n) ^ (-1 / 2 : ℝ)) =O[atTop]
       (fun n ↦ hedgeFraction C α m (v n) n) := by
   set L := Real.log (((2 : ℕ) : ℝ) / α) with hL

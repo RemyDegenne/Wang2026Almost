@@ -28,6 +28,9 @@ the test process tends to `0`.
 * `ae_tendsto_subgaussianTest_zero_of_not_summable`,
   `ae_exists_tendsto_subgaussianTest_pos_of_summable`: the two halves of the criterion;
 * `sum_sq_criterion_subgaussian_of_indep`: the criterion (Theorem 5.2) in filtration form;
+* `sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF`: the criterion for observations such that
+  `X n - m` is conditionally `1`-sub-Gaussian given `ℱ n` (not necessarily independent);
+* `ae_tendsto_subgaussianTest_zero_of_hasCondSubgaussianMGF`: the same for constant alternatives;
 * `ae_tendsto_subgaussianTest_zero`: the test process of a constant `l ≠ m` tends to `0` almost
   surely on i.i.d. observations.
 -/
@@ -86,6 +89,36 @@ lemma exists_tendsto_subgaussianTest_pos {m : ℝ} {lam X : ℕ → Ω → ℝ} 
   exact (Real.continuous_exp.tendsto _).comp
     (hT.sub (hsum.hasSum.tendsto_sum_nat.div_const 2))
 
+/-- **The sub-Gaussian sum-of-squares criterion from the almost sure events**: if almost surely
+`T n = ∑_{k < n} (lam k - m) (X k - m)` converges on `{∑ (lam k - m) ^ 2 < ∞}` and
+`|T n| ≤ C + ε ∑_{k < n} (lam k - m) ^ 2` for every `ε > 0`, then the test process converges
+almost surely to a random variable `M` with `M = 0` iff `∑ (lam n - m) ^ 2 = ∞`, and `M > 0` iff
+`∑ (lam n - m) ^ 2 < ∞`. -/
+lemma sum_sq_criterion_subgaussian_of_ae {μ : Measure Ω} {m : ℝ} {lam X : ℕ → Ω → ℝ}
+    (h : ∀ᵐ ω ∂μ, (Summable (fun n ↦ (lam n ω - m) ^ 2) →
+        ∃ T, Tendsto (fun n ↦ ∑ k ∈ range n, (lam k ω - m) * (X k ω - m)) atTop (𝓝 T)) ∧
+      ∀ ε > 0, ∃ C, ∀ n, |∑ k ∈ range n, (lam k ω - m) * (X k ω - m)|
+        ≤ C + ε * ∑ k ∈ range n, (lam k ω - m) ^ 2) :
+    ∃ M : Ω → ℝ, (∀ᵐ ω ∂μ, Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 (M ω))) ∧
+      (∀ᵐ ω ∂μ, M ω = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
+      (∀ᵐ ω ∂μ, 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
+  have key : ∀ᵐ ω ∂μ, ∃ L, Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 L) ∧
+      (L = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
+      (0 < L ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
+    filter_upwards [h] with ω ⟨hconv, hle⟩
+    by_cases hsum : Summable (fun n ↦ (lam n ω - m) ^ 2)
+    · obtain ⟨T, hT⟩ := hconv hsum
+      obtain ⟨L, hL, hT⟩ := exists_tendsto_subgaussianTest_pos hsum hT
+      exact ⟨L, hT, by simp [hL.ne', hsum], by simp [hL, hsum]⟩
+    · obtain ⟨C, hC⟩ := hle (1 / 4) (by norm_num)
+      exact ⟨0, tendsto_subgaussianTest_zero_of_abs_sum_le hC hsum, by simp [hsum],
+        by simp [hsum]⟩
+  refine ⟨fun ω ↦ limUnder atTop (fun n ↦ subgaussianTest m lam X n ω), ?_, ?_, ?_⟩ <;>
+    filter_upwards [key] with ω ⟨L, hL, h1, h2⟩
+  · rwa [hL.limUnder_eq]
+  · rwa [hL.limUnder_eq]
+  · rwa [hL.limUnder_eq]
+
 variable {ℱ : Filtration ℕ mΩ} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} {m : ℝ} {lam X : ℕ → Ω → ℝ}
 
@@ -97,9 +130,9 @@ lemma supermartingale_subgaussianTest (hP : HasSubgaussianMGF (fun x ↦ x - m) 
     (hindep : ∀ n, Indep (MeasurableSpace.comap (X n) inferInstance) (ℱ n) P')
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam) :
     Supermartingale (subgaussianTest m lam X) ℱ P' := by
-  have h := supermartingale_exp_sum_mul (Y := fun n ω ↦ X n ω - m) (w := fun n ω ↦ lam n ω - m)
-    (c := 1) (fun n ↦ (hX n).sub_const m)
-    (fun n ↦ indep_comap_comp (hindep n) (f := fun x ↦ x - m) (measurable_id.sub_const m))
+  have h := supermartingale_exp_sum_mul_of_indep (Y := fun n ω ↦ X n ω - m)
+    (w := fun n ω ↦ lam n ω - m) (c := 1) (fun n ↦ (hX n).sub_const m)
+    (fun n ↦ (hindep n).comap_comp (f := fun x ↦ x - m) (measurable_id.sub_const m))
     (fun n ↦ (hlaw n).hasSubgaussianMGF_comp hP) (fun n ↦ (hlam n).sub_const m) 1
   convert h using 2 with n
   ext ω
@@ -121,11 +154,12 @@ lemma ae_sum_sq_subgaussian_events (hP : HasSubgaussianMGF (fun x ↦ x - m) 1 P
         ≤ C + ε * ∑ k ∈ range n, (lam k ω - m) ^ 2 := by
   have hY : ∀ n, Measurable[ℱ (n + 1)] (fun ω ↦ X n ω - m) := fun n ↦ (hX n).sub_const m
   have hi : ∀ n, Indep (MeasurableSpace.comap (fun ω ↦ X n ω - m) inferInstance) (ℱ n) P' :=
-    fun n ↦ indep_comap_comp (hindep n) (f := fun x ↦ x - m) (measurable_id.sub_const m)
+    fun n ↦ (hindep n).comap_comp (f := fun x ↦ x - m) (measurable_id.sub_const m)
   have hs : ∀ n, HasSubgaussianMGF (fun ω ↦ X n ω - m) 1 P' :=
     fun n ↦ (hlaw n).hasSubgaussianMGF_comp hP
   have hw : Adapted ℱ (fun n ω ↦ lam n ω - m) := fun n ↦ (hlam n).sub_const m
-  filter_upwards [ae_exists_tendsto_sum_mul hY hi hs hw, ae_forall_abs_sum_mul_le hY hi hs hw]
+  filter_upwards [ae_exists_tendsto_sum_mul_of_indep hY hi hs hw,
+    ae_forall_abs_sum_mul_le_of_indep hY hi hs hw]
     with ω h1 h2
   exact ⟨h1, h2⟩
 
@@ -164,22 +198,8 @@ lemma sum_sq_criterion_subgaussian_of_indep (hP : HasSubgaussianMGF (fun x ↦ x
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam) :
     ∃ M : Ω → ℝ, (∀ᵐ ω ∂P', Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 (M ω))) ∧
       (∀ᵐ ω ∂P', M ω = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
-      (∀ᵐ ω ∂P', 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
-  have key : ∀ᵐ ω ∂P', ∃ L, Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 L) ∧
-      (L = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
-      (0 < L ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
-    filter_upwards [ae_tendsto_subgaussianTest_zero_of_not_summable hP hX hindep hlaw hlam,
-      ae_exists_tendsto_subgaussianTest_pos_of_summable hP hX hindep hlaw hlam]
-      with ω hdiv hconv
-    by_cases hsum : Summable (fun n ↦ (lam n ω - m) ^ 2)
-    · obtain ⟨L, hL, hT⟩ := hconv hsum
-      exact ⟨L, hT, by simp [hL.ne', hsum], by simp [hL, hsum]⟩
-    · exact ⟨0, hdiv hsum, by simp [hsum], by simp [hsum]⟩
-  refine ⟨fun ω ↦ limUnder atTop (fun n ↦ subgaussianTest m lam X n ω), ?_, ?_, ?_⟩ <;>
-    filter_upwards [key] with ω ⟨L, hL, h1, h2⟩
-  · rwa [hL.limUnder_eq]
-  · rwa [hL.limUnder_eq]
-  · rwa [hL.limUnder_eq]
+      (∀ᵐ ω ∂P', 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) :=
+  sum_sq_criterion_subgaussian_of_ae (ae_sum_sq_subgaussian_events hP hX hindep hlaw hlam)
 
 /-- **Constant alternatives are rejected.** If `x - m` is `1`-sub-Gaussian under `P`, then on
 i.i.d. observations with law `P`, the test process of the constant alternative `l ≠ m` tends to `0`
@@ -195,5 +215,71 @@ lemma ae_tendsto_subgaussianTest_zero (hP : HasSubgaussianMGF (fun x ↦ x - m) 
     rw [summable_const_iff]
     exact pow_ne_zero 2 (sub_ne_zero.2 hl)
   filter_upwards [h] with ω hω using hω hns
+
+section Conditional
+
+/-! ### Conditionally sub-Gaussian observations
+
+The criterion holds under the composite null of observations `X n` such that `X n - m` is
+conditionally `1`-sub-Gaussian given `ℱ n` (a sub-Gaussian martingale difference sequence), without
+independence or identical distribution. -/
+
+variable [StandardBorelSpace Ω]
+
+/-- **The plug-in sub-Gaussian test process is a supermartingale** under conditionally
+sub-Gaussian observations: if `X n` is `ℱ (n + 1)`-measurable, `X n - m` is conditionally
+`1`-sub-Gaussian given `ℱ n` and `lam` is adapted to `ℱ`, then `subgaussianTest m lam X` is a
+supermartingale. -/
+lemma supermartingale_subgaussianTest_of_hasCondSubgaussianMGF
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hsubG : ∀ n, HasCondSubgaussianMGF (ℱ n) (ℱ.le n) (fun ω ↦ X n ω - m) 1 P')
+    (hlam : Adapted ℱ lam) :
+    Supermartingale (subgaussianTest m lam X) ℱ P' := by
+  have h := supermartingale_exp_sum_mul (Y := fun n ω ↦ X n ω - m)
+    (w := fun n ω ↦ lam n ω - m) (fun n ↦ (hX n).sub_const m) hsubG
+    (fun n ↦ (hlam n).sub_const m) 1
+  convert h using 2 with n
+  ext ω
+  rw [subgaussianTest_eq]
+  congr 1
+  push_cast
+  ring
+
+/-- **Sum-of-squares criterion for sub-Gaussian test processes, conditionally sub-Gaussian
+observations.** If `X n` is `ℱ (n + 1)`-measurable, `X n - m` is conditionally `1`-sub-Gaussian
+given `ℱ n` and `lam` is adapted to `ℱ`, then the plug-in test process converges almost surely to a
+random variable `M` such that, almost surely, `M = 0` iff `∑ (lam n - m) ^ 2 = ∞`, and `M > 0` iff
+`∑ (lam n - m) ^ 2 < ∞`. -/
+lemma sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hsubG : ∀ n, HasCondSubgaussianMGF (ℱ n) (ℱ.le n) (fun ω ↦ X n ω - m) 1 P')
+    (hlam : Adapted ℱ lam) :
+    ∃ M : Ω → ℝ, (∀ᵐ ω ∂P', Tendsto (fun n ↦ subgaussianTest m lam X n ω) atTop (𝓝 (M ω))) ∧
+      (∀ᵐ ω ∂P', M ω = 0 ↔ ¬ Summable (fun n ↦ (lam n ω - m) ^ 2)) ∧
+      (∀ᵐ ω ∂P', 0 < M ω ↔ Summable (fun n ↦ (lam n ω - m) ^ 2)) := by
+  have hY : ∀ n, Measurable[ℱ (n + 1)] (fun ω ↦ X n ω - m) := fun n ↦ (hX n).sub_const m
+  have hw : Adapted ℱ (fun n ω ↦ lam n ω - m) := fun n ↦ (hlam n).sub_const m
+  refine sum_sq_criterion_subgaussian_of_ae ?_
+  filter_upwards [ae_exists_tendsto_sum_mul hY hsubG hw, ae_forall_abs_sum_mul_le hY hsubG hw]
+    with ω h1 h2
+  exact ⟨h1, h2⟩
+
+/-- **Constant alternatives are rejected**, conditionally sub-Gaussian observations: if `X n` is
+`ℱ (n + 1)`-measurable and `X n - m` is conditionally `1`-sub-Gaussian given `ℱ n`, the test
+process of the constant alternative `l ≠ m` tends to `0` almost surely. -/
+lemma ae_tendsto_subgaussianTest_zero_of_hasCondSubgaussianMGF
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hsubG : ∀ n, HasCondSubgaussianMGF (ℱ n) (ℱ.le n) (fun ω ↦ X n ω - m) 1 P') {l : ℝ}
+    (hl : l ≠ m) :
+    ∀ᵐ ω ∂P', Tendsto (fun n ↦ subgaussianTest m (fun _ _ ↦ l) X n ω) atTop (𝓝 0) := by
+  obtain ⟨M, hM, hM0, -⟩ := sum_sq_criterion_subgaussian_of_hasCondSubgaussianMGF
+    (lam := fun _ _ ↦ l) hX hsubG fun _ ↦ measurable_const
+  have hns : ¬ Summable (fun _ : ℕ ↦ (l - m) ^ 2) := by
+    rw [summable_const_iff]
+    exact pow_ne_zero 2 (sub_ne_zero.2 hl)
+  filter_upwards [hM, hM0] with ω h1 h2
+  rwa [h2.2 hns] at h1
+
+end Conditional
 
 end Learning.Betting

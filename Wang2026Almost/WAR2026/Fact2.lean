@@ -56,7 +56,7 @@ lemma wealth_portfolioFraction_short {m ρ κ : ℝ} (hm : m ∈ Set.Ioo 0 1) (h
   have hκρ : -ρ ≤ κ * (1 - ρ) := (div_le_iff₀ h1ρ).1 hκ.1
   have hW : ∀ mu : ℕ → (ℕ → ℝ) → ℝ, (∀ n x, mu n x ∈ fractionRange m) →
       ∀ y, IsBinaryPath y → ∀ n, 0 ≤ wealth m mu coord n y := by
-    refine fun mu hmu y hy n ↦ wealth_nonneg hm (fun k _ ↦ hmu k y) fun k _ ↦ ?_
+    refine fun mu hmu y hy n ↦ wealth_nonneg hmI (fun k _ ↦ hmu k y) fun k _ ↦ ?_
     rcases hy k with h | h <;> simp [coord, h]
   -- On a binary path, the portfolio wealth is nonnegative, and its numerator vanishes with it.
   have hD : ∀ y, IsBinaryPath y → ∀ n,

@@ -46,7 +46,8 @@ theorem tendsto_mixtureWealth_betaMixture (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 
   have hm01 := mem_Ioo_of_ne_dirac hP hm hnd
   refine ((tendsto_mixtureWealth hP hm hnd hX hindep hlaw (betaMixture a b) ?_).2).2
     (betaMixture_singleton_zero a b)
-  filter_upwards [ae_mem_Icc_betaMixture a b] with l hl using Icc_subset_fractionRange hm01 hl
+  filter_upwards [ae_mem_Icc_betaMixture a b] with l hl
+    using Icc_neg_one_one_subset_fractionRange hm01 hl
 
 /-- **Proposition 3.2, Robbins' mixture** (Wang, Agrawal, Ramdas 2026): under every
 non-degenerate null distribution on `[0, 1]`, the wealth of the mixture strategy with Robbins'
@@ -60,6 +61,7 @@ theorem tendsto_mixtureWealth_robbinsMixture (hP : ∀ᵐ x ∂P, x ∈ Set.Icc 
   have hm01 := mem_Ioo_of_ne_dirac hP hm hnd
   refine ((tendsto_mixtureWealth hP hm hnd hX hindep hlaw robbinsMixture ?_).2).2
     robbinsMixture_singleton_zero
-  filter_upwards [ae_mem_Icc_robbinsMixture] with l hl using Icc_subset_fractionRange hm01 hl
+  filter_upwards [ae_mem_Icc_robbinsMixture] with l hl
+    using Icc_neg_one_one_subset_fractionRange hm01 hl
 
 end Wang2026Almost

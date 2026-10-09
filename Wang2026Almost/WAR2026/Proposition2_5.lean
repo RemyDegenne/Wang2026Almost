@@ -52,9 +52,9 @@ theorem kt_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x,
       ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m (ktFraction C m X) X n ω) atTop (𝓝 0) := by
   have hm01 := mem_Ioo_of_variance_pos hP hm hvar
   have hC : 0 < C := lt_of_lt_of_le (mul_pos hm01.1 (sub_pos.2 hm01.2)) hC₁
-  have hL2 := memLp_two_id_of_mem_Icc hP
-  have hΩ := isBigOmegaInProb_ktFraction hC hm hL2 hvar hindep hlaw
-  refine ⟨tendstoInDistribution_sqrt_mul_ktFraction hC hm hL2 hindep hlaw, hΩ, ?_⟩
+  have hL2 := memLp_of_bounded hP aestronglyMeasurable_id 2
+  have hΩ := isBigOmegaInProb_ktFraction hC.ne' hm hL2 hvar hindep hlaw
+  refine ⟨tendstoInDistribution_sqrt_mul_ktFraction hC.ne' hm hL2 hindep hlaw, hΩ, ?_⟩
   have hX01 := ae_forall_mem_Icc_of_hasLaw hP hlaw
   refine tendsto_wealth_zero_of_isBigOmega_of_isPlugIn hP hm (ne_dirac_of_variance_pos hvar) hX
     hindep hlaw (isPlugIn_ktFraction C m X) (fun n ↦ ?_) (Or.inl hΩ)

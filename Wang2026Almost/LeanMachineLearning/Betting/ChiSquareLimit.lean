@@ -60,11 +60,12 @@ lemma tendstoInDistribution_sq_sum_sub_div (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0
       (fun (n : ℕ) ω ↦ (∑ k ∈ range n, (X k ω - m)) ^ 2 / ∑ k ∈ range n, (X k ω - m) ^ 2)
       atTop (id : ℝ → ℝ) (fun _ ↦ μ) (chiSquareMeasure 1) := by
   set σ2 := Var[id; P] with hσ2
-  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_two_id_of_mem_Icc hP)
+  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_id_of_mem_Icc hP 2)
   rw [hm] at hclt
   set R : ℕ → Ω → ℝ := fun n ω ↦ n / ∑ k ∈ range n, (X k ω - m) ^ 2 with hR
   have hR_ae : ∀ᵐ ω ∂μ, Tendsto (fun n ↦ R n ω) atTop (𝓝 σ2⁻¹) := by
-    filter_upwards [ae_tendsto_sum_sub_sq_div hP hm hindep hlaw] with ω hω
+    filter_upwards [ae_tendsto_sum_sub_sq_div hP hm (fun _ _ hij ↦ hindep.indepFun hij) hlaw]
+      with ω hω
     refine (hω.inv₀ hvar.ne').congr fun n ↦ ?_
     simp [hR]
   have hR_meas : ∀ n, AEMeasurable (R n) μ := fun n ↦ by

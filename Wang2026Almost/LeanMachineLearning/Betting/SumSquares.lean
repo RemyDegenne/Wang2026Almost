@@ -13,6 +13,8 @@ public import Wang2026Almost.Mathlib.Analysis.SpecialFunctions.Log.Summable
 public import Wang2026Almost.Mathlib.Probability.Martingale.SubgaussianSum
 public import Wang2026Almost.Mathlib.Probability.SumBigOmegaInProb
 public import Mathlib.Probability.HasLaw
+public import Wang2026Almost.Mathlib.Probability.HasLaw
+public import Wang2026Almost.Mathlib.Probability.Independence.Freezing
 
 /-!
 # The sum-of-squares criterion for null bankruptcy
@@ -52,58 +54,11 @@ The proof does not use the martingale convergence and divergence theorems of the
 open MeasureTheory ProbabilityTheory Filter Finset
 open scoped Topology ENNReal NNReal
 
-namespace ProbabilityTheory
-
-variable {Ω 𝓧 : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} {P' : Measure Ω}
-  {μ : Measure 𝓧} {Y : Ω → 𝓧}
-
-/-- A function `f ∘ Y` of a random variable `Y` with law `μ` is sub-Gaussian if `f` is
-sub-Gaussian under `μ`. -/
-lemma HasLaw.hasSubgaussianMGF_comp (hY : HasLaw Y μ P') {f : 𝓧 → ℝ} {c : ℝ≥0}
-    (hf : HasSubgaussianMGF f c μ) : HasSubgaussianMGF (fun ω ↦ f (Y ω)) c P' :=
-  HasSubgaussianMGF.of_map hY.aemeasurable (hY.map_eq ▸ hf)
-
-/-- If `Y` is independent of a `σ`-algebra `m'`, so is every measurable function of `Y`. -/
-lemma indep_comap_comp {m' : MeasurableSpace Ω}
-    (h : Indep (MeasurableSpace.comap Y m𝓧) m' P') {f : 𝓧 → ℝ} (hf : Measurable f) :
-    Indep (MeasurableSpace.comap (fun ω ↦ f (Y ω)) inferInstance) m' P' :=
-  indep_of_indep_of_le_left h (hf.comp (comap_measurable Y)).comap_le
-
-end ProbabilityTheory
-
 namespace Learning.Betting
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
 section Pathwise
-
-/-- `1 + x ≤ exp (x - x² / (2 (1 + M)))` for `-1 ≤ x ≤ M`, `M ≥ 0`. -/
-lemma one_add_le_exp_sub_mul_sq {x M : ℝ} (hM : 0 ≤ M) (hx1 : -1 ≤ x) (hxM : x ≤ M) :
-    1 + x ≤ Real.exp (x - x ^ 2 / (2 * (1 + M))) := by
-  rcases hx1.eq_or_lt with h | h
-  · rw [← h]
-    norm_num
-    positivity
-  · calc 1 + x = Real.exp (Real.log (1 + x)) := (Real.exp_log (by linarith)).symm
-      _ ≤ _ := Real.exp_le_exp.2 (Real.log_one_add_le_sub_mul_sq hM h hxM)
-
-/-- `|log (1 + x) - x| ≤ x²` for `|x| ≤ 1 / 2`. -/
-lemma abs_log_one_add_sub_self_le {x : ℝ} (hx : |x| ≤ 1 / 2) :
-    |Real.log (1 + x) - x| ≤ x ^ 2 := by
-  have h1 : 0 < 1 + x := by linarith [neg_abs_le x]
-  have h2 := Real.sub_sq_le_log_one_add hx
-  have h3 := Real.log_le_sub_one_of_pos h1
-  rw [abs_le]
-  constructor <;> linarith
-
-/-- A bet fraction in `fractionRange m` has absolute value at most `1 / m + 1 / (1 - m)`. -/
-lemma abs_le_of_mem_fractionRange {m l : ℝ} (hm : m ∈ Set.Ioo 0 1) (hl : l ∈ fractionRange m) :
-    |l| ≤ 1 / m + 1 / (1 - m) := by
-  have h1 : 0 < 1 / m := one_div_pos.2 hm.1
-  have h2 : 0 < 1 / (1 - m) := one_div_pos.2 (sub_pos.2 hm.2)
-  have h3 : -1 / (1 - m) = -(1 / (1 - m)) := neg_div _ _
-  rw [abs_le]
-  constructor <;> linarith [hl.1, hl.2]
 
 /-- **Bankruptcy on the divergence event, pathwise.** If the bets are in `fractionRange m`, the
 observations in `[0, 1]`, `σ2 > 0`, `∑ lam k ^ 2 = ∞` and the sums `∑_{k < n} lam k (X k - m)`
@@ -123,7 +78,8 @@ lemma tendsto_wealth_zero_of_forall_abs_sum_le {m σ2 : ℝ} {lam X : ℕ → Ω
     have := one_div_pos.2 hm.1
     have := one_div_pos.2 (sub_pos.2 hm.2)
     positivity
-  have hlamL : ∀ k, |lam k ω| ≤ L := fun k ↦ abs_le_of_mem_fractionRange hm (hlam k)
+  have hlamL : ∀ k, |lam k ω| ≤ L := fun k ↦ (abs_le_of_mem_fractionRange (hlam k)).trans
+    (max_le_add_of_nonneg (one_div_pos.2 hm.1).le (one_div_pos.2 (sub_pos.2 hm.2)).le)
   have hY : ∀ k, |X k ω - m| ≤ 1 := fun k ↦ by
     rw [abs_le]
     constructor <;> linarith [(hX k).1, (hX k).2, hm.1, hm.2]
@@ -137,13 +93,13 @@ lemma tendsto_wealth_zero_of_forall_abs_sum_le {m σ2 : ℝ} {lam X : ℕ → Ω
       ≤ Real.exp (lam k ω * (X k ω - m) - c * (lam k ω ^ 2 * (X k ω - m) ^ 2)) := by
     intro k
     have h1 : -1 ≤ lam k ω * (X k ω - m) := by
-      linarith [one_add_mul_sub_nonneg hm (hlam k) (hX k)]
+      linarith [one_add_mul_sub_nonneg (Set.Ioo_subset_Icc_self hm) (hlam k) (hX k)]
     have h2 : lam k ω * (X k ω - m) ≤ L := by
       calc lam k ω * (X k ω - m) ≤ |lam k ω * (X k ω - m)| := le_abs_self _
         _ = |lam k ω| * |X k ω - m| := abs_mul _ _
         _ ≤ L * 1 := mul_le_mul (hlamL k) (hY k) (abs_nonneg _) hL
         _ = L := mul_one L
-    convert one_add_le_exp_sub_mul_sq hL h1 h2 using 2
+    convert Real.one_add_le_exp_sub_mul_sq hL h1 h2 using 2
     rw [hc_def, mul_pow]
     ring
   have hW : ∀ n, wealth m lam X n ω ≤ Real.exp (T n - c * (σ2 * A n + U n)) := by
@@ -152,7 +108,8 @@ lemma tendsto_wealth_zero_of_forall_abs_sum_le {m σ2 : ℝ} {lam X : ℕ → Ω
       simp only [hA_def, hU_def, mul_sum, ← sum_add_distrib]
       exact sum_congr rfl fun k _ ↦ by ring
     rw [hsq, mul_sum, ← sum_sub_distrib, Real.exp_sum]
-    exact prod_le_prod₀ (fun k _ ↦ one_add_mul_sub_nonneg hm (hlam k) (hX k)) fun k _ ↦ hfac k
+    exact prod_le_prod₀ (fun k _ ↦ one_add_mul_sub_nonneg (Set.Ioo_subset_Icc_self hm) (hlam k)
+      (hX k)) fun k _ ↦ hfac k
   -- the bounds on the martingale parts
   obtain ⟨C1, hC1⟩ := hT (c * σ2 / 4) (by positivity)
   obtain ⟨C2, hC2⟩ := hU (σ2 / (2 * (L ^ 2 + 1))) (by positivity)
@@ -185,7 +142,8 @@ lemma tendsto_wealth_zero_of_forall_abs_sum_le {m σ2 : ℝ} {lam X : ℕ → Ω
     simp only [Function.comp_apply]
     ring
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
-    (fun n ↦ wealth_nonneg hm (fun k _ ↦ hlam k) (fun k _ ↦ hX k)) fun n ↦ ?_
+    (fun n ↦ wealth_nonneg (Set.Ioo_subset_Icc_self hm) (fun k _ ↦ hlam k) (fun k _ ↦ hX k))
+    fun n ↦ ?_
   exact (hW n).trans (Real.exp_le_exp.2 (hbound n))
 
 /-- **Non-bankruptcy on the convergence event, pathwise.** If no bet loses the whole wealth,
@@ -214,7 +172,7 @@ lemma exists_tendsto_wealth_pos {m : ℝ} {lam X : ℕ → Ω → ℝ} {ω : Ω}
     refine Summable.of_norm_bounded_eventually hsum ?_
     rw [Nat.cofinite_eq_atTop]
     filter_upwards [hsmall] with k hk
-    exact (abs_log_one_add_sub_self_le hk).trans (hx2 k)
+    exact (Real.abs_log_one_add_sub_le_sq (by linarith [neg_abs_le (x k)])).trans (hx2 k)
   have hW : ∀ n, wealth m lam X n ω
       = Real.exp (∑ k ∈ range n, x k + ∑ k ∈ range n, g k) := by
     intro n
@@ -232,31 +190,25 @@ section Indep
 variable {ℱ : Filtration ℕ mΩ} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ} {lam X : ℕ → Ω → ℝ}
 
-omit [IsProbabilityMeasure P'] [IsProbabilityMeasure P] in
-/-- An observation with law `P` on `[0, 1]` is in `[0, 1]` almost surely. -/
-private lemma ae_mem_Icc_of_hasLaw {Y : Ω → ℝ} (hY : HasLaw Y P P')
-    (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) : ∀ᵐ ω ∂P', Y ω ∈ Set.Icc 0 1 := by
-  rw [← hY.map_eq] at hP
-  exact ae_of_ae_map hY.aemeasurable hP
-
 /-- **The wealth is a supermartingale** under the null: if the observations are i.i.d. along `ℱ`
-with a law `P` on `[0, 1]` with mean `m ∈ (0, 1)` and the strategy `lam` is adapted to `ℱ` with
+with a law `P` on `[0, 1]` with mean `m` and the strategy `lam` is adapted to `ℱ` with
 values in `fractionRange m` almost surely, then the wealth is a supermartingale (in fact a
 martingale). -/
 lemma supermartingale_wealth (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hm01 : m ∈ Set.Ioo 0 1) (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
     (hindep : ∀ n, Indep (MeasurableSpace.comap (X n) inferInstance) (ℱ n) P')
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam)
     (hlam_mem : ∀ n, ∀ᵐ ω ∂P', lam n ω ∈ fractionRange m) :
     Supermartingale (wealth m lam X) ℱ P' := by
+  have hm01 := mem_Icc_of_integral_eq hP hm
   have hXm : ∀ n, Measurable (X n) := fun n ↦ (hX n).mono (ℱ.le _) le_rfl
   have hall : ∀ᵐ ω ∂P', (∀ n, lam n ω ∈ fractionRange m) ∧ ∀ n, X n ω ∈ Set.Icc 0 1 :=
-    (ae_all_iff.2 hlam_mem).and (ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw (hlaw n) hP)
+    (ae_all_iff.2 hlam_mem).and (ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP)
   have hW_nonneg : ∀ n, 0 ≤ᵐ[P'] wealth m lam X n := fun n ↦ by
     filter_upwards [hall] with ω hω
     exact wealth_nonneg hm01 (fun k _ ↦ hω.1 k) (fun k _ ↦ hω.2 k)
   have hW0 : wealth m lam X 0 = fun _ ↦ 1 := funext fun ω ↦ wealth_zero m lam X ω
-  have hint : Integrable (fun x : ℝ ↦ x) P := (memLp_two_id_of_mem_Icc hP).integrable one_le_two
+  have hint : Integrable (fun x : ℝ ↦ x) P := (memLp_id_of_mem_Icc hP 2).integrable one_le_two
   refine supermartingale_of_lintegral_le (adapted_wealth hlam hX) hW_nonneg
     (by rw [hW0]; exact integrable_const _) (Z := fun n ω ↦ (wealth m lam X n ω, lam n ω))
     (Y := X) (fun n ↦ (adapted_wealth hlam hX n).prodMk (hlam n)) hXm hindep
@@ -282,62 +234,25 @@ lemma supermartingale_wealth (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm
 /-- The wealth of a predictable strategy converges almost surely under the null (it is a
 nonnegative supermartingale). -/
 lemma ae_exists_tendsto_wealth (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hm01 : m ∈ Set.Ioo 0 1) (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
     (hindep : ∀ n, Indep (MeasurableSpace.comap (X n) inferInstance) (ℱ n) P')
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam)
     (hlam_mem : ∀ n, ∀ᵐ ω ∂P', lam n ω ∈ fractionRange m) :
     ∀ᵐ ω ∂P', ∃ L, Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 L) := by
+  have hm01 := mem_Icc_of_integral_eq hP hm
   have hall : ∀ᵐ ω ∂P', (∀ n, lam n ω ∈ fractionRange m) ∧ ∀ n, X n ω ∈ Set.Icc 0 1 :=
-    (ae_all_iff.2 hlam_mem).and (ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw (hlaw n) hP)
-  obtain ⟨L, -, hL, -⟩ := (supermartingale_wealth hP hm hm01 hX hindep hlaw hlam
+    (ae_all_iff.2 hlam_mem).and (ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP)
+  obtain ⟨L, -, hL, -⟩ := (supermartingale_wealth hP hm hX hindep hlaw hlam
     hlam_mem).exists_ae_tendsto_of_nonneg fun n ↦ by
       filter_upwards [hall] with ω hω
       exact wealth_nonneg hm01 (fun k _ ↦ hω.1 k) (fun k _ ↦ hω.2 k)
   filter_upwards [hL] with ω hω using ⟨L ω, hω⟩
 
-/-- Under a null distribution on `[0, 1]` with mean `m`, `x - m` is `1 / 4`-sub-Gaussian
-(Hoeffding's lemma). -/
-lemma hasSubgaussianMGF_sub_of_mem_Icc (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
-    (hm : ∫ x, x ∂P = m) :
-    HasSubgaussianMGF (fun x ↦ x - m) (1 / 4) P := by
-  have hint : Integrable (fun x : ℝ ↦ x) P := (memLp_two_id_of_mem_Icc hP).integrable one_le_two
-  have h := hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero (μ := P) (X := fun x ↦ x - m) (a := -m)
-    (b := 1 - m) (by fun_prop) ?_ ?_
-  · have hc : (‖(1 - m) - (-m)‖₊ / 2) ^ 2 = 1 / 4 := by norm_num
-    rwa [hc] at h
-  · filter_upwards [hP] with x hx
-    exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
-  · rw [integral_sub hint (integrable_const _), hm]
-    simp
-
-/-- Under a null distribution on `[0, 1]` with mean `m ∈ [0, 1]`, `(x - m)² - Var[id; P]` is
-`1 / 4`-sub-Gaussian (Hoeffding's lemma). -/
-lemma hasSubgaussianMGF_sq_sub_variance (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
-    (hm : ∫ x, x ∂P = m) (hm01 : m ∈ Set.Icc 0 1) :
-    HasSubgaussianMGF (fun x ↦ (x - m) ^ 2 - Var[id; P]) (1 / 4) P := by
-  have hb : ∀ᵐ x ∂P, (x - m) ^ 2 ∈ Set.Icc (0 : ℝ) 1 := by
-    filter_upwards [hP] with x hx
-    refine ⟨sq_nonneg _, ?_⟩
-    have h : |x - m| ≤ 1 := by
-      rw [abs_le]
-      constructor <;> linarith [hx.1, hx.2, hm01.1, hm01.2]
-    simpa using sq_le_sq.2 (h.trans_eq abs_one.symm)
-  have hint : Integrable (fun x : ℝ ↦ (x - m) ^ 2) P := Integrable.of_mem_Icc 0 1 (by fun_prop) hb
-  have h := hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero
-    (μ := P) (X := fun x ↦ (x - m) ^ 2 - Var[id; P]) (a := -Var[id; P]) (b := 1 - Var[id; P])
-    (by fun_prop) ?_ ?_
-  · have hc : (‖(1 - Var[id; P]) - (-Var[id; P])‖₊ / 2) ^ 2 = 1 / 4 := by norm_num
-    rwa [hc] at h
-  · filter_upwards [hb] with x hx
-    exact ⟨by linarith [hx.1], by linarith [hx.2]⟩
-  · rw [integral_sub hint (integrable_const _), variance_eq_integral aemeasurable_id]
-    simp [hm]
-
 /-- The almost sure events used in the proof of the sum-of-squares criterion: the sums
 `∑ lam k (X k - m)` and `∑ lam k ^ 2 ((X k - m)² - σ²)` are small compared to the sums of the
 squared weights, and `∑ lam k (X k - m)` converges on `{∑ lam k ^ 2 < ∞}`. -/
 lemma ae_sum_sq_events (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hm01 : m ∈ Set.Icc 0 1) (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
     (hindep : ∀ n, Indep (MeasurableSpace.comap (X n) inferInstance) (ℱ n) P')
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam) :
     ∀ᵐ ω ∂P', (∀ ε > 0, ∃ C, ∀ n, |∑ k ∈ range n, lam k ω * (X k ω - m)|
@@ -346,20 +261,22 @@ lemma ae_sum_sq_events (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫
         ≤ C + ε * ∑ k ∈ range n, (lam k ω ^ 2) ^ 2) ∧
       (Summable (fun n ↦ lam n ω ^ 2) →
         ∃ T, Tendsto (fun n ↦ ∑ k ∈ range n, lam k ω * (X k ω - m)) atTop (𝓝 T)) := by
+  have hm01 := mem_Icc_of_integral_eq hP hm
   have hY1 : ∀ n, Measurable[ℱ (n + 1)] (fun ω ↦ X n ω - m) := fun n ↦ (hX n).sub_const m
   have hY2 : ∀ n, Measurable[ℱ (n + 1)] (fun ω ↦ (X n ω - m) ^ 2 - Var[id; P]) :=
     fun n ↦ ((hX n).sub_const m).pow_const 2 |>.sub_const _
   have hi1 : ∀ n, Indep (MeasurableSpace.comap (fun ω ↦ X n ω - m) inferInstance) (ℱ n) P' :=
-    fun n ↦ indep_comap_comp (hindep n) (measurable_id.sub_const m)
+    fun n ↦ (hindep n).comap_comp (measurable_id.sub_const m)
   have hi2 : ∀ n, Indep (MeasurableSpace.comap (fun ω ↦ (X n ω - m) ^ 2 - Var[id; P])
       inferInstance) (ℱ n) P' :=
-    fun n ↦ indep_comap_comp (hindep n) (f := fun x ↦ (x - m) ^ 2 - Var[id; P]) (by fun_prop)
+    fun n ↦ (hindep n).comap_comp (f := fun x ↦ (x - m) ^ 2 - Var[id; P]) (by fun_prop)
   have hs1 := fun n ↦ (hlaw n).hasSubgaussianMGF_comp (hasSubgaussianMGF_sub_of_mem_Icc hP hm)
   have hs2 := fun n ↦ (hlaw n).hasSubgaussianMGF_comp
-    (hasSubgaussianMGF_sq_sub_variance hP hm hm01)
+    (hasSubgaussianMGF_sq_sub_variance hP hm)
   have hw2 : Adapted ℱ (fun n ω ↦ lam n ω ^ 2) := fun n ↦ (hlam n).pow_const 2
-  filter_upwards [ae_forall_abs_sum_mul_le hY1 hi1 hs1 hlam,
-    ae_forall_abs_sum_mul_le hY2 hi2 hs2 hw2, ae_exists_tendsto_sum_mul hY1 hi1 hs1 hlam]
+  filter_upwards [ae_forall_abs_sum_mul_le_of_indep hY1 hi1 hs1 hlam,
+    ae_forall_abs_sum_mul_le_of_indep hY2 hi2 hs2 hw2,
+    ae_exists_tendsto_sum_mul_of_indep hY1 hi1 hs1 hlam]
     with ω h1 h2 h3
   exact ⟨h1, h2, h3⟩
 
@@ -374,8 +291,8 @@ lemma ae_tendsto_wealth_zero_of_not_summable (hP : ∀ᵐ x ∂P, x ∈ Set.Icc 
     ∀ᵐ ω ∂P', ¬ Summable (fun n ↦ lam n ω ^ 2) →
       Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0) := by
   have hm01 := mem_Ioo_of_ne_dirac hP hm hnd
-  filter_upwards [ae_all_iff.2 hlam_mem, ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw (hlaw n) hP,
-    ae_sum_sq_events hP hm (Set.Ioo_subset_Icc_self hm01) hX hindep hlaw hlam]
+  filter_upwards [ae_all_iff.2 hlam_mem, ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP,
+    ae_sum_sq_events hP hm hX hindep hlaw hlam]
     with ω h1 h2 ⟨h3, h4, _⟩ hsum
   exact tendsto_wealth_zero_of_forall_abs_sum_le hm01 (variance_pos_of_ne_dirac hP hm hnd) h1 h2
     h3 h4 hsum
@@ -385,13 +302,14 @@ on `[0, 1]`, for a predictable strategy, almost surely on `{∑ lam n ^ 2 < ∞}
 whole wealth, then the wealth converges to a positive limit. The bets need not be in
 `fractionRange m`. -/
 lemma ae_exists_tendsto_wealth_pos_of_summable (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
-    (hm : ∫ x, x ∂P = m) (hm01 : m ∈ Set.Icc 0 1) (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
+    (hm : ∫ x, x ∂P = m) (hX : ∀ n, Measurable[ℱ (n + 1)] (X n))
     (hindep : ∀ n, Indep (MeasurableSpace.comap (X n) inferInstance) (ℱ n) P')
     (hlaw : ∀ n, HasLaw (X n) P P') (hlam : Adapted ℱ lam) :
     ∀ᵐ ω ∂P', Summable (fun n ↦ lam n ω ^ 2) → (∀ n, -1 < lam n ω * (X n ω - m)) →
       ∃ L, 0 < L ∧ Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 L) := by
-  filter_upwards [ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw (hlaw n) hP,
-    ae_sum_sq_events hP hm hm01 hX hindep hlaw hlam] with ω h2 ⟨_, _, h5⟩ hsum hpos
+  have hm01 := mem_Icc_of_integral_eq hP hm
+  filter_upwards [ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP,
+    ae_sum_sq_events hP hm hX hindep hlaw hlam] with ω h2 ⟨_, _, h5⟩ hsum hpos
   obtain ⟨T, hT⟩ := h5 hsum
   refine exists_tendsto_wealth_pos hpos (fun n ↦ ?_) hsum hT
   rw [abs_le]
@@ -415,12 +333,12 @@ lemma sum_sq_criterion_of_indep (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) 
   have key : ∀ᵐ ω ∂P', ∃ L, Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 L) ∧
       (L = 0 ↔ ¬ Summable (fun n ↦ lam n ω ^ 2) ∨ ∃ n, lam n ω * (X n ω - m) = -1) ∧
       (0 < L ↔ Summable (fun n ↦ lam n ω ^ 2) ∧ ∀ n, -1 < lam n ω * (X n ω - m)) := by
-    filter_upwards [ae_all_iff.2 hlam_mem, ae_all_iff.2 fun n ↦ ae_mem_Icc_of_hasLaw (hlaw n) hP,
+    filter_upwards [ae_all_iff.2 hlam_mem, ae_all_iff.2 fun n ↦ (hlaw n).ae_comp hP,
       ae_tendsto_wealth_zero_of_not_summable hP hm hnd hX hindep hlaw hlam hlam_mem,
-      ae_exists_tendsto_wealth_pos_of_summable hP hm (Set.Ioo_subset_Icc_self hm01) hX hindep
+      ae_exists_tendsto_wealth_pos_of_summable hP hm hX hindep
         hlaw hlam] with ω h1 h2 hdiv hconv
     have hge : ∀ n, -1 ≤ lam n ω * (X n ω - m) := fun n ↦ by
-      linarith [one_add_mul_sub_nonneg hm01 (h1 n) (h2 n)]
+      linarith [one_add_mul_sub_nonneg (Set.Ioo_subset_Icc_self hm01) (h1 n) (h2 n)]
     by_cases hloss : ∃ n, lam n ω * (X n ω - m) = -1
     · obtain ⟨n, hn⟩ := hloss
       refine ⟨0, tendsto_atTop_of_eventually_const (i₀ := n + 1) fun k hk ↦ ?_,
@@ -446,7 +364,7 @@ lemma sum_sq_criterion_of_indep (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) 
   · rwa [hL.limUnder_eq]
 
 /-- `(x ^ (-1 / 2)) ^ 2 = x⁻¹` for `x ≥ 0`. -/
-lemma rpow_neg_one_half_sq {x : ℝ} (hx : 0 ≤ x) : (x ^ (-1 / 2 : ℝ)) ^ 2 = x⁻¹ := by
+private lemma rpow_neg_one_half_sq {x : ℝ} (hx : 0 ≤ x) : (x ^ (-1 / 2 : ℝ)) ^ 2 = x⁻¹ := by
   rw [← Real.rpow_natCast, ← Real.rpow_mul hx]
   norm_num [Real.rpow_neg_one]
 

@@ -18,23 +18,24 @@
 
 \begin{lemma}
   \label{lem:log_ge_sub_sq}
-  \lean{Real.sub_sq_le_log_one_add}
+  \lean{Real.sub_sq_le_log_one_add, Real.abs_log_one_add_sub_le_sq}
   \leanok
-  For $\abs x \le 1/2$, $\log(1 + x) \ge x - x^2$.
+  For $x \ge -1/2$, $\log(1 + x) \ge x - x^2$; hence $\abs{\log(1 + x) - x} \le x^2$.
 \end{lemma}
 
 \begin{proof}
   \leanok
   $g(x) = \log(1+x) - x + x^2$ satisfies $g(0) = 0$ and $g'(x) = \frac{x(1 + 2x)}{1 + x}$, of the
-  sign of $x$ on $[-1/2, 1/2]$. (Lemma~\ref{lem:log_taylor} alone is not enough: it gives
+  sign of $x$ on $[-1/2, \infty)$. The upper bound is $\log(1+x) \le x$. (Lemma~\ref{lem:log_taylor} alone is not enough: it gives
   $\log(1+x) \ge x - x^2/2 - 2\abs x^3$, which is $\ge x - x^2$ only for $\abs x \le 1/4$.)
 \end{proof}
 
 \begin{lemma}
   \label{lem:log_le_sub_mul_sq}
-  \lean{Real.log_one_add_le_sub_mul_sq}
+  \lean{Real.log_one_add_le_sub_mul_sq, Real.one_add_le_exp_sub_mul_sq}
   \leanok
-  For $M \ge 0$ and $-1 < x \le M$, $\log(1+x) \le x - \frac{x^2}{2(1+M)}$.
+  For $M \ge 0$ and $-1 < x \le M$, $\log(1+x) \le x - \frac{x^2}{2(1+M)}$. Equivalently, for
+  $-1 \le x \le M$, $1 + x \le \exp\big(x - \frac{x^2}{2(1+M)}\big)$.
 \end{lemma}
 
 \begin{proof}

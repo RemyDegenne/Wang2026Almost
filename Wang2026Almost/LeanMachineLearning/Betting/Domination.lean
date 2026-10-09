@@ -49,20 +49,9 @@ lemma prod_one_add_mul_le_rpow {ε l : ℝ} (hε : 0 < ε) (hεl : ε ≤ l)
 
 variable {m ε l : ℝ} {X : ℕ → Ω → ℝ} {n : ℕ} {ω : Ω}
 
-/-- A fraction between `0` and a fraction of `fractionRange m` is in `fractionRange m`. -/
-private lemma mem_fractionRange_of_mem_uIcc (hm : m ∈ Set.Ioo 0 1) (hl : l ∈ fractionRange m)
-    (hε : ε ∈ Set.uIcc 0 l) : ε ∈ fractionRange m := by
-  have h1 : -1 / (1 - m) ≤ 0 := div_nonpos_of_nonpos_of_nonneg (by norm_num) (by linarith [hm.2])
-  have h2 : 0 ≤ 1 / m := by have := hm.1; positivity
-  rcases le_total 0 l with h | h
-  · rw [Set.uIcc_of_le h] at hε
-    exact ⟨h1.trans hε.1, hε.2.trans hl.2⟩
-  · rw [Set.uIcc_of_ge h] at hε
-    exact ⟨hl.1.trans hε.1, hε.2.trans h2⟩
-
 /-- **Bernoulli domination of fixed-fraction wealths**: for observations in `[0, 1]`,
 `0 < ε ≤ l` and `l ∈ fractionRange m`, `W^l_n ≤ (W^ε_n) ^ (l / ε)`. -/
-lemma fixedWealth_le_rpow (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hεl : ε ≤ l)
+lemma fixedWealth_le_rpow (hm : m ∈ Set.Icc 0 1) (hε : 0 < ε) (hεl : ε ≤ l)
     (hl : l ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1) :
     fixedWealth m l X n ω ≤ fixedWealth m ε X n ω ^ (l / ε) := by
   have hεr : ε ∈ fractionRange m := mem_fractionRange_of_mem_uIcc hm hl
@@ -72,7 +61,7 @@ lemma fixedWealth_le_rpow (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hεl : ε ≤
 
 /-- **Bernoulli domination of fixed-fraction wealths**, negative fractions: for observations in
 `[0, 1]`, `l ≤ -ε < 0` and `l ∈ fractionRange m`, `W^l_n ≤ (W^{-ε}_n) ^ (-l / ε)`. -/
-lemma fixedWealth_le_rpow_of_le_neg (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hlε : l ≤ -ε)
+lemma fixedWealth_le_rpow_of_le_neg (hm : m ∈ Set.Icc 0 1) (hε : 0 < ε) (hlε : l ≤ -ε)
     (hl : l ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1) :
     fixedWealth m l X n ω ≤ fixedWealth m (-ε) X n ω ^ (-l / ε) := by
   have hεr : -ε ∈ fractionRange m := mem_fractionRange_of_mem_uIcc hm hl
@@ -89,7 +78,7 @@ lemma fixedWealth_le_rpow_of_le_neg (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hl�
 
 /-- For observations in `[0, 1]`, `0 < ε ≤ l` and `l ∈ fractionRange m`, the wealth of the fixed
 fraction `ε` dominates that of `l` when it is at most `1`. -/
-lemma fixedWealth_le_of_le_one (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hεl : ε ≤ l)
+lemma fixedWealth_le_of_le_one (hm : m ∈ Set.Icc 0 1) (hε : 0 < ε) (hεl : ε ≤ l)
     (hl : l ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1)
     (h1 : fixedWealth m ε X n ω ≤ 1) :
     fixedWealth m l X n ω ≤ fixedWealth m ε X n ω := by
@@ -103,7 +92,7 @@ lemma fixedWealth_le_of_le_one (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hεl : �
 
 /-- For observations in `[0, 1]`, `l ≤ -ε < 0` and `l ∈ fractionRange m`, the wealth of the
 fixed fraction `-ε` dominates that of `l` when it is at most `1`. -/
-lemma fixedWealth_le_of_le_one_of_le_neg (hm : m ∈ Set.Ioo 0 1) (hε : 0 < ε) (hlε : l ≤ -ε)
+lemma fixedWealth_le_of_le_one_of_le_neg (hm : m ∈ Set.Icc 0 1) (hε : 0 < ε) (hlε : l ≤ -ε)
     (hl : l ∈ fractionRange m) (hX : ∀ k < n, X k ω ∈ Set.Icc 0 1)
     (h1 : fixedWealth m (-ε) X n ω ≤ 1) :
     fixedWealth m l X n ω ≤ fixedWealth m (-ε) X n ω := by

@@ -5,6 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Wang2026Almost.LeanMachineLearning.Betting.WealthLemmas
 public import Wang2026Almost.LeanMachineLearning.Betting.Domination
 public import Wang2026Almost.Mathlib.Analysis.SpecialFunctions.Log.OneAdd
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
@@ -124,19 +125,6 @@ lemma ciSup_Icc_eq_ciSup_rat {G : ℝ → ℝ} (hG : Continuous G) {a b : ℝ} (
     have h2 : (l : ℝ) ∈ closure (Set.Ioo a b) := by rw [closure_Ioo hab.ne]; exact l.2
     exact closure_minimal h1 isClosed_closure h2
   exact (isClosed_le hG continuous_const).closure_subset_iff.2 hsub hl
-
-/-- The fraction range `[-1 / (1 - m), 1 / m]` is a nondegenerate interval for `m ∈ (0, 1)`. -/
-private lemma neg_one_div_one_sub_lt_one_div {m : ℝ} (hm : m ∈ Set.Ioo 0 1) :
-    -1 / (1 - m) < 1 / m := by
-  have h1 : -1 / (1 - m) < 0 := div_neg_of_neg_of_pos (by norm_num) (by linarith [hm.2])
-  have h2 : 0 < 1 / m := by have := hm.1; positivity
-  linarith
-
-/-- The fixed-fraction wealth is continuous in the bet fraction. -/
-private lemma continuous_fixedWealth (m : ℝ) (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
-    Continuous fun l ↦ fixedWealth m l X n ω := by
-  change Continuous fun l ↦ ∏ k ∈ range n, (1 + l * (X k ω - m))
-  fun_prop
 
 /-- The best-in-hindsight log-wealth `log (sup_{l ∈ fractionRange m} W^l_n)` of measurable
 observations is measurable: the supremum can be taken over the rational fractions. -/
@@ -359,24 +347,19 @@ private lemma abs_le_one_of_mem_Icc (hm : m ∈ Set.Ioo 0 1) {x : ℝ}
     (hx : x ∈ Set.Icc (-m) (1 - m)) : |x| ≤ 1 :=
   abs_le.2 ⟨by linarith [hx.1, hm.2], by linarith [hx.2, hm.1]⟩
 
-/-- The fractions `|l| ≤ 1` are in the interior of the fraction range. -/
 private lemma mem_interior_fractionRange (hm : m ∈ Set.Ioo 0 1) {l : ℝ} (hl : |l| ≤ 1) :
-    l ∈ interior (fractionRange m) := by
-  rw [fractionRange, interior_Icc]
-  obtain ⟨h1, h2⟩ := abs_le.1 hl
-  have h3 : 1 < 1 / (1 - m) := by rw [lt_div_iff₀ (by linarith [hm.2])]; linarith [hm.1]
-  have h4 : 1 < 1 / m := by rw [lt_div_iff₀ hm.1]; linarith [hm.2]
-  exact ⟨by rw [neg_div]; linarith, by linarith⟩
+    l ∈ interior (fractionRange m) :=
+  Icc_neg_one_one_subset_interior_fractionRange hm (abs_le.1 hl)
 
-/-- The fractions `|l| ≤ 1` are in the fraction range. -/
 private lemma mem_fractionRange_of_abs_le (hm : m ∈ Set.Ioo 0 1) {l : ℝ} (hl : |l| ≤ 1) :
     l ∈ fractionRange m :=
-  interior_subset (mem_interior_fractionRange hm hl)
+  Icc_neg_one_one_subset_fractionRange hm (abs_le.1 hl)
 
 /-- For `l ∈ fractionRange m` and `x ∈ [-m, 1 - m]`, `1 + l x ≥ 0`. -/
 private lemma one_add_mul_nonneg_of_mem (hm : m ∈ Set.Ioo 0 1) {l x : ℝ}
     (hl : l ∈ fractionRange m) (hx : x ∈ Set.Icc (-m) (1 - m)) : 0 ≤ 1 + l * x := by
-  have h := one_add_mul_sub_nonneg hm hl (x := x + m) ⟨by linarith [hx.1], by linarith [hx.2]⟩
+  have h := one_add_mul_sub_nonneg (Set.Ioo_subset_Icc_self hm) hl (x := x + m)
+    ⟨by linarith [hx.1], by linarith [hx.2]⟩
   rwa [add_sub_cancel_right] at h
 
 /-- `C b ≤ σ² / 4` for `0 ≤ C ≤ D` and `0 ≤ b ≤ σ² / (4 D)`. -/

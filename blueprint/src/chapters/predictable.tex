@@ -126,20 +126,17 @@
   $\sum_n 1/n = \infty$. The paper's proof, for these weights, goes as follows. Let
   $\eps \in (0, 1/2)$; there are $\delta > 0$ and $N$ with $\Prob(A_n) \ge 1 - \eps$ for
   $n \ge N$, where $A_n = \{Z_n \ge \delta/n\}$. On $C = \{\sum Z_n < \infty\}$,
-  $\sum_{n \ge 1} \indic_{A_n}/n \le \delta^{-1} \sum Z_n < \infty$, so by
-  Lemma~\ref{lem:cesaro_of_summable_div} $G_n := \frac1n \sum_{k<n} \indic_{A_k} \to 0$, and
+  $\sum_{n \ge 1} \indic_{A_n}/n \le \delta^{-1} \sum Z_n < \infty$, so
+  $G_n := \frac1n \sum_{k<n} \indic_{A_k} \to 0$ (a case of Kronecker's lemma:
+  $G_n \le \frac Mn + \sum_{M \le k < n} \indic_{A_k}/k$ for every $M \ge 1$), and
   $C \subseteq \liminf_n \{G_n < 1/2\}$. Now $\E[G_n] \ge \frac{n - N}{n}(1-\eps)$, so by Markov's
   inequality applied to $1 - G_n \in [0,1]$, $\Prob(G_n < 1/2) \le 2(1 - \E G_n)$, whose limit
   superior is at most $2\eps$. By Lemma~\ref{lem:measure_liminf_le},
   $\Prob(C) \le \liminf_n \Prob(G_n < 1/2) \le 2\eps$. Since $\eps$ is arbitrary, $\Prob(C) = 0$.
-  The formal proof replaces the Ces\`aro means $G_n$ by the weighted means
-  $\sum_{k<n} \indic_{A_k}/k \,\big/ \sum_{k<n} 1/k$, which on $C$ tend to $0$ without
-  Lemma~\ref{lem:cesaro_of_summable_div} (bounded numerator, divergent denominator).
 \end{proof}
 
 \begin{remark}
-  The paper uses Kronecker's lemma, of which Lemma~\ref{lem:cesaro_of_summable_div} is the special
-  case needed. The formal proof (Lemma~\ref{lem:ae_not_summable_of_isBigOmegaInProb}) uses weighted
+  The paper uses Kronecker's lemma. The formal proof (Lemma~\ref{lem:ae_not_summable_of_isBigOmegaInProb}) uses weighted
   counts of failures instead and holds for any nonnegative non-summable rate $a_n$ in place of
   $n^{-1}$; the $Z_n$ only need to be almost everywhere measurable.
 \end{remark}
@@ -292,7 +289,7 @@
   \label{lem:good_event}
   \lean{Learning.Betting.ae_isBigO_sum_sub, Learning.Betting.ae_isBigO_sum_sq_sub}
   \leanok
-  \uses{lem:hoeffding_rate, lem:hoeffding_lemma_null}
+  \uses{lem:hoeffding_rate, lem:null_subgaussian}
   Let $X_n$ be i.i.d.\ with law $P$ on $[0,1]$ with mean $m$ and variance $\sigma^2$. Almost surely,
   $S_n = O(\sqrt n \log n)$ and $V_n - n\sigma^2 = O(\sqrt n \log n)$, where
   $V_n = \sum_{k<n} (X_k - m)^2$.
@@ -300,7 +297,8 @@
 
 \begin{proof}
   \leanok
-  $X_k - m$ and $(X_k - m)^2 - \sigma^2$ are bounded, centered and i.i.d.; apply
+  $X_k - m$ and $(X_k - m)^2 - \sigma^2$ are independent and $\frac14$-sub-Gaussian
+  (Lemma~\ref{lem:null_subgaussian}); apply
   Lemma~\ref{lem:hoeffding_rate}.
 \end{proof}
 

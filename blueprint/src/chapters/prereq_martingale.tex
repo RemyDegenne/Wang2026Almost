@@ -1,19 +1,25 @@
-\chapter{Supermartingales from independent increments}
+\chapter{Supermartingales from independent and conditionally sub-Gaussian increments}
 \label{chap:pre_martingale}
 
 Throughout, $(\Omega, \mathcal A, \Prob)$ is a probability space with a filtration $\F$ indexed by
 $\N$. A real process $Y$ has \emph{independent increments along $\F$} if each $Y_n$ is
-$\F_{n+1}$-measurable and independent of $\F_n$.
+$\F_{n+1}$-measurable and independent of $\F_n$. When $\Omega$ is a standard Borel space, a
+sub-$\sigma$-algebra $\mathcal G$ has a conditional expectation kernel $\kappa_{\mathcal G}$ (a
+regular version of $\Prob(\cdot \mid \mathcal G)$, Mathlib's \texttt{condExpKernel}), and a random
+variable $Y$ is \emph{conditionally $c$-sub-Gaussian given $\mathcal G$} if $e^{tY}$ is integrable
+for all $t$ and, for almost every $\omega$, $\int e^{tY} \, d\kappa_{\mathcal G}(\omega) \le
+e^{ct^2/2}$ for all $t \in \R$ (Mathlib's \texttt{HasCondSubgaussianMGF}).
 
 \section{Freezing and supermartingales}
 
 \begin{lemma}[Freezing lemma]
   \label{lem:lintegral_comp_indep}
-  \lean{ProbabilityTheory.setLIntegral_comp_of_indep}
+  \lean{ProbabilityTheory.setLIntegral_comp_of_indep, ProbabilityTheory.Indep.comap_comp}
   \leanok
   Let $Y$ be a random variable independent of a sub-$\sigma$-algebra $\mathcal G$, $Z$ a
   $\mathcal G$-measurable random variable, $F \ge 0$ measurable and $A \in \mathcal G$. Then
-  $\int_A F(Z, Y) \, d\Prob = \int_A \int F(Z, y) \, d\Prob_Y(y) \, d\Prob$.
+  $\int_A F(Z, Y) \, d\Prob = \int_A \int F(Z, y) \, d\Prob_Y(y) \, d\Prob$. Moreover, every
+  measurable function of $Y$ is independent of $\mathcal G$.
 \end{lemma}
 
 \begin{proof}
@@ -23,23 +29,45 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
   $((z, a), y) \mapsto a F(z, y)$.
 \end{proof}
 
-\begin{lemma}[Supermartingales with independent increments]
-  \label{lem:supermartingale_of_markov}
-  \lean{MeasureTheory.supermartingale_of_lintegral_le}
+\begin{lemma}[Freezing lemma, conditional form]
+  \label{lem:lintegral_comp_condExpKernel}
+  \lean{ProbabilityTheory.lintegral_comp_condExpKernel}
   \leanok
-  \uses{lem:lintegral_comp_indep}
-  Let $V$ be an adapted, a.s.\ nonnegative process with $V_0$ integrable, $Y$ with independent
-  increments along $\F$, and for each $n$ an $\F_n$-measurable $Z_n$ and a measurable
-  $\Phi_n \ge 0$ with $V_{n+1} = \Phi_n(Z_n, Y_n)$ a.s.\ and
-  $\int \Phi_n(Z_n, y) \, d\Prob_{Y_n}(y) \le V_n$ a.s. Then $V$ is a supermartingale.
+  Let $\Omega$ be standard Borel, $\mathcal G$ a sub-$\sigma$-algebra, $Z$ a $\mathcal G$-measurable
+  random variable and $F \ge 0$ measurable. Then
+  $\int F(Z(\omega), \omega) \, d\Prob(\omega) = \int \int F(Z(\omega), \omega') \,
+  d\kappa_{\mathcal G}(\omega)(\omega') \, d\Prob(\omega)$.
 \end{lemma}
 
 \begin{proof}
   \leanok
-  For $A \in \F_n$, Lemma~\ref{lem:lintegral_comp_indep} gives
-  $\int_A V_{n+1} = \int_A \int \Phi_n(Z_n, y)\,d\Prob_{Y_n}(y) \le \int_A V_n$. With $A = \Omega$
-  and induction, every $V_n$ is integrable. Conclude with the characterization of supermartingales
-  by set integrals (Mathlib's \texttt{supermartingale\_of\_setIntegral\_succ\_le}).
+  The composition-product of $\Prob|_{\mathcal G}$ and $\kappa_{\mathcal G}$ is the law of
+  $\omega \mapsto (\omega, \omega)$ on $(\Omega, \mathcal G) \times (\Omega, \mathcal A)$ (Mathlib's
+  \texttt{compProd\_trim\_condExpKernel}). Apply Tonelli's theorem for composition-products to
+  the $\mathcal G \otimes \mathcal A$-measurable function $(\omega, \omega') \mapsto F(Z(\omega),
+  \omega')$; the inner integral is $\mathcal G$-measurable, so its integral against
+  $\Prob|_{\mathcal G}$ is its integral against $\Prob$.
+\end{proof}
+
+\begin{lemma}[Supermartingales with independent increments]
+  \label{lem:supermartingale_of_markov}
+  \lean{MeasureTheory.supermartingale_of_setLIntegral_succ_le,
+    MeasureTheory.supermartingale_of_lintegral_le}
+  \leanok
+  \uses{lem:lintegral_comp_indep}
+  An adapted, a.s.\ nonnegative process $V$ with $V_0$ integrable and $\int_A V_{n+1} \le \int_A
+  V_n$ for all $n$ and $A \in \F_n$ is a supermartingale. In particular, let $V$ be such a process
+  (without the inequality), $Y$ with independent increments along $\F$, and for each $n$ an
+  $\F_n$-measurable $Z_n$ and a measurable $\Phi_n \ge 0$ with $V_{n+1} = \Phi_n(Z_n, Y_n)$ a.s.\
+  and $\int \Phi_n(Z_n, y) \, d\Prob_{Y_n}(y) \le V_n$ a.s. Then $V$ is a supermartingale.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  With $A = \Omega$ and induction, every $V_n$ is integrable. Conclude with the characterization of
+  supermartingales by set integrals (Mathlib's \texttt{supermartingale\_of\_setIntegral\_succ\_le}).
+  For the second statement, for $A \in \F_n$, Lemma~\ref{lem:lintegral_comp_indep} gives
+  $\int_A V_{n+1} = \int_A \int \Phi_n(Z_n, y)\,d\Prob_{Y_n}(y) \le \int_A V_n$.
 \end{proof}
 
 \begin{lemma}[Convergence of nonnegative supermartingales]
@@ -78,28 +106,72 @@ $\F_{n+1}$-measurable and independent of $\F_n$.
 
 \section{Conditionally sub-Gaussian sums}
 
-In this section $Y$ has independent increments along $\F$ and each $Y_n$ is $c$-sub-Gaussian:
-$\E[e^{tY_n}] \le e^{ct^2/2}$ for all $t$. Let $w$ be an adapted real process,
-$T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
+In this section each $Y_n$ is $\F_{n+1}$-measurable, $w$ is an adapted real process,
+$T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$, and the increments satisfy the
+\emph{moment bound at predictable parameters}: for every $n$, every $\F_n$-measurable $s$ and every
+$\F_n$-measurable $g \ge 0$,
+\begin{equation}
+  \label{eq:moment_bound}
+  \E[g \, e^{s Y_n}] \le \E[g \, e^{c s^2 / 2}].
+\end{equation}
+By the next lemma, this holds when $Y$ has independent $c$-sub-Gaussian increments along $\F$, on
+any probability space, and when each $Y_n$ is conditionally $c$-sub-Gaussian given $\F_n$ (a
+sub-Gaussian martingale difference sequence), on a standard Borel space. The results of this
+section are stated in Lean in these three forms: under~\eqref{eq:moment_bound} (suffix
+\texttt{\_of\_lintegral\_le}), for conditionally sub-Gaussian increments (no suffix) and for
+independent increments (suffix \texttt{\_of\_indep}).
+
+\begin{lemma}[Moment bound at predictable parameters]
+  \label{lem:subg_moment_bound}
+  \lean{ProbabilityTheory.HasCondSubgaussianMGF.lintegral_mul_exp_le,
+    ProbabilityTheory.HasSubgaussianMGF.lintegral_mul_exp_le_of_indep,
+    ProbabilityTheory.HasSubgaussianMGF.hasCondSubgaussianMGF_of_indep,
+    ProbabilityTheory.lintegral_mul_exp_le_of_hasCondSubgaussianMGF,
+    ProbabilityTheory.lintegral_mul_exp_le_of_indep}
+  \leanok
+  \uses{lem:lintegral_comp_indep, lem:lintegral_comp_condExpKernel}
+  Let $\mathcal G$ be a sub-$\sigma$-algebra and $Y$ a measurable random variable, which is either
+  $c$-sub-Gaussian and independent of $\mathcal G$, or conditionally $c$-sub-Gaussian given
+  $\mathcal G$ ($\Omega$ standard Borel). Then for all $\mathcal G$-measurable $s$ and $g \ge 0$,
+  $\E[g \, e^{sY}] \le \E[g \, e^{cs^2/2}]$. On a standard Borel space, a $c$-sub-Gaussian random
+  variable independent of $\mathcal G$ is conditionally $c$-sub-Gaussian given $\mathcal G$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Freeze $(g, s)$: by Lemma~\ref{lem:lintegral_comp_indep} (with $A = \Omega$), resp.\
+  Lemma~\ref{lem:lintegral_comp_condExpKernel}, $\E[g \, e^{sY}]$ is the expectation of
+  $g(\omega) \int e^{s(\omega) y} \, d\Prob_Y(y)$, resp.\ of $g(\omega) \int e^{s(\omega) Y} \,
+  d\kappa_{\mathcal G}(\omega)$, and the inner integral is at most $e^{c s(\omega)^2/2}$ (for almost
+  every $\omega$ in the conditional case, since the bound holds for all $t$ simultaneously). For the
+  last claim: for rational $q$, almost surely $\int e^{qY} \, d\kappa_{\mathcal G} = \E[e^{qY} \mid
+  \mathcal G] = \E[e^{qY}] \le e^{cq^2/2}$ by independence; the moment generating function under
+  $\kappa_{\mathcal G}(\omega)$ is continuous, which gives the bound for all real $t$ (Mathlib's
+  \texttt{Kernel.HasSubgaussianMGF.of\_rat}).
+\end{proof}
 
 \begin{lemma}[Exponential supermartingale]
   \label{lem:exp_subg_supermartingale}
-  \lean{ProbabilityTheory.supermartingale_exp_sum_mul}
+  \lean{ProbabilityTheory.supermartingale_exp_sum_mul_of_lintegral_le,
+    ProbabilityTheory.supermartingale_exp_sum_mul,
+    ProbabilityTheory.supermartingale_exp_sum_mul_of_indep}
   \leanok
-  \uses{lem:supermartingale_of_markov}
+  \uses{lem:supermartingale_of_markov, lem:subg_moment_bound}
   For every $t \in \R$, $U^t_n := \exp(t T_n - c t^2 A_n / 2)$ is a nonnegative supermartingale.
 \end{lemma}
 
 \begin{proof}
   \leanok
-  $U^t_{n+1} = U^t_n \exp(t w_n Y_n - c t^2 w_n^2/2) = \Phi((U^t_n, w_n), Y_n)$ and, for fixed
-  $(u, z)$, $\int \Phi((u, z), y) \, d\Prob_{Y_n}(y) = u e^{-ct^2z^2/2} \E[e^{tzY_n}] \le u$. Apply
-  Lemma~\ref{lem:supermartingale_of_markov}.
+  $U^t_{n+1} = U^t_n e^{-c s^2/2} e^{s Y_n}$ with the $\F_n$-measurable parameter $s = t w_n$. For
+  $A \in \F_n$, \eqref{eq:moment_bound} with $g = \indic_A U^t_n e^{-cs^2/2}$ gives $\int_A U^t_{n+1}
+  \le \int_A U^t_n$. Conclude with the first part of Lemma~\ref{lem:supermartingale_of_markov}.
 \end{proof}
 
 \begin{lemma}[Convergence on finite quadratic variation]
   \label{lem:subg_sum_tendsto}
-  \lean{ProbabilityTheory.ae_exists_tendsto_sum_mul}
+  \lean{ProbabilityTheory.ae_exists_tendsto_sum_mul_of_lintegral_le,
+    ProbabilityTheory.ae_exists_tendsto_exp_sum_mul_of_lintegral_le,
+    ProbabilityTheory.ae_exists_tendsto_sum_mul, ProbabilityTheory.ae_exists_tendsto_sum_mul_of_indep}
   \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
   Almost surely, if $\sum_n w_n^2 < \infty$ then $T_n$ converges.
@@ -115,7 +187,8 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Little-$o$ on infinite quadratic variation]
   \label{lem:subg_sum_little_o}
-  \lean{ProbabilityTheory.ae_forall_abs_sum_mul_le}
+  \lean{ProbabilityTheory.ae_forall_abs_sum_mul_le_of_lintegral_le,
+    ProbabilityTheory.ae_forall_abs_sum_mul_le, ProbabilityTheory.ae_forall_abs_sum_mul_le_of_indep}
   \leanok
   \uses{lem:exp_subg_supermartingale, lem:supermartingale_tendsto}
   Almost surely, for every $\eps > 0$ there is $C$ with $\abs{T_n} \le C + \eps A_n$ for all $n$.
@@ -140,10 +213,12 @@ $T_n := \sum_{k<n} w_k Y_k$ and $A_n := \sum_{k<n} w_k^2$.
 
 \begin{lemma}[Almost sure rate of i.i.d.\ sub-Gaussian sums]
   \label{lem:hoeffding_rate}
-  \lean{ProbabilityTheory.ae_isBigO_sum_range_sqrt_mul_log}
+  \lean{ProbabilityTheory.ae_eventually_abs_sum_range_lt,
+    ProbabilityTheory.ae_isBigO_sum_range_sqrt_mul_log}
   \leanok
-  Let $Y_n$ be independent and $c$-sub-Gaussian. Then almost surely
-  $\sum_{k<n} Y_k = O(\sqrt n \log n)$.
+  Let $Y_n$ be independent and $c$-sub-Gaussian, and $b_n \ge 0$ for large $n$ with
+  $\sum_n \exp(-b_n^2/(2cn)) < \infty$. Then almost surely $\abs{\sum_{k<n} Y_k} < b_n$ for all
+  large $n$. In particular, almost surely $\sum_{k<n} Y_k = O(\sqrt n \log n)$.
 \end{lemma}
 
 \begin{proof}

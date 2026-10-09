@@ -51,12 +51,12 @@ theorem tendstoInDistribution_hindsightLogWealth (hP : ∀ᵐ x ∂P, x ∈ Set.
   -- `S_n² / V_n → χ²₁` and, almost surely, `2 L*_n - S_n² / V_n → 0`
   have h1 := tendstoInDistribution_sq_sum_sub_div hP hm hvar hX hindep hlaw
   have hX01 : ∀ᵐ ω ∂P', ∀ k, X k ω ∈ Set.Icc (0 : ℝ) 1 :=
-    ae_all_iff.2 fun k ↦ ae_mem_Icc_of_hasLaw hP (hlaw k)
+    ae_all_iff.2 fun k ↦ (hlaw k).ae_comp hP
   have hdiff : ∀ᵐ ω ∂P', Tendsto (fun n : ℕ ↦ 2 * hindsightLogWealth m X n ω -
       (∑ k ∈ Finset.range n, (X k ω - m)) ^ 2 / ∑ k ∈ Finset.range n, (X k ω - m) ^ 2) atTop
       (𝓝 0) := by
-    filter_upwards [hX01, ae_isBigO_sum_sub hP hm hX hindep hlaw,
-      ae_isBigO_sum_sq_sub hP hm hX hindep hlaw] with ω hω hS hV
+    filter_upwards [hX01, ae_isBigO_sum_sub hP hm hindep hlaw,
+      ae_isBigO_sum_sq_sub hP hm hindep hlaw] with ω hω hS hV
     exact tendsto_two_mul_hindsightLogWealth_sub hm01 hvar hω hS hV
   have hmeas : ∀ n, Measurable (fun ω ↦ 2 * hindsightLogWealth m X n ω) := fun n ↦
     (measurable_hindsightLogWealth hm01 hX n).const_mul 2

@@ -35,11 +35,6 @@ namespace Learning.Betting
 
 variable {Ω : Type*}
 
-/-- The null bet fraction `0` is in `fractionRange m` for `m ∈ [0, 1]`. -/
-lemma zero_mem_fractionRange {m : ℝ} (hm : m ∈ Set.Icc 0 1) : 0 ∈ fractionRange m :=
-  ⟨div_nonpos_of_nonpos_of_nonneg (by norm_num) (sub_nonneg.2 hm.2),
-    div_nonneg zero_le_one hm.1⟩
-
 /-- The wealth after `n` rounds depends only on the first `n` bet fractions and observations. -/
 lemma wealth_congr {m : ℝ} {lam lam' X X' : ℕ → Ω → ℝ} {n : ℕ} {ω ω' : Ω}
     (hlam : ∀ k < n, lam k ω = lam' k ω') (hX : ∀ k < n, X k ω = X' k ω') :

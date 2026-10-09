@@ -17,7 +17,7 @@ Under a `1`-sub-Gaussian null distribution with mean `m`, the mixture
 sub-Gaussian test process with mixing distribution `π` converges almost surely to `π({m})`.
 
 The proof does not follow the paper (law of the iterated logarithm): it splits the mixture at
-`|l - m| = ε` (`Learning.Betting.ae_tendsto_integral_of_ball`). The alternatives `|l - m| ≥ ε` are
+`|l - m| = ε` (`MeasureTheory.ae_tendsto_integral_of_ball`). The alternatives `|l - m| ≥ ε` are
 dominated by the test processes `M^{m ± ε}_n → 0`
 (`Learning.Betting.ae_exists_bound_subgaussianTest_of_le_abs`), and the alternatives
 `0 < |l - m| < ε` form a nonnegative supermartingale whose limit has expectation at most

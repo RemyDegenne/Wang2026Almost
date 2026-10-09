@@ -17,7 +17,9 @@ function of `(Z, Y)` over a set of `m` amounts to first integrating out `Y` with
 ## Main statements
 
 * `ProbabilityTheory.setLIntegral_comp_of_indep`: the freezing lemma for nonnegative functions,
-  integrated over a set `A` of the sub-σ-algebra.
+  integrated over a set `A` of the sub-σ-algebra;
+* `ProbabilityTheory.Indep.comap_comp`: a measurable function of a random variable independent of
+  a σ-algebra is independent of it.
 -/
 
 @[expose] public section
@@ -29,6 +31,11 @@ namespace ProbabilityTheory
 
 variable {Ω E F : Type*} {m mΩ : MeasurableSpace Ω} {mE : MeasurableSpace E}
   {mF : MeasurableSpace F} {μ : Measure Ω}
+
+/-- If `Y` is independent of a σ-algebra `m`, so is every measurable function of `Y`. -/
+lemma Indep.comap_comp {Y : Ω → E} (h : Indep (MeasurableSpace.comap Y mE) m μ) {f : E → F}
+    (hf : Measurable f) : Indep (MeasurableSpace.comap (fun ω ↦ f (Y ω)) mF) m μ :=
+  indep_of_indep_of_le_left h (hf.comp (comap_measurable Y)).comap_le
 
 /-- **Freezing lemma**: if `Y` is independent of a sub-σ-algebra `m` and `Z` is `m`-measurable,
 then for every measurable `Φ ≥ 0` and every `A ∈ m`,

@@ -13,7 +13,7 @@ public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
 /-!
 # Asymptotic normality of the Krichevsky–Trofimov bet fractions
 
-For i.i.d. observations with law `P` (mean `m`, finite variance `σ²`) and a constant `C > 0`,
+For i.i.d. observations with law `P` (mean `m`, finite variance `σ²`) and a constant `C ≠ 0`,
 `√n λ^KT_n = √n (1/2 + ∑_{k < n} (X k - m)) / (C (n + 1))` converges in distribution to
 `N(0, σ² / C²)`: the CLT for `∑_{k < n} (X k - m) / √n` and Slutsky's lemma with the deterministic
 factors `n / (C (n + 1)) → 1 / C` and `√n / (2 C (n + 1)) → 0`.
@@ -51,10 +51,10 @@ lemma gaussianReal_preimage_id_zero {v : ℝ≥0} (hv : v ≠ 0) :
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
 
 /-- **Asymptotic normality of the KT bet fractions**: for i.i.d. square integrable observations
-with law `P` of mean `m` and a constant `C > 0`, `√n λ^KT_n → N(0, Var_P / C²)` in
+with law `P` of mean `m` and a constant `C ≠ 0`, `√n λ^KT_n → N(0, Var_P / C²)` in
 distribution. -/
 lemma tendstoInDistribution_sqrt_mul_ktFraction {P : Measure ℝ}
-    {m C : ℝ} (hC : 0 < C) (hm : ∫ x, x ∂P = m) (hP : MemLp id 2 P) {X : ℕ → Ω → ℝ}
+    {m C : ℝ} (hC : C ≠ 0) (hm : ∫ x, x ∂P = m) (hP : MemLp id 2 P) {X : ℕ → Ω → ℝ}
     (hindep : iIndepFun X μ) (hlaw : ∀ n, HasLaw (X n) P μ) :
     TendstoInDistribution (fun (n : ℕ) ω ↦ √n * ktFraction C m X n ω) atTop (id : ℝ → ℝ)
       (fun _ ↦ μ) (gaussianReal 0 (Var[id; P] / C ^ 2).toNNReal) := by
@@ -80,12 +80,13 @@ lemma tendstoInDistribution_sqrt_mul_ktFraction {P : Measure ℝ}
   · simpa using gaussianReal_map_inv_mul C Var[id; P] (variance_nonneg _ _)
 
 /-- The KT bet fractions are `Ω_p(n^{-1/2})` for i.i.d. observations with positive variance. -/
-lemma isBigOmegaInProb_ktFraction {P : Measure ℝ} {m C : ℝ} (hC : 0 < C) (hm : ∫ x, x ∂P = m)
+lemma isBigOmegaInProb_ktFraction {P : Measure ℝ} {m C : ℝ} (hC : C ≠ 0) (hm : ∫ x, x ∂P = m)
     (hP : MemLp id 2 P) (hvar : 0 < Var[id; P]) {X : ℕ → Ω → ℝ} (hindep : iIndepFun X μ)
     (hlaw : ∀ n, HasLaw (X n) P μ) :
     IsBigOmegaInProb μ (ktFraction C m X) (fun n ↦ (n : ℝ) ^ (-1 / 2 : ℝ)) :=
   isBigOmegaInProb_rpow_of_tendstoInDistribution_sqrt_mul
     (tendstoInDistribution_sqrt_mul_ktFraction hC hm hP hindep hlaw)
-    (gaussianReal_preimage_id_zero (by simpa using div_pos hvar (pow_pos hC 2)))
+    (gaussianReal_preimage_id_zero (by
+      simpa using div_pos hvar (pow_pos (abs_pos.2 hC) 2 |>.trans_eq (sq_abs C))))
 
 end Learning.Betting

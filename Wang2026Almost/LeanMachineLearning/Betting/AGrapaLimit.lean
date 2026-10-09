@@ -6,6 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Wang2026Almost.LeanMachineLearning.Betting.KTLimit
+public import Wang2026Almost.Mathlib.Probability.HasLaw
 public import Wang2026Almost.LeanMachineLearning.Betting.Null
 public import Wang2026Almost.LeanMachineLearning.Betting.StrategyBounds
 
@@ -37,33 +38,30 @@ namespace Learning.Betting
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ} {X : ℕ → Ω → ℝ}
 
-lemma integrable_of_mem_Icc_of_continuous (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) {f : ℝ → ℝ}
-    (hf : Continuous f) : Integrable f P := by
-  obtain ⟨K, hK⟩ := (isCompact_Icc (a := (0 : ℝ)) (b := 1)).exists_bound_of_continuousOn
-    hf.continuousOn
-  exact Integrable.of_bound hf.aestronglyMeasurable K (hP.mono fun x hx ↦ hK x hx)
-
 omit [IsProbabilityMeasure μ] in
-/-- Strong law under a null distribution on `[0, 1]`: `S_n / n → 0` almost surely. -/
+/-- Strong law under a null distribution on `[0, 1]`, for pairwise independent observations:
+`S_n / n → 0` almost surely. -/
 lemma ae_tendsto_sum_sub_div (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hindep : iIndepFun X μ) (hlaw : ∀ n, HasLaw (X n) P μ) :
+    (hindep : Pairwise fun i j ↦ X i ⟂ᵢ[μ] X j) (hlaw : ∀ n, HasLaw (X n) P μ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ ↦ (∑ k ∈ range n, (X k ω - m)) / n) atTop (𝓝 0) := by
   have h := ae_tendsto_sum_comp_div hindep hlaw (f := fun x ↦ x - m) (by fun_prop)
-    (integrable_of_mem_Icc_of_continuous hP (by fun_prop))
+    (integrable_of_ae_mem_of_continuous isCompact_Icc hP (by fun_prop))
   have h0 : ∫ x, (x - m) ∂P = 0 := by
-    rw [integral_sub (integrable_of_mem_Icc_of_continuous hP (f := fun x ↦ x) continuous_id')
+    rw [integral_sub
+      (integrable_of_ae_mem_of_continuous isCompact_Icc hP (f := fun x ↦ x) continuous_id')
       (integrable_const m), hm]
     simp
   simpa [h0] using h
 
 omit [IsProbabilityMeasure μ] in
-/-- Strong law under a null distribution on `[0, 1]`: `V_n / n → σ²` almost surely. -/
+/-- Strong law under a null distribution on `[0, 1]`, for pairwise independent observations:
+`V_n / n → σ²` almost surely. -/
 lemma ae_tendsto_sum_sub_sq_div (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
-    (hindep : iIndepFun X μ) (hlaw : ∀ n, HasLaw (X n) P μ) :
+    (hindep : Pairwise fun i j ↦ X i ⟂ᵢ[μ] X j) (hlaw : ∀ n, HasLaw (X n) P μ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ ↦ (∑ k ∈ range n, (X k ω - m) ^ 2) / n) atTop
       (𝓝 Var[id; P]) := by
   have h := ae_tendsto_sum_comp_div hindep hlaw (f := fun x ↦ (x - m) ^ 2) (by fun_prop)
-    (integrable_of_mem_Icc_of_continuous hP (by fun_prop))
+    (integrable_of_ae_mem_of_continuous isCompact_Icc hP (by fun_prop))
   have hvar : Var[id; P] = ∫ x, (x - m) ^ 2 ∂P := by
     rw [variance_eq_integral aemeasurable_id]
     simp [hm]
@@ -84,12 +82,13 @@ lemma tendstoInDistribution_sqrt_mul_agrapaFraction (hP : ∀ᵐ x ∂P, x ∈ S
       (fun _ ↦ μ) (gaussianReal 0 (Var[id; P])⁻¹.toNNReal) := by
   set σ2 := Var[id; P] with hσ2
   have hm01 := mem_Ioo_of_variance_pos hP hm hvar
-  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_two_id_of_mem_Icc hP)
+  have hclt := tendstoInDistribution_sum_sub_div_sqrt hindep hlaw (memLp_id_of_mem_Icc hP 2)
   rw [hm] at hclt
   -- the random factor `n / V_n → σ⁻²`
   set R : ℕ → Ω → ℝ := fun n ω ↦ n / ∑ k ∈ range n, (X k ω - m) ^ 2 with hR
   have hR_ae : ∀ᵐ ω ∂μ, Tendsto (fun n ↦ R n ω) atTop (𝓝 σ2⁻¹) := by
-    filter_upwards [ae_tendsto_sum_sub_sq_div hP hm hindep hlaw] with ω hω
+    filter_upwards [ae_tendsto_sum_sub_sq_div hP hm (fun _ _ hij ↦ hindep.indepFun hij) hlaw]
+      with ω hω
     refine (hω.inv₀ hvar.ne').congr fun n ↦ ?_
     simp [hR]
   have hR_meas : ∀ n, AEMeasurable (R n) μ := fun n ↦ by
@@ -102,8 +101,8 @@ lemma tendstoInDistribution_sqrt_mul_agrapaFraction (hP : ∀ᵐ x ∂P, x ∈ S
   -- the clipping is eventually inactive
   have hdiff : ∀ᵐ ω ∂μ, Tendsto (fun n : ℕ ↦ √n * agrapaFraction C m X n ω -
       (∑ k ∈ range n, (X k ω - m)) / √n * R n ω) atTop (𝓝 0) := by
-    filter_upwards [ae_tendsto_sum_sub_div hP hm hindep hlaw,
-      ae_tendsto_sum_sub_sq_div hP hm hindep hlaw] with ω hS hV
+    filter_upwards [ae_tendsto_sum_sub_div hP hm (fun _ _ hij ↦ hindep.indepFun hij) hlaw,
+      ae_tendsto_sum_sub_sq_div hP hm (fun _ _ hij ↦ hindep.indepFun hij) hlaw] with ω hS hV
     have hu := hS.div hV hvar.ne'
     rw [zero_div] at hu
     have hlo : -C / (1 - m) < 0 := div_neg_of_neg_of_pos (neg_neg_of_pos hC) (sub_pos.2 hm01.2)

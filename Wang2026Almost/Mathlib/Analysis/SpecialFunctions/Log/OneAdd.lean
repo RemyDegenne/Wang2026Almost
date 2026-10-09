@@ -18,9 +18,11 @@ a sum of squared bets.
 ## Main statements
 
 * `Real.abs_log_one_add_sub_le`: for `|x| ≤ 1 / 2`, `|log (1 + x) - (x - x ^ 2 / 2)| ≤ 2 |x| ^ 3`;
-* `Real.sub_sq_le_log_one_add`: for `|x| ≤ 1 / 2`, `x - x ^ 2 ≤ log (1 + x)`;
+* `Real.sub_sq_le_log_one_add`: for `x ≥ -1 / 2`, `x - x ^ 2 ≤ log (1 + x)`, hence
+  `Real.abs_log_one_add_sub_le_sq`: `|log (1 + x) - x| ≤ x ^ 2`;
 * `Real.log_one_add_le_sub_mul_sq`: for `M ≥ 0` and `-1 < x ≤ M`,
-  `log (1 + x) ≤ x - x ^ 2 / (2 (1 + M))`.
+  `log (1 + x) ≤ x - x ^ 2 / (2 (1 + M))`, and its exponential form
+  `Real.one_add_le_exp_sub_mul_sq`.
 -/
 
 @[expose] public section
@@ -70,9 +72,8 @@ lemma abs_log_one_add_sub_le {x : ℝ} (hx : |x| ≤ 1 / 2) :
     _ ≤ |x| ^ 3 / (1 - |x|) := h
     _ ≤ 2 * |x| ^ 3 := h1
 
-/-- For `|x| ≤ 1 / 2`, `x - x ^ 2 ≤ log (1 + x)`. -/
-lemma sub_sq_le_log_one_add {x : ℝ} (hx : |x| ≤ 1 / 2) : x - x ^ 2 ≤ log (1 + x) := by
-  rw [abs_le] at hx
+/-- For `x ≥ -1 / 2`, `x - x ^ 2 ≤ log (1 + x)`. -/
+lemma sub_sq_le_log_one_add {x : ℝ} (hx : -1 / 2 ≤ x) : x - x ^ 2 ≤ log (1 + x) := by
   have hmem : ∀ y ∈ uIcc 0 x, -1 / 2 ≤ y := fun y hy ↦ by
     rcases le_total 0 x with h | h
     · rw [uIcc_of_le h] at hy; linarith [hy.1]
@@ -124,5 +125,23 @@ lemma log_one_add_le_sub_mul_sq {x M : ℝ} (hM : 0 ≤ M) (hx1 : -1 < x) (hxM :
   simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_div, sub_self,
     add_zero, log_one] at key
   linarith
+
+/-- For `x ≥ -1 / 2`, `|log (1 + x) - x| ≤ x ^ 2`. -/
+lemma abs_log_one_add_sub_le_sq {x : ℝ} (hx : -1 / 2 ≤ x) : |log (1 + x) - x| ≤ x ^ 2 := by
+  have h1 : 0 < 1 + x := by linarith
+  have h2 := sub_sq_le_log_one_add hx
+  have h3 := log_le_sub_one_of_pos h1
+  rw [abs_le]
+  constructor <;> nlinarith [sq_nonneg x]
+
+/-- For `M ≥ 0` and `-1 ≤ x ≤ M`, `1 + x ≤ exp (x - x ^ 2 / (2 (1 + M)))`. -/
+lemma one_add_le_exp_sub_mul_sq {x M : ℝ} (hM : 0 ≤ M) (hx1 : -1 ≤ x) (hxM : x ≤ M) :
+    1 + x ≤ exp (x - x ^ 2 / (2 * (1 + M))) := by
+  rcases hx1.eq_or_lt with h | h
+  · rw [← h]
+    norm_num
+    positivity
+  · calc 1 + x = exp (log (1 + x)) := (exp_log (by linarith)).symm
+      _ ≤ _ := exp_le_exp.2 (log_one_add_le_sub_mul_sq hM h hxM)
 
 end Real
