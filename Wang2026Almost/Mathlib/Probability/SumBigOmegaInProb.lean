@@ -47,7 +47,7 @@ lemma measure_liminf_atTop_le_liminf {α : Type*} {mα : MeasurableSpace α} (μ
     fun m n hmn ↦ biInf_mono fun i hi ↦ hmn.trans hi
   simp only [Set.iSup_eq_iUnion] at h_mono ⊢
   rw [h_mono.measure_iUnion]
-  exact iSup_mono fun n ↦ le_iInf₂ fun i hi ↦ measure_mono (biInf_le _ hi)
+  exact iSup_mono fun n ↦ le_iInf₂ fun i hi ↦ measure_mono (iInf₂_le i hi)
 
 end MeasureTheory
 

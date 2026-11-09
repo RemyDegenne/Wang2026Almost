@@ -35,6 +35,7 @@ namespace Learning.IsAlgEnvSeq
 variable {Ω 𝓞 𝓐 𝓨 : Type*} [MeasurableSpace 𝓞] [MeasurableSpace 𝓐] [MeasurableSpace 𝓨]
   {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
 
+omit [IsProbabilityMeasure P] in
 /-- The feedback of round `n` is measurable for the filtration of the actions at time `n + 1`. -/
 lemma measurable_feedback_filtrationAction_succ {alg : Algorithm 𝓞 𝓐 𝓨}
     {env : Environment 𝓞 𝓐 𝓨} {O : ℕ → Ω → 𝓞} {A : ℕ → Ω → 𝓐} {Y : ℕ → Ω → 𝓨}

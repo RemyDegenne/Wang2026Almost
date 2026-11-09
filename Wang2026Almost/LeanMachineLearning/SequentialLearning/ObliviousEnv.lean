@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import LeanMachineLearning.SequentialLearning.StationaryEnv
-public import LeanMachineLearning.ForMathlib.Probability.Independence.IndepFun
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
 
 /-!
 # The i.i.d. environment
@@ -131,6 +131,7 @@ section General
 variable {alg : Algorithm 𝓞 𝓐 𝓨} {env : Environment 𝓞 𝓐 𝓨} {O : ℕ → Ω → 𝓞} {A : ℕ → Ω → 𝓐}
   {Y : ℕ → Ω → 𝓨}
 
+omit [IsProbabilityMeasure P] in
 /-- In a run against an environment whose feedbacks lie in the measurable set `s`, the feedbacks
 lie in `s` almost surely. -/
 lemma ae_feedback_mem (h : IsAlgEnvSeq O A Y alg env P) {s : Set 𝓨} (henv : env.FeedbackIn s)
@@ -143,6 +144,7 @@ lemma ae_feedback_mem (h : IsAlgEnvSeq O A Y alg env P) {s : Set 𝓨} (henv : e
   rw [← h_law.map_eq] at h1
   exact ae_of_ae_map h_law.aemeasurable h1
 
+omit [IsProbabilityMeasure P] in
 /-- In a run against an environment whose observations lie in the measurable set `s`, the
 observations lie in `s` almost surely. -/
 lemma ae_obs_mem (h : IsAlgEnvSeq O A Y alg env P) {s : Set 𝓞} (henv : env.ObsIn s)

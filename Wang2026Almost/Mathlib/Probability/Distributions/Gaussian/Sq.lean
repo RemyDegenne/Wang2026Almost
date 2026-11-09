@@ -5,6 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
+public import Mathlib.Analysis.Analytic.IsolatedZeros
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Moments.ComplexMGF
 public import Wang2026Almost.Mathlib.Probability.Distributions.ChiSquare
@@ -75,7 +76,8 @@ lemma _root_.MeasureTheory.Measure.ext_of_eqOn_mgf [IsFiniteMeasure μ] [IsFinit
     have := (Complex.continuous_ofReal.tendsto (0 : ℝ)).comp hx_tendsto.1
     simpa [Function.comp_def] using this
   have hEqOn : Set.EqOn (complexMGF X μ) (complexMGF Y μ') T :=
-    hXan.eqOn_of_preconnected_of_frequently_eq hYan hTconn (z₀ := 0) (by simp [hT, hS0]) hfreq
+    AnalyticOnNhd.eqOn_of_preconnected_of_frequently_eq hXan hYan hTconn (z₀ := 0)
+      (by simp [hT, hS0]) hfreq
   refine Measure.ext_of_charFun (funext fun t ↦ ?_)
   rw [← complexMGF_mul_I hX, ← complexMGF_mul_I hY]
   exact hEqOn (by simp [hT, hS0])

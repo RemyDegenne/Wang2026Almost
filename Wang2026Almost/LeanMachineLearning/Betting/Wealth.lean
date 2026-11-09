@@ -60,7 +60,7 @@ variable {Ω : Type*}
 
 /-- The range `[-1 / (1 - m), 1 / m]` of the bet fractions for which the wealth stays
 nonnegative when the observations are in `[0, 1]`. -/
-def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
+noncomputable def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
 
 section FractionRange
 
