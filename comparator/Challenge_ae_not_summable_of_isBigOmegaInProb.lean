@@ -28,7 +28,7 @@ end ProbabilityTheory
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

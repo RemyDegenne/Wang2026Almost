@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Mixture
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Mixture
 public import Wang2026Almost.WAR2026.MixturesProb
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def

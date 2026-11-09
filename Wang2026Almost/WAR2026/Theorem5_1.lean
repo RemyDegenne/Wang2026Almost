@@ -5,12 +5,12 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
-public import Wang2026Almost.LeanMachineLearning.Betting.WealthLemmas
-public import Wang2026Almost.LeanMachineLearning.Betting.ChiSquareLimit
-public import Wang2026Almost.LeanMachineLearning.Betting.GoodEvent
-public import Wang2026Almost.LeanMachineLearning.Betting.Hindsight
-public import Wang2026Almost.Mathlib.Probability.Distributions.ChiSquare
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.WealthLemmas
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.ChiSquareLimit
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.GoodEvent
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Hindsight
+public import Wang2026Almost.ForLMLExplore.Probability.Distributions.ChiSquare
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def

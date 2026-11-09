@@ -194,7 +194,7 @@ end Bandit
 end Learning
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.SequentialLearning.ObliviousEnv ═══
+-- ═══ Wang2026Almost.ForLMLExplore.SequentialLearning.ObliviousEnv ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -209,7 +209,7 @@ noncomputable def Environment.const (μ : Measure 𝓨) [IsProbabilityMeasure μ
 end Learning
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting

@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Wang2026Almost.WAR2026.Mixtures
-public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 

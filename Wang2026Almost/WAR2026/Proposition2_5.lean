@@ -5,11 +5,11 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.KTLimit
-public import Wang2026Almost.LeanMachineLearning.Betting.PlugIn
-public import Wang2026Almost.LeanMachineLearning.Betting.StrategyBounds
-public import Wang2026Almost.LeanMachineLearning.Betting.Strategies
-public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.KTLimit
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.PlugIn
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.StrategyBounds
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies
+public import Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.HasLaw

@@ -19,11 +19,12 @@ fixed below (names and statements). Later packages import earlier ones. Waves:
   declaration with a docstring, `lemma` (never `theorem`, except the paper's headline results
   already stated), Mathlib naming, lines ≤ 100 chars, no `sorry` left at the end.
 * **Never change** the statements of the existing headline theorems and lemmas in
-  `Wang2026Almost/WAR2026/` nor the definitions in `Wang2026Almost/LeanMachineLearning/Betting/`,
-  `Wang2026Almost/WAR2026/Leverage.lean`, `Mixtures.lean`, `AsymptoticsInProbability.lean`,
-  `ChiSquare.lean`, `Gamma.lean`, `ObliviousEnv.lean` (they are frozen by the comparator
-  challenges). You may add lemmas to those files only when the brief says so; otherwise add new
-  files. If a frozen statement looks false or unprovable, stop and report instead of changing it.
+  `Wang2026Almost/WAR2026/` nor the definitions in
+  `Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/`, `Wang2026Almost/WAR2026/Leverage.lean`,
+  `Mixtures.lean`, `AsymptoticsInProbability.lean`, `ChiSquare.lean`, `Gamma.lean`,
+  `ObliviousEnv.lean` (they are frozen by the comparator challenges). You may add lemmas to
+  those files only when the brief says so; otherwise add new files. If a frozen statement looks
+  false or unprovable, stop and report instead of changing it.
 * Prove the general statement and derive the specialization; drop hypotheses the proof does not
   use from *new* lemmas (and say so in the docstring when it departs from the paper).
 * Only edit the files of your package and the blueprint chapters listed in your brief. After
@@ -45,12 +46,12 @@ fixed below (names and statements). Later packages import earlier ones. Waves:
 ## A. Martingale tools (`chap:pre_martingale`)
 
 Files (namespaces `ProbabilityTheory` / `MeasureTheory`):
-`Wang2026Almost/Mathlib/Probability/Independence/Freezing.lean`,
-`Wang2026Almost/Mathlib/Probability/Martingale/IndepIncrements.lean`,
-`Wang2026Almost/Mathlib/Probability/Martingale/Nonneg.lean`,
-`Wang2026Almost/Mathlib/Probability/Martingale/Mixture.lean`,
-`Wang2026Almost/Mathlib/Probability/Martingale/SubgaussianSum.lean`,
-`Wang2026Almost/Mathlib/Probability/Moments/SubgaussianRate.lean`.
+`Wang2026Almost/ForLMLExplore/Probability/Independence/Freezing.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Martingale/IndepIncrements.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Martingale/Nonneg.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Martingale/Mixture.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Martingale/SubgaussianSum.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Moments/SubgaussianRate.lean`.
 
 Interfaces (adapt binder details as needed, keep the names and the mathematical content):
 
@@ -117,11 +118,11 @@ Hints: `indepFun_iff_map_prod_eq_prod_map_map`, `lintegral_map`, `lintegral_prod
 
 ## B. Asymptotics in probability, Theorem 2.2, Corollary 2.3 (`chap:pre_asymptotics`, part of `chap:predictable`)
 
-Files: add to `Wang2026Almost/Mathlib/Probability/AsymptoticsInProbability.lean` (allowed:
-new lemmas only), new `Wang2026Almost/Mathlib/Probability/SumBigOmegaInProb.lean`
-(Theorem 2.2 in library form), `Wang2026Almost/Mathlib/Order/Cesaro.lean` (or a better Mathlib
-path), `Wang2026Almost/Mathlib/Analysis/SpecialFunctions/Log/Summable.lean`,
-`Wang2026Almost/Mathlib/Probability/Distributions/Gaussian/Sq.lean`; proofs of
+Files: add to `Wang2026Almost/ForLMLExplore/Probability/AsymptoticsInProbability.lean` (allowed:
+new lemmas only), new `Wang2026Almost/ForLMLExplore/Probability/SumBigOmegaInProb.lean`
+(Theorem 2.2 in library form), `Wang2026Almost/ForLMLExplore/Order/Cesaro.lean` (or a better Mathlib
+path), `Wang2026Almost/ForLMLExplore/Analysis/SpecialFunctions/Log/Summable.lean`,
+`Wang2026Almost/ForLMLExplore/Probability/Distributions/Gaussian/Sq.lean`; proofs of
 `WAR2026/Theorem2_2.lean` and `WAR2026/Corollary2_3.lean`.
 
 ```lean
@@ -156,16 +157,17 @@ Prove `WAR2026/LemmaB_2.lean`, `LemmaB_3.lean`, `DefinitionB_4.lean`, `Fact1.lea
 file `WAR2026/LeverageMeasurable.lean`, or in `Theorem4_1.lean`), and the second theorem of
 `WAR2026/Theorem5_1.lean` (`not_bddAbove_logRegret_of_tendsto_wealth_zero`; leave the first
 theorem `sorry` for package E). Helper lemmas about `wealth` may go in a new file
-`Wang2026Almost/LeanMachineLearning/Betting/WealthLemmas.lean` (namespace `Learning.Betting`),
-e.g. `wealth_eq_zero_of_...`, `bddAbove_fixedWealth`, `one_le_iSup_fixedWealth`.
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/WealthLemmas.lean` (namespace
+`Learning.Betting`), e.g. `wealth_eq_zero_of_...`, `bddAbove_fixedWealth`,
+`one_le_iSup_fixedWealth`.
 Blueprint: `chapters/improve.tex`, `lem:exp_regular` in `chapters/mixture.tex`,
 `thm:unbounded_regret` in `chapters/odds.tex`.
 
 ## C2. Log inequalities, Bernoulli domination, hindsight analysis (`chap:pre_betting` except `lem:wealth_supermartingale`)
 
-Files: `Wang2026Almost/Mathlib/Analysis/SpecialFunctions/Log/OneAdd.lean` (namespace `Real`),
-`Wang2026Almost/LeanMachineLearning/Betting/Domination.lean`,
-`Wang2026Almost/LeanMachineLearning/Betting/Hindsight.lean` (namespace `Learning.Betting`).
+Files: `Wang2026Almost/ForLMLExplore/Analysis/SpecialFunctions/Log/OneAdd.lean` (namespace `Real`),
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/Domination.lean`,
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/Hindsight.lean` (namespace `Learning.Betting`).
 
 ```lean
 lemma Real.abs_log_one_add_sub_le {x : ℝ} (hx : |x| ≤ 1 / 2) :
@@ -204,10 +206,10 @@ Blueprint: `chapters/prereq_betting.tex` (all but `lem:wealth_supermartingale`) 
 
 ## D. Sum-of-squares criteria (wave 2; `chap:predictable` first and third sections, `thm:sos_crit_subg*`, `lem:wealth_supermartingale`, `lem:iid_of_run`, `lem:iid_of_plug_in`, `def:past_filtration`)
 
-Files: `Wang2026Almost/LeanMachineLearning/Betting/PastFiltration.lean`,
-`Wang2026Almost/LeanMachineLearning/Betting/IIDRun.lean`,
-`Wang2026Almost/LeanMachineLearning/Betting/SumSquares.lean`,
-`Wang2026Almost/LeanMachineLearning/Betting/SumSquaresSubgaussian.lean`; proofs of
+Files: `Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/PastFiltration.lean`,
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/IIDRun.lean`,
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/SumSquares.lean`,
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/SumSquaresSubgaussian.lean`; proofs of
 `WAR2026/Theorem2_1.lean`, `Corollary2_4.lean`, `Theorem5_2.lean`.
 
 ```lean
@@ -232,13 +234,13 @@ lemma Learning.Betting.ae_tendsto_subgaussianTest_zero  -- constant l ≠ m
 ## E. Strategies and the χ² limit (wave 3; `prop:kt` … `prop:hedge`, `thm:chisq_klinf`, `lem:good_event`, `lem:kt_mem`, `lem:empVar_add_sq`)
 
 Proofs of `WAR2026/Proposition2_5.lean` … `Proposition2_8.lean` and the first theorem of
-`Theorem5_1.lean`; helper files under `Wang2026Almost/LeanMachineLearning/Betting/`
+`Theorem5_1.lean`; helper files under `Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/`
 (`KT.lean`, `GoodEvent.lean`, …).
 
 ## F. Mixtures (wave 3; `chap:mixture` except `lem:exp_regular`, `thm:nocash_subg`)
 
 Proofs of `WAR2026/Theorem3_1.lean`, `Proposition3_2.lean`, `Theorem5_3.lean`; helper files
-`Wang2026Almost/LeanMachineLearning/Betting/Mixture.lean`, `WAR2026/MixturesProb.lean`
+`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/Mixture.lean`, `WAR2026/MixturesProb.lean`
 (probability and atomlessness of `betaMixture`, `robbinsMixture`).
 
 ## Progress log

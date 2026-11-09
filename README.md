@@ -22,14 +22,14 @@ proved in Lean, with no `sorry`; the 16 headline theorems depend only on the sta
   `LemmaB_3.lean`, `Fact2.lean`), namespace `Wang2026Almost`, and the paper-specific definitions
   (`Leverage.lean`: predictably non-bankrupt events, leverage, portfolios; `Mixtures.lean`: the
   universal portfolio and Robbins' mixing distributions).
-* `Wang2026Almost/LeanMachineLearning/`: material for LML: the i.i.d. environment
+* `Wang2026Almost/ForLMLExplore/`: material for LML: the i.i.d. environment
   `Environment.const` and its runs (`SequentialLearning/`), the betting wealth processes
   (`Betting/Wealth.lean`), the classical strategies KT, GRAPA, aGRAPA, hedging
   (`Betting/Strategies.lean`) and their asymptotics (`Betting/*Limit.lean`, `Betting/HedgeRate.lean`),
   the sum-of-squares criteria for strategies predictable for a filtration
   (`Betting/SumSquares*.lean`, `Betting/PlugIn.lean`), mixtures (`Betting/Mixture.lean`), and the
   analysis of the hindsight log-wealth (`Betting/Hindsight.lean`).
-* `Wang2026Almost/Mathlib/`: material for Mathlib: Landau notation in probability and the
+* `Wang2026Almost/ForLMLExplore/`: material for Mathlib: Landau notation in probability and the
   divergence of `Σ Ω_p(a_n)` (`Probability/AsymptoticsInProbability.lean`,
   `Probability/SumBigOmegaInProb.lean`), supermartingales with independent increments, their
   convergence and mixtures, exponential supermartingales of sums of conditionally sub-Gaussian

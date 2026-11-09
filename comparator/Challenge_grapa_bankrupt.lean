@@ -79,7 +79,7 @@ end Real
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -100,7 +100,7 @@ noncomputable def fixedWealth (m l : ℝ) (X : ℕ → Ω → ℝ) : ℕ → Ω 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Strategies ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies ═══
 @[expose] public section
 open Finset
 namespace Learning.Betting
@@ -121,7 +121,7 @@ def IsGrapa (m : ℝ) (X gr : ℕ → Ω → ℝ) : Prop :=
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

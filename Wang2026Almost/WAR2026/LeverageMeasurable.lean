@@ -6,7 +6,7 @@ Authors: Rémy Degenne
 module
 
 public import Wang2026Almost.WAR2026.Leverage
-public import Wang2026Almost.LeanMachineLearning.Betting.WealthLemmas
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.WealthLemmas
 
 /-!
 # Predictability of the opportunistic leverage

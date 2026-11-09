@@ -195,7 +195,7 @@ end Bandit
 end Learning
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.SequentialLearning.ObliviousEnv ═══
+-- ═══ Wang2026Almost.ForLMLExplore.SequentialLearning.ObliviousEnv ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -210,7 +210,7 @@ noncomputable def Environment.const (μ : Measure 𝓨) [IsProbabilityMeasure μ
 end Learning
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -228,7 +228,7 @@ noncomputable def wealth (m : ℝ) (lam X : ℕ → Ω → ℝ) (n : ℕ) (ω : 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

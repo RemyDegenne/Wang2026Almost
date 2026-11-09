@@ -5,9 +5,9 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.SumSquares
-public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
-public import Wang2026Almost.LeanMachineLearning.SequentialLearning.ConstEnvFiltration
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.SumSquares
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth
+public import Wang2026Almost.ForLMLExplore.SequentialLearning.ConstEnvFiltration
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 

@@ -70,7 +70,7 @@ end Real
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -84,7 +84,7 @@ noncomputable def wealth (m : ℝ) (lam X : ℕ → Ω → ℝ) (n : ℕ) (ω : 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Strategies ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies ═══
 @[expose] public section
 open Finset
 namespace Learning.Betting
@@ -98,7 +98,7 @@ noncomputable def ktFraction (C m : ℝ) (X : ℕ → Ω → ℝ) (n : ℕ) (ω 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

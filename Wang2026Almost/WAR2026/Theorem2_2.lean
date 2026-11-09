@@ -5,8 +5,8 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
-public import Wang2026Almost.Mathlib.Probability.SumBigOmegaInProb
+public import Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability
+public import Wang2026Almost.ForLMLExplore.Probability.SumBigOmegaInProb
 public import Mathlib.Analysis.PSeries
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs

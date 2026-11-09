@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Mixture
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Mixture
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.SubGaussian

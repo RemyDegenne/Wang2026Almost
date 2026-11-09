@@ -74,7 +74,7 @@ end Learning
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -100,7 +100,7 @@ noncomputable def hindsightLogWealth (m : ℝ) (X : ℕ → Ω → ℝ) (n : ℕ
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.Distributions.ChiSquare ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.Distributions.ChiSquare ═══
 @[expose] public section
 open MeasureTheory Real Set
 open scoped ENNReal
