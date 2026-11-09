@@ -1,0 +1,36 @@
+{
+  "WAR26": {
+    "uri": "https://arxiv.org/abs/2602.08888",
+    "identifiers": {
+      "arxiv": "2602.08888"
+    },
+    "citation": {
+      "id": "WAR26",
+      "type": "paper-conference",
+      "title": "Almost sure null bankruptcy of testing-by-betting strategies",
+      "author": [
+        {
+          "family": "Wang",
+          "given": "Hongjian"
+        },
+        {
+          "family": "Agrawal",
+          "given": "Shubhada"
+        },
+        {
+          "family": "Ramdas",
+          "given": "Aaditya"
+        }
+      ],
+      "container-title": "Proceedings of the Conference on Learning Theory (COLT)",
+      "issued": {
+        "date-parts": [
+          [
+            2026
+          ]
+        ]
+      }
+    },
+    "version": "v2"
+  }
+}
