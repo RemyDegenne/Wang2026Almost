@@ -1,27 +1,13 @@
 module
 
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.Kernel.Composition.MapComap
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.InfinitePi
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.SubGaussian
 public import Mathlib.Topology.Order.Compact
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -38,9 +24,8 @@ public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Probability.Process.Adapted
+public import LeanMachineLearning.SequentialLearning.SumRewards
 public import Mathlib.Order.Filter.Extr
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Probability.Martingale.BorelCantelli
 public import Mathlib.Probability.Moments.Variance
 
 /-! # Standalone extraction for `Wang2026Almost.sum_sq_criterion`
@@ -58,8 +43,6 @@ namespace MeasureTheory
 end MeasureTheory
 namespace ProbabilityTheory
 end ProbabilityTheory
-namespace Real
-end Real
 namespace Learning
 end Learning
 namespace Learning.Betting
@@ -67,135 +50,7 @@ end Learning.Betting
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ LeanMachineLearning.SequentialLearning.Algorithm ═══
-@[expose] public section
-open MeasureTheory ProbabilityTheory Filter Real Finset
-open scoped ENNReal NNReal
-namespace Learning
-variable {𝓞 𝓐 𝓨 Ω : Type*} {m𝓞 : MeasurableSpace 𝓞} {m𝓐 : MeasurableSpace 𝓐} {m𝓨 : MeasurableSpace 𝓨} {mΩ : MeasurableSpace Ω}
-
-/-- One round of interaction: an observation, then an action, then a feedback. -/
-abbrev Round (𝓞 𝓐 𝓨 : Type*) := 𝓞 × 𝓐 × 𝓨
-
-/-- History of `n` complete rounds; `n = 0` is the empty history. -/
-abbrev Hist (𝓞 𝓐 𝓨 : Type*) (n : ℕ) := Fin n → Round 𝓞 𝓐 𝓨
-
-/-- A stochastic, sequential algorithm.
-At each round, it sees an observation in `𝓞`, then takes an action in `𝓐`, and finally receives
-feedback in `𝓨`. The action is a random function of the past rounds and the current observation. -/
-@[ext]
-structure Algorithm (𝓞 𝓐 𝓨 : Type*) [MeasurableSpace 𝓞] [MeasurableSpace 𝓐] [MeasurableSpace 𝓨]
-    where
-  /-- Law of the action of round `n` given the past rounds and the current observation. -/
-  policy : (n : ℕ) → Kernel (Hist 𝓞 𝓐 𝓨 n × 𝓞) 𝓐
-  /-- The policy is a Markov kernel. -/
-  [isMarkovKernel_policy : ∀ n, IsMarkovKernel (policy n)]
-
-/-- A stochastic environment.
-At each round, an observation is drawn prior to the algorithm taking an action. Then the environment
-provides feedback based on the observation and the action. -/
-@[ext]
-structure Environment (𝓞 𝓐 𝓨 : Type*) [MeasurableSpace 𝓞] [MeasurableSpace 𝓐] [MeasurableSpace 𝓨]
-    where
-  /-- Law of the observation of round `n` given the past rounds. -/
-  obs : (n : ℕ) → Kernel (Hist 𝓞 𝓐 𝓨 n) 𝓞
-  /-- Law of the feedback of round `n` given the past rounds, the observation and the action. -/
-  feedback : (n : ℕ) → Kernel ((Hist 𝓞 𝓐 𝓨 n × 𝓞) × 𝓐) 𝓨
-  /-- The observation kernel is a Markov kernel. -/
-  [isMarkovKernel_obs : ∀ n, IsMarkovKernel (obs n)]
-  /-- The feedback kernel is a Markov kernel. -/
-  [isMarkovKernel_feedback : ∀ n, IsMarkovKernel (feedback n)]
-
-section IsAlgEnvSeq
-variable {O : ℕ → Ω → 𝓞} {A : ℕ → Ω → 𝓐} {Y : ℕ → Ω → 𝓨} {alg : Algorithm 𝓞 𝓐 𝓨} {env : Environment 𝓞 𝓐 𝓨} {P : Measure Ω} [IsFiniteMeasure P] {N : ℕ}
-
-/-- History of the algorithm-environment sequence before time `n`: the rounds at
-times `0, ..., n - 1`. -/
-def history (O : ℕ → Ω → 𝓞) (A : ℕ → Ω → 𝓐) (Y : ℕ → Ω → 𝓨) (n : ℕ) (ω : Ω) : Hist 𝓞 𝓐 𝓨 n :=
-  fun i ↦ (O i ω, A i ω, Y i ω)
-
-/-- An algorithm-environment sequence: a sequence of observations, actions and feedbacks generated
-by an algorithm interacting with an environment. -/
-structure IsAlgEnvSeq
-    (O : ℕ → Ω → 𝓞) (A : ℕ → Ω → 𝓐) (Y : ℕ → Ω → 𝓨)
-    (alg : Algorithm 𝓞 𝓐 𝓨) (env : Environment 𝓞 𝓐 𝓨)
-    (P : Measure Ω) [IsFiniteMeasure P] : Prop where
-  /-- The observation sequence is measurable. -/
-  measurable_obs n : Measurable (O n) := by fun_prop
-  /-- The action sequence is measurable. -/
-  measurable_action n : Measurable (A n) := by fun_prop
-  /-- The feedback sequence is measurable. -/
-  measurable_feedback n : Measurable (Y n) := by fun_prop
-  /-- The observation at time `n` has the correct conditional distribution given the history. -/
-  hasCondDistrib_obs n :
-    HasCondDistrib (O n) (history O A Y n) (env.obs n) P
-  /-- The action at time `n` has the correct conditional distribution given the history and the
-  observation at time `n`. -/
-  hasCondDistrib_action n :
-    HasCondDistrib (A n) (fun ω ↦ (history O A Y n ω, O n ω)) (alg.policy n) P
-  /-- The feedback at time `n` has the correct conditional distribution given the history, the
-  observation and the action at time `n`. -/
-  hasCondDistrib_feedback n :
-    HasCondDistrib (Y n) (fun ω ↦ ((history O A Y n ω, O n ω), A n ω)) (env.feedback n) P
-
-end IsAlgEnvSeq
-end Learning
-end
-
--- ═══ LeanMachineLearning.SequentialLearning.StationaryEnv ═══
-@[expose] public section
-open MeasureTheory ProbabilityTheory Filter Real Finset
-open scoped ENNReal NNReal
-namespace Learning
-variable {𝓞 𝓐 𝓨 : Type*} {m𝓞 : MeasurableSpace 𝓞} {m𝓐 : MeasurableSpace 𝓐} {m𝓨 : MeasurableSpace 𝓨}
-
-/-- An environment is oblivious if the distributions of the next observation and feedback
-don't depend on the past history: the observation at time `n` has a fixed law, and the feedback
-at time `n` depends only on the observation and the action at time `n`. -/
-class Environment.IsOblivious (env : Environment 𝓞 𝓐 𝓨) : Prop where
-  exists_obs_eq_const : ∃ μ : ℕ → Measure 𝓞, (∀ n, IsProbabilityMeasure (μ n)) ∧
-    ∀ n, env.obs n = Kernel.const _ (μ n)
-  exists_feedback_eq_comap : ∃ ν : ℕ → Kernel (𝓞 × 𝓐) 𝓨, (∀ n, IsMarkovKernel (ν n)) ∧
-    ∀ n, env.feedback n = (ν n).comap (fun p ↦ (p.1.2, p.2)) (by fun_prop)
-
-section Oblivious
-variable {μ : ℕ → Measure 𝓞} [∀ n, IsProbabilityMeasure (μ n)] {ν : ℕ → Kernel (𝓞 × 𝓐) 𝓨} [∀ n, IsMarkovKernel (ν n)]
-
-/-- The oblivious environment in which the observation at time `n` has law `μ n` and the feedback
-at time `n` is drawn from `ν n` applied to the observation and the action at time `n`, whatever the
-past history. -/
-noncomputable
-def Environment.oblivious (μ : ℕ → Measure 𝓞) [∀ n, IsProbabilityMeasure (μ n)]
-    (ν : ℕ → Kernel (𝓞 × 𝓐) 𝓨) [∀ n, IsMarkovKernel (ν n)] : Environment 𝓞 𝓐 𝓨 where
-  obs n := Kernel.const _ (μ n)
-  feedback n := (ν n).comap (fun p ↦ (p.1.2, p.2)) (by fun_prop)
-
-end Oblivious
-section Stationary
-variable {μ : Measure 𝓞} [IsProbabilityMeasure μ] {ν : Kernel (𝓞 × 𝓐) 𝓨} [IsMarkovKernel ν]
-
-/-- The stationary environment in which the observations have law `μ` and the feedback is drawn
-from `ν` applied to the observation and the action, whatever the past history. -/
-noncomputable
-def Environment.stationary (μ : Measure 𝓞) [IsProbabilityMeasure μ] (ν : Kernel (𝓞 × 𝓐) 𝓨)
-    [IsMarkovKernel ν] : Environment 𝓞 𝓐 𝓨 :=
-  Environment.oblivious (fun _ ↦ μ) (fun _ ↦ ν)
-
-end Stationary
-section Bandit
-variable {ν : Kernel 𝓐 𝓨} [IsMarkovKernel ν]
-
-/-- The stationary environment without observations in which the feedback is drawn from `ν`
-applied to the action, whatever the past history: a stochastic bandit. -/
-noncomputable
-def Environment.bandit (ν : Kernel 𝓐 𝓨) [IsMarkovKernel ν] : Environment Unit 𝓐 𝓨 :=
-  Environment.stationary (Measure.dirac ()) (ν.prodMkLeft Unit)
-
-end Bandit
-end Learning
-end
-
--- ═══ Wang2026Almost.LeanMachineLearning.SequentialLearning.ObliviousEnv ═══
+-- ═══ Wang2026Almost.ForLMLExplore.SequentialLearning.ObliviousEnv ═══
 @[expose] public section
 open MeasureTheory ProbabilityTheory
 namespace Learning
@@ -210,7 +65,7 @@ noncomputable def Environment.const (μ : Measure 𝓨) [IsProbabilityMeasure μ
 end Learning
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -218,7 +73,7 @@ variable {Ω : Type*}
 
 /-- The range `[-1 / (1 - m), 1 / m]` of the bet fractions for which the wealth stays
 nonnegative when the observations are in `[0, 1]`. -/
-def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
+noncomputable def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
 
 /-- The wealth after `n` rounds of the predictable plug-in betting strategy `lam` on the
 observations `X`, testing the null mean `m`: `∏_{k < n} (1 + lam k (X k - m))`. -/

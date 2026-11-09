@@ -43,9 +43,9 @@ lemma sub_pos_of_lt_nextWealthMin {m ρ : ℝ} (hm : m ∈ Set.Icc 0 1) {lam X :
   · simp [← hm0, ha]
   · positivity
 
-/-- **Lemma B.3** (Wang, Agrawal, Ramdas 2026): if the next wealth of the strategy `lam` is
-guaranteed to stay above `ρ` at round `n`, then the leveraged bet fraction
-`leverageFraction m ρ lam X n` is in `(-1 / (1 - m), 1 / m)`. -/
+/-- **Lemma B.3** [WAR26, Lemma B.3]: if the next wealth of the strategy `lam` is guaranteed to stay
+above `ρ` at round `n`, then the leveraged bet fraction `leverageFraction m ρ lam X n` is in
+`(-1 / (1 - m), 1 / m)`. -/
 lemma leverageFraction_mem_Ioo {m ρ : ℝ} (hm : m ∈ Set.Ioo 0 1) {lam X : ℕ → Ω → ℝ} {n : ℕ}
     {ω : Ω} (h : ρ < nextWealthMin m lam X n ω) :
     leverageFraction m ρ lam X n ω ∈ Set.Ioo (-1 / (1 - m)) (1 / m) := by

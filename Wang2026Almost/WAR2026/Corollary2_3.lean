@@ -28,9 +28,9 @@ namespace Wang2026Almost
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
 
-/-- **Corollary 2.3** (Wang, Agrawal, Ramdas 2026): for i.i.d. random variables `Y n` with mean
-`0` and variance `σ² > 0`, the series `∑ S n ^ 2 / n ^ 2` of the partial sums
-`S n = Y 0 + … + Y (n - 1)` diverges almost surely. -/
+/-- **Corollary 2.3** [WAR26, Corollary 2.3]: for i.i.d. random variables `Y n` with mean `0` and
+variance `σ² > 0`, the series `∑ S n ^ 2 / n ^ 2` of the partial sums `S n = Y 0 + … + Y (n - 1)`
+diverges almost surely. -/
 theorem ae_not_summable_sum_sq_div_sq {Y : ℕ → Ω → ℝ} (hindep : iIndepFun Y P')
     (hident : ∀ n, IdentDistrib (Y n) (Y 0) P' P') (hL2 : MemLp (Y 0) 2 P')
     (h0 : P'[Y 0] = 0) (hvar : 0 < Var[Y 0; P']) :

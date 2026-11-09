@@ -4,16 +4,12 @@ Machine-checkable verification, with [leanprover/comparator](https://github.com/
 that this repository proves the headline results claimed in [`formalization.yaml`](../formalization.yaml)
 without having to read or trust the Lean development in `Wang2026Almost/`.
 
-**Status.** Phase 2 complete (2026-10-08): the project proves the 16 headline theorems with no
-`sorry` and the standard axioms only; the challenges, regenerated after phase 2, compile
-(`lake build Comparator`). In the linter cleanup (2026-10-09) the statements of Theorems 5.1 (regret
-part) and 5.3 were strengthened by dropping unused probability-measure instances, and their
-challenges were regenerated. The full comparator run (`scripts/comparator-verify.sh`) remains to
-be done.
+**Status.** Every challenge is proved. The challenges were regenerated on 2026-11-09, when the project
+moved to LMLExplore; `scripts/comparator-verify.sh` has not been run on them yet (nor on the
+former ones).
 
-Each challenge is one self-contained file whose transitive imports resolve to Mathlib and Lean
-core only, the shape the [Palomar registry](https://palomar-registry.org/) enforces: no LML, no
-project modules, no sibling helpers.
+Each challenge is one file that imports LML and Mathlib modules only (the project does not use
+LMLExplore's definitions yet), no project modules and no sibling helpers.
 
 ## The trust story
 
@@ -37,9 +33,10 @@ config `<name>.json`; the list is `targets.txt`:
 | Theorem 5.2 (sum-of-squares criterion II) | `sum_sq_criterion_subgaussian` |
 | Theorem 5.3 (no-cash criterion II) | `tendsto_subgaussianMixtureTest` |
 
-Each challenge states the theorem with `sorry`, with every definition the statement rests on
-copied verbatim from its source by [challenge-gen](https://github.com/LeanTrustBuilders/challenge-gen):
-the project's definitions and the LML declarations they build on. A reader checks the *statement*
+Each challenge states the theorem with `sorry`, with every definition of the project that the
+statement rests on copied verbatim from its source by
+[challenge-gen](https://github.com/LeanTrustBuilders/challenge-gen); the definitions of
+LMLExplore, LML, Tau Ceti and Mathlib that it uses are imported. A reader checks the *statement*
 (the challenge file) by hand and lets comparator check that the project proves exactly it, with
 no axioms beyond `propext`, `Classical.choice` and `Quot.sound`, the proofs replayed through the
 kernel. The config also lists the lemmas the definitions use, left `sorry` in the challenge and

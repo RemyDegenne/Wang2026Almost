@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Mixture
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Mixture
 public import Wang2026Almost.WAR2026.MixturesProb
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
@@ -36,8 +36,8 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Theorem 3.1** (no-cash criterion, Wang, Agrawal, Ramdas 2026): for i.i.d. observations `X`
-of a non-degenerate law `P` on `[0, 1]` with mean `m`, and a probability measure `π` on
+/-- **Theorem 3.1** (no-cash criterion) [WAR26, Theorem 3.1]: for i.i.d. observations `X` of a
+non-degenerate law `P` on `[0, 1]` with mean `m`, and a probability measure `π` on
 `[-1 / (1 - m), 1 / m]`, the mixture wealth process converges almost surely to `π({0})`. In
 particular it converges to `0` almost surely iff `π` has no atom at `0`. -/
 theorem tendsto_mixtureWealth (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)

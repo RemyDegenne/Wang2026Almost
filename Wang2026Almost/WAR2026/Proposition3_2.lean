@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth
 public import Wang2026Almost.WAR2026.Mixtures
 public import Wang2026Almost.WAR2026.MixturesProb
 public import Wang2026Almost.WAR2026.Theorem3_1
@@ -34,9 +34,9 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Proposition 3.2, universal portfolio** (Wang, Agrawal, Ramdas 2026): under every
-non-degenerate null distribution on `[0, 1]`, the wealth of the mixture strategy with a rescaled
-Beta mixing distribution converges to `0` almost surely. -/
+/-- **Proposition 3.2, universal portfolio** [WAR26, Proposition 3.2]: under every non-degenerate
+null distribution on `[0, 1]`, the wealth of the mixture strategy with a rescaled Beta mixing
+distribution converges to `0` almost surely. -/
 theorem tendsto_mixtureWealth_betaMixture (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
     (hm : ∫ x, x ∂P = m) (hnd : P ≠ Measure.dirac m) {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
     (hindep : iIndepFun X P')
@@ -49,9 +49,9 @@ theorem tendsto_mixtureWealth_betaMixture (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 
   filter_upwards [ae_mem_Icc_betaMixture a b] with l hl
     using Icc_neg_one_one_subset_fractionRange hm01 hl
 
-/-- **Proposition 3.2, Robbins' mixture** (Wang, Agrawal, Ramdas 2026): under every
-non-degenerate null distribution on `[0, 1]`, the wealth of the mixture strategy with Robbins'
-iterated-logarithm mixing distribution converges to `0` almost surely. -/
+/-- **Proposition 3.2, Robbins' mixture** [WAR26, Proposition 3.2]: under every non-degenerate null
+distribution on `[0, 1]`, the wealth of the mixture strategy with Robbins' iterated-logarithm mixing
+distribution converges to `0` almost surely. -/
 theorem tendsto_mixtureWealth_robbinsMixture (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
     (hm : ∫ x, x ∂P = m) (hnd : P ≠ Measure.dirac m) {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
     (hindep : iIndepFun X P')

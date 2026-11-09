@@ -5,11 +5,11 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.KTLimit
-public import Wang2026Almost.LeanMachineLearning.Betting.PlugIn
-public import Wang2026Almost.LeanMachineLearning.Betting.StrategyBounds
-public import Wang2026Almost.LeanMachineLearning.Betting.Strategies
-public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.KTLimit
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.PlugIn
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.StrategyBounds
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies
+public import Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.HasLaw
@@ -25,7 +25,8 @@ wealth process converges to `0` almost surely.
 
 The paper takes `C ≥ m (1 - m)`; the additional condition `C ≥ m / 2` guarantees that the first
 bet `1 / (2 C)` lies in `[-1 / (1 - m), 1 / m]` (together, the two conditions guarantee that all
-the KT bet fractions do, which the bankruptcy statement relies on through Corollary 2.4).
+the KT bet fractions do, which the bankruptcy statement relies on through Corollary 2.4). This is
+erratum E1 of `notes/paper-errata.md`.
 -/
 
 @[expose] public section
@@ -38,8 +39,8 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Proposition 2.5** (Wang, Agrawal, Ramdas 2026): for i.i.d. observations `X` of law `P` on
-`[0, 1]` with mean `m` and variance `σ² > 0`, the Krichevsky–Trofimov bet fractions with constant
+/-- **Proposition 2.5** [WAR26, Proposition 2.5]: for i.i.d. observations `X` of law `P` on `[0, 1]`
+with mean `m` and variance `σ² > 0`, the Krichevsky–Trofimov bet fractions with constant
 `C ≥ max (m (1 - m)) (m / 2)` satisfy `√n lam n → N(0, σ² / C²)` in distribution, hence
 `lam n = Ω_p(n^{-1/2})`, and the KT wealth process converges to `0` almost surely. -/
 theorem kt_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)

@@ -5,8 +5,8 @@ COLT 2026, arXiv 2602.08888. Source in `source/bankrupt/` (`main.tex`, `appdx.te
 This file is the contract between the blueprint chapters and the Lean files: it fixes every
 label, the statement of every result, its proof route and what Mathlib/LML already provide.
 Lean library `Wang2026Almost`; paper directory `Wang2026Almost/WAR2026/` (namespace
-`Wang2026Almost`); library material in `Wang2026Almost/Mathlib/` (namespaces `MeasureTheory`,
-`ProbabilityTheory`) and `Wang2026Almost/LeanMachineLearning/` (namespace `Learning`,
+`Wang2026Almost`); library material in `Wang2026Almost/ForLMLExplore/` (namespaces `MeasureTheory`,
+`ProbabilityTheory`) and `Wang2026Almost/ForLMLExplore/` (namespace `Learning`,
 `Learning.Betting`).
 
 ## 0. Modelling decisions
@@ -34,9 +34,9 @@ Lean library `Wang2026Almost`; paper directory `Wang2026Almost/WAR2026/` (namesp
   `hnd : P ≠ Measure.dirac m` or `hvar : 0 < Var[id; P]`. Consequences used everywhere
   (`lem:null_basic`): `m ∈ (0, 1)`, `σ² := Var[id; P] > 0`, `X n ∈ [0, 1]` a.s.
 * **Asymptotic notation** (`def:asymp`): `IsBigOInProb`, `IsBigOmegaInProb`, `IsBigOAE`,
-  `IsBigOmegaAE` (`Wang2026Almost/Mathlib/Probability/AsymptoticsInProbability.lean`).
+  `IsBigOmegaAE` (`Wang2026Almost/ForLMLExplore/Probability/AsymptoticsInProbability.lean`).
 * **Convergence in distribution**: Mathlib's `TendstoInDistribution`; limits `gaussianReal`,
-  `chiSquareMeasure` (`Wang2026Almost/Mathlib/Probability/Distributions/ChiSquare.lean`).
+  `chiSquareMeasure` (`Wang2026Almost/ForLMLExplore/Probability/Distributions/ChiSquare.lean`).
 * **Theorem 4.1** is stated for predictable processes w.r.t. an arbitrary filtration (pathwise,
   as in the paper): the improved strategy is the explicit `ρ`-opportunistic leverage, predictable
   for the same filtration. It is *not* stated as "∃ an LML algorithm": a randomized LML policy
@@ -213,7 +213,7 @@ independent of `filtrationAction n`, law `P`), `lem:iid_of_plug_in` (from `iInde
 
 ## 4. Part II: prerequisites
 
-### Chapter `chap:pre_martingale` (`Wang2026Almost/Mathlib/Probability/Martingale/*.lean`, `ProbabilityTheory`/`MeasureTheory`)
+### Chapter `chap:pre_martingale` (`Wang2026Almost/ForLMLExplore/Probability/Martingale/*.lean`, `ProbabilityTheory`/`MeasureTheory`)
 
 * `lem:lintegral_comp_indep` (`ProbabilityTheory.lintegral_comp_of_indep`): `Y` independent of
   the σ-algebra `m`, `W` `m`-measurable, `F ≥ 0` measurable, `A ∈ m`:
@@ -237,7 +237,7 @@ independent of `filtrationAction n`, law `P`), `lem:iid_of_plug_in` (from `iInde
   enough? use `iIndepFun`) sub-Gaussian `Y` ⇒ a.s. `Σ_{k<n} Y_k = O(√n log n)`. Mathlib:
   `measure_sum_range_ge_le_of_iIndepFun`, `measure_limsup_atTop_eq_zero`.
 
-### Chapter `chap:pre_asymptotics` (`Wang2026Almost/Mathlib/Probability/AsymptoticsInProbability.lean` and neighbours)
+### Chapter `chap:pre_asymptotics` (`Wang2026Almost/ForLMLExplore/Probability/AsymptoticsInProbability.lean` and neighbours)
 
 * `lem:isBigOmegaInProb_mono`, `lem:isBigOmegaInProb_sq`, `lem:isBigOmegaInProb_of_tendstoInDistribution`
   (`X n / a n → Z` in distribution, `P(Z = 0) = 0`, `a n > 0` eventually ⇒ `X = Ω_p(a)`;
@@ -249,7 +249,7 @@ independent of `filtrationAction n`, law `P`), `lem:iid_of_plug_in` (from `iInde
 * `lem:tendstoInDistribution_congr_ae`: Slutsky helpers (a.s. convergence ⇒ in measure:
   Mathlib `tendstoInMeasure_of_tendsto_ae`).
 
-### Chapter `chap:pre_betting` (`Wang2026Almost/LeanMachineLearning/Betting/*.lean`)
+### Chapter `chap:pre_betting` (`Wang2026Almost/ForLMLExplore/OnlineLearning/Betting/*.lean`)
 
 * `lem:log_ge_sub_sq` (`log(1+x) ≥ x - x²`, `|x| ≤ 1/2`), `lem:log_le_sub_mul_sq`
   (`log(1+x) ≤ x - x²/(2(1+M))` for `-1 < x ≤ M`), `lem:log_taylor` (`|log(1+x) - x + x²/2| ≤ 2|x|³`,

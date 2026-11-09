@@ -5,7 +5,7 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.LeanMachineLearning.Betting.Wealth
+public import Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth
 
 /-!
 # Predictably non-bankrupt paths, leverage and portfolios of betting strategies

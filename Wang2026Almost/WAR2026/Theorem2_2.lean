@@ -5,8 +5,8 @@ Authors: Rémy Degenne
 -/
 module
 
-public import Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability
-public import Wang2026Almost.Mathlib.Probability.SumBigOmegaInProb
+public import Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability
+public import Wang2026Almost.ForLMLExplore.Probability.SumBigOmegaInProb
 public import Mathlib.Analysis.PSeries
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
@@ -27,8 +27,8 @@ namespace Wang2026Almost
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
 
-/-- **Theorem 2.2** (Wang, Agrawal, Ramdas 2026): if `Z n` are (almost surely) nonnegative random
-variables with `Z n = Ω_p(n⁻¹)`, then `∑ Z n = ∞` almost surely. -/
+/-- **Theorem 2.2** [WAR26, Theorem 2.2]: if `Z n` are (almost surely) nonnegative random variables
+with `Z n = Ω_p(n⁻¹)`, then `∑ Z n = ∞` almost surely. -/
 theorem ae_not_summable_of_isBigOmegaInProb {Z : ℕ → Ω → ℝ} (hZ : ∀ n, AEMeasurable (Z n) P')
     (hnn : ∀ n, 0 ≤ᵐ[P'] Z n) (hΩ : IsBigOmegaInProb P' Z (fun n ↦ (n : ℝ)⁻¹)) :
     ∀ᵐ ω ∂P', ¬ Summable (fun n ↦ Z n ω) :=

@@ -5,10 +5,10 @@ Updated as phase 2 proceeds.
 
 ## Mathlib
 
-* `Wang2026Almost/Mathlib/Probability/AsymptoticsInProbability.lean`: `IsBigOInProb`,
+* `Wang2026Almost/ForLMLExplore/Probability/AsymptoticsInProbability.lean`: `IsBigOInProb`,
   `IsBigOmegaInProb`, `IsBigOAE`, `IsBigOmegaAE` (from LMLPapers); phase 2 adds monotonicity in
   the rate, squaring, and `Ω_p` from convergence in distribution to a law without atom at `0`.
-* `Wang2026Almost/Mathlib/Probability/Distributions/{Gamma,ChiSquare}.lean`: gamma MGF,
+* `Wang2026Almost/ForLMLExplore/Probability/Distributions/{Gamma,ChiSquare}.lean`: gamma MGF,
   chi-squared distribution (from LMLPapers); phase 2 adds the law of the square of a standard
   Gaussian.
 * Done in phase 2 (Mathlib-shaped, namespaces `MeasureTheory`/`ProbabilityTheory`/`Real`):

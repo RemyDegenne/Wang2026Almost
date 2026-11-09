@@ -2,31 +2,16 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.InfinitePi
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.Kernel.Composition.MapComap
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
+public import LeanMachineLearning.SequentialLearning.SumRewards
 public import Mathlib.Order.Filter.Extr
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Probability.Martingale.BorelCantelli
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Portmanteau
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.Process.Adapted
 public import Mathlib.Topology.Order.Compact
@@ -67,7 +52,7 @@ end Real
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -86,7 +71,7 @@ noncomputable def hedgedWealth (m : ℝ) (lam X : ℕ → Ω → ℝ) (n : ℕ) 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Strategies ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies ═══
 @[expose] public section
 open Finset
 namespace Learning.Betting
@@ -108,7 +93,7 @@ noncomputable def hedgeFraction (C α m v : ℝ) (n : ℕ) : ℝ :=
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

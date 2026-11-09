@@ -2,32 +2,17 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.InfinitePi
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.Kernel.Composition.MapComap
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
+public import LeanMachineLearning.SequentialLearning.SumRewards
 public import Mathlib.Order.Filter.Extr
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Probability.Martingale.BorelCantelli
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Measure.Portmanteau
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.Process.Adapted
 public import Mathlib.Topology.Order.Compact
@@ -49,10 +34,12 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 public import Mathlib.Topology.Algebra.Order.Archimedean
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+public import Mathlib.Analysis.Analytic.IsolatedZeros
 public import Mathlib.Probability.Moments.ComplexMGF
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.Probability.CentralLimitTheorem
+public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.StrongLaw
 
 /-! # Standalone extraction for `Wang2026Almost.grapa_bankrupt`
@@ -79,7 +66,7 @@ end Real
 namespace Wang2026Almost
 end Wang2026Almost
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Wealth ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Wealth ═══
 @[expose] public section
 open MeasureTheory Finset
 namespace Learning.Betting
@@ -87,7 +74,7 @@ variable {Ω : Type*}
 
 /-- The range `[-1 / (1 - m), 1 / m]` of the bet fractions for which the wealth stays
 nonnegative when the observations are in `[0, 1]`. -/
-def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
+noncomputable def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
 
 /-- The wealth after `n` rounds of the predictable plug-in betting strategy `lam` on the
 observations `X`, testing the null mean `m`: `∏_{k < n} (1 + lam k (X k - m))`. -/
@@ -100,7 +87,7 @@ noncomputable def fixedWealth (m l : ℝ) (X : ℕ → Ω → ℝ) : ℕ → Ω 
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.LeanMachineLearning.Betting.Strategies ═══
+-- ═══ Wang2026Almost.ForLMLExplore.OnlineLearning.Betting.Strategies ═══
 @[expose] public section
 open Finset
 namespace Learning.Betting
@@ -121,7 +108,7 @@ def IsGrapa (m : ℝ) (X gr : ℕ → Ω → ℝ) : Prop :=
 end Learning.Betting
 end
 
--- ═══ Wang2026Almost.Mathlib.Probability.AsymptoticsInProbability ═══
+-- ═══ Wang2026Almost.ForLMLExplore.Probability.AsymptoticsInProbability ═══
 @[expose] public section
 open Filter MeasureTheory Asymptotics
 open scoped Topology

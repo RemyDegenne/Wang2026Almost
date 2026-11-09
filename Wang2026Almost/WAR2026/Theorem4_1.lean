@@ -35,14 +35,13 @@ namespace Wang2026Almost
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
-/-- **Theorem 4.1** (improvability on predictably non-bankrupt paths, Wang, Agrawal, Ramdas
-2026). Let `lam` be a betting strategy, predictable for a filtration `ℱ` to which the
-observations `X` are adapted with a lag, and let `ρ ∈ (0, 1)`. There is another betting strategy
-`gam`, predictable for `ℱ`, whose bet fractions are in `[-1 / (1 - m), 1 / m]` whenever those of
-`lam` are, and whose wealth is `(W n - ρ) / (1 - ρ)` on the `ρ`-predictably non-bankrupt event
-`N^ρ` of `lam`. Consequently, on `N^ρ`: `W' n > W n` when `W n > 1`, `W' n / W n → 1 / (1 - ρ)`
-when `W n → ∞`, `W' n < W n` when `W n < 1`, and `W' n → (w - ρ) / (1 - ρ) < w` when
-`W n → w < 1`. -/
+/-- **Theorem 4.1** (improvability on predictably non-bankrupt paths) [WAR26, Theorem 4.1]. Let
+`lam` be a betting strategy, predictable for a filtration `ℱ` to which the observations `X` are
+adapted with a lag, and let `ρ ∈ (0, 1)`. There is another betting strategy `gam`, predictable for
+`ℱ`, whose bet fractions are in `[-1 / (1 - m), 1 / m]` whenever those of `lam` are, and whose
+wealth is `(W n - ρ) / (1 - ρ)` on the `ρ`-predictably non-bankrupt event `N^ρ` of `lam`.
+Consequently, on `N^ρ`: `W' n > W n` when `W n > 1`, `W' n / W n → 1 / (1 - ρ)` when `W n → ∞`,
+`W' n < W n` when `W n < 1`, and `W' n → (w - ρ) / (1 - ρ) < w` when `W n → w < 1`. -/
 theorem exists_improve {ℱ : Filtration ℕ mΩ} {m ρ : ℝ} (hm : m ∈ Set.Ioo 0 1)
     (hρ : ρ ∈ Set.Ioo 0 1) {lam X : ℕ → Ω → ℝ} (hlam : Adapted ℱ lam)
     (hX : ∀ n, Measurable[ℱ (n + 1)] (X n)) :
