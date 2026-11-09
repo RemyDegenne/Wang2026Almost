@@ -186,3 +186,121 @@ status:
     statements are strictly stronger; their challenges are regenerated.
   sorry_count: 0
   sorry_in_definitions: 0
+
+alignment:
+  namespace: "Wang2026Almost"
+  note: >-
+    The full source-to-Lean map is the blueprint: each environment of blueprint/src/chapters/*.tex
+    carries a \lean{} tag. Only the headline statements (the 16 comparator challenges) are
+    repeated here. Each has its Literature Links relation, read "paper relation Lean": exactMatch,
+    closeMatch, broadMatch (the Lean statement is more general), narrowMatch (the paper's is) or
+    hasPart; and its entry in notes/paper-errata.md when the paper's statement had to be
+    corrected. Predictable strategies are runs of (possibly randomized) LML algorithms in the
+    i.i.d. environment `Environment.const P` (Theorems 2.1, 5.2, Corollary 2.4), or processes
+    predictable for a filtration (Theorem 4.1). Lean indices start at 0: `lam n` is the paper's
+    λ_{n+1}. Every numbered theorem, proposition and corollary of the paper is a headline result.
+  statements:
+    - source: "thm:sos_crit — Theorem 2.1, sum-of-squares criterion"
+      lean: "Wang2026Almost.sum_sq_criterion"
+      module: "Wang2026Almost.WAR2026.Theorem2_1"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "thm:sum_of_op — Theorem 2.2, almost sure divergence of ∑ Ω_p(1/n)"
+      lean: "Wang2026Almost.ae_not_summable_of_isBigOmegaInProb"
+      module: "Wang2026Almost.WAR2026.Theorem2_2"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "cor:div_sample_mean — Corollary 2.3, divergence of ∑ S_n²/n²"
+      lean: "Wang2026Almost.ae_not_summable_sum_sq_div_sq"
+      module: "Wang2026Almost.WAR2026.Corollary2_3"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "cor:sq_crit — Corollary 2.4, the n^{-1/2} criterion"
+      lean: "Wang2026Almost.tendsto_wealth_zero_of_isBigOmega"
+      module: "Wang2026Almost.WAR2026.Corollary2_4"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "prop:kt — Proposition 2.5, null bankruptcy of the KT bettor"
+      lean: "Wang2026Almost.kt_bankrupt"
+      module: "Wang2026Almost.WAR2026.Proposition2_5"
+      status: "proved"
+      relation: "narrowMatch"
+      erratum: "E1"
+      note: >-
+        Assumes C ≥ m/2 besides the paper's C ≥ m(1-m): otherwise the first bet 1/(2C) can exceed
+        1/m and the KT wealth can become negative.
+    - source: "prop:grapa — Proposition 2.6, null bankruptcy of the GRAPA bettor"
+      lean: "Wang2026Almost.grapa_bankrupt"
+      module: "Wang2026Almost.WAR2026.Proposition2_6"
+      status: "proved"
+      relation: "exactMatch"
+      note: "For any measurable choice of the hindsight maximizer (`IsGrapa`)."
+    - source: "prop:agrapa — Proposition 2.7, null bankruptcy of the aGRAPA bettor"
+      lean: "Wang2026Almost.agrapa_bankrupt"
+      module: "Wang2026Almost.WAR2026.Proposition2_7"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "prop:hedge — Proposition 2.8, null bankruptcy of predictable hedging"
+      lean: "Wang2026Almost.hedged_bankrupt"
+      module: "Wang2026Almost.WAR2026.Proposition2_8"
+      status: "proved"
+      relation: "closeMatch"
+      note: >-
+        The paper's "appropriate consistent variance estimator" is any plug-in estimator that
+        converges almost surely to σ². The statement is the paper's; its proof has a gap, repaired
+        in the Lean proof (E2 in notes/paper-errata.md).
+    - source: "thm:nocash — Theorem 3.1, no-cash criterion"
+      lean: "Wang2026Almost.tendsto_mixtureWealth"
+      module: "Wang2026Almost.WAR2026.Theorem3_1"
+      status: "proved"
+      relation: "exactMatch"
+    - source: "prop:mixture_bankrupt — Proposition 3.2, the universal portfolio"
+      lean: "Wang2026Almost.tendsto_mixtureWealth_betaMixture"
+      module: "Wang2026Almost.WAR2026.Proposition3_2"
+      status: "proved"
+      relation: "hasPart"
+      note: >-
+        The universal-portfolio claim, for every Beta(a, b) mixing distribution (a, b > 0)
+        rescaled to [-1, 1]; the paper does not fix the parameters.
+    - source: "prop:mixture_bankrupt — Proposition 3.2, Robbins' mixture"
+      lean: "Wang2026Almost.tendsto_mixtureWealth_robbinsMixture"
+      module: "Wang2026Almost.WAR2026.Proposition3_2"
+      status: "proved"
+      relation: "hasPart"
+      note: "The claim for Robbins' iterated-logarithm mixture, with the paper's density and C = 6.6e."
+    - source: "thm:improve — Theorem 4.1, improvability on predictably non-bankrupt paths"
+      lean: "Wang2026Almost.exists_improve"
+      module: "Wang2026Almost.WAR2026.Theorem4_1"
+      status: "proved"
+      relation: "exactMatch"
+      note: >-
+        A strategy is any process predictable for a filtration to which the observations are
+        adapted with a lag, and the improved strategy is predictable for the same filtration; the
+        paper's liminf of W♯_n / W_n is stated as a limit.
+    - source: "thm:chisq_klinf — Theorem 5.1, χ²₁ limit of twice the hindsight log-wealth"
+      lean: "Wang2026Almost.tendstoInDistribution_hindsightLogWealth"
+      module: "Wang2026Almost.WAR2026.Theorem5_1"
+      status: "proved"
+      relation: "hasPart"
+      note: "The first claim of Theorem 5.1; its consequence, the unbounded regret, is the next entry."
+    - source: "thm:unbounded_regret — Theorem 5.1, unbounded regret of null-bankrupt strategies"
+      lean: "Wang2026Almost.not_bddAbove_logRegret_of_tendsto_wealth_zero"
+      module: "Wang2026Almost.WAR2026.Theorem5_1"
+      status: "proved"
+      relation: "hasPart"
+      note: >-
+        The second claim, for any strategy and any observations (only m ∈ (0, 1) is assumed). A
+        wealth that vanishes after finitely many rounds, where the paper's regret is +∞, is a
+        separate disjunct, as log 0 = 0 in Lean.
+    - source: "thm:sos_crit_subg — Theorem 5.2, sum-of-squares criterion II"
+      lean: "Wang2026Almost.sum_sq_criterion_subgaussian"
+      module: "Wang2026Almost.WAR2026.Theorem5_2"
+      status: "proved"
+      relation: "broadMatch"
+      note: "Without the paper's hypothesis that P is non-degenerate, which the proof does not use."
+    - source: "thm:nocash_subg — Theorem 5.3, no-cash criterion II"
+      lean: "Wang2026Almost.tendsto_subgaussianMixtureTest"
+      module: "Wang2026Almost.WAR2026.Theorem5_3"
+      status: "proved"
+      relation: "broadMatch"
+      note: "Without the paper's hypothesis that P is non-degenerate, which the proof does not use."
