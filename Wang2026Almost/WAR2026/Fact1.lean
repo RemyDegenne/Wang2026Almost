@@ -75,8 +75,8 @@ lemma portfolioFraction_mem_fractionRange {m κ : ℝ} (hm : m ∈ Set.Icc 0 1)
     · rw [div_le_iff₀ hD]
       nlinarith [mul_le_mul_of_nonneg_left hl2 ha, mul_le_mul_of_nonneg_left hn2 hb]
 
-/-- **Fact 1** (Wang, Agrawal, Ramdas 2026): for two bet fraction processes `lam`, `nu` with
-values in `[-1 / (1 - m), 1 / m]`, observations in `[0, 1]` and `κ ∈ [0, 1]`, the bet fractions
+/-- **Fact 1** [WAR26, Fact 1]: for two bet fraction processes `lam`, `nu` with values in
+`[-1 / (1 - m), 1 / m]`, observations in `[0, 1]` and `κ ∈ [0, 1]`, the bet fractions
 `portfolioFraction m κ lam nu X` are in `[-1 / (1 - m), 1 / m]` and their wealth is the portfolio
 `(1 - κ) W^lam + κ W^nu`. -/
 lemma wealth_portfolioFraction {m κ : ℝ} (hm : m ∈ Set.Ioo 0 1) (hκ : κ ∈ Set.Icc 0 1)

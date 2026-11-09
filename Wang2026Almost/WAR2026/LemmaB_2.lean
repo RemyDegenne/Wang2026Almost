@@ -24,9 +24,9 @@ open scoped Topology
 
 namespace Wang2026Almost
 
-/-- **Lemma B.2** (Wang, Agrawal, Ramdas 2026): for a finite measure `γ` on `[0, ∞)` and a
-sequence `A n` tending to `∞`, `∫ exp (-x A n) dγ(x) → γ({0})`. The paper assumes `A` positive and
-increasing; the proof (dominated convergence) does not use it. -/
+/-- **Lemma B.2** [WAR26, Lemma B.2]: for a finite measure `γ` on `[0, ∞)` and a sequence `A n`
+tending to `∞`, `∫ exp (-x A n) dγ(x) → γ({0})`. The paper assumes `A` positive and increasing; the
+proof (dominated convergence) does not use it. -/
 lemma tendsto_integral_exp_neg_mul (γ : Measure ℝ) [IsFiniteMeasure γ] (hγ : γ (Set.Iio 0) = 0)
     {A : ℕ → ℝ} (hA : Tendsto A atTop atTop) :
     Tendsto (fun n ↦ ∫ x, Real.exp (-x * A n) ∂γ) atTop (𝓝 (γ.real {0})) := by

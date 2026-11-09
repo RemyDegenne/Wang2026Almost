@@ -36,10 +36,10 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Theorem 5.1, `χ²` limit** (Wang, Agrawal, Ramdas 2026): for i.i.d. observations `X` of a
+/-- **Theorem 5.1, `χ²` limit** [WAR26, Theorem 5.1]: for i.i.d. observations `X` of a
 non-degenerate law `P` on `[0, 1]` with mean `m`, twice the best-in-hindsight log-wealth
-`2 L*_n = 2 max_{l ∈ [-1/(1-m), 1/m]} log W_n^l` converges in distribution to the `χ²`
-distribution with one degree of freedom. -/
+`2 L*_n = 2 max_{l ∈ [-1/(1-m), 1/m]} log W_n^l` converges in distribution to the `χ²` distribution
+with one degree of freedom. -/
 theorem tendstoInDistribution_hindsightLogWealth (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1)
     (hm : ∫ x, x ∂P = m) (hnd : P ≠ Measure.dirac m) {X : ℕ → Ω → ℝ} (hX : ∀ n, Measurable (X n))
     (hindep : iIndepFun X P')
@@ -67,11 +67,10 @@ theorem tendstoInDistribution_hindsightLogWealth (hP : ∀ᵐ x ∂P, x ∈ Set.
     (Finset.measurable_sum _ fun k _ ↦ ((hX k).sub_const m).pow_const 2))
 
 omit [IsProbabilityMeasure P'] in
-/-- **Theorem 5.1, unbounded regret** (Wang, Agrawal, Ramdas 2026): a null-bankrupt betting
-strategy has unbounded regret against the best-in-hindsight wealth on almost all paths:
-`sup_n (L*_n - log W_n) = ∞` (the wealth may also vanish after finitely many rounds, in which
-case the regret is infinite from that round on). The measure `P'` need not be a probability
-measure. -/
+/-- **Theorem 5.1, unbounded regret** [WAR26, Theorem 5.1]: a null-bankrupt betting strategy has
+unbounded regret against the best-in-hindsight wealth on almost all paths:
+`sup_n (L*_n - log W_n) = ∞` (the wealth may also vanish after finitely many rounds, in which case
+the regret is infinite from that round on). The measure `P'` need not be a probability measure. -/
 theorem not_bddAbove_logRegret_of_tendsto_wealth_zero (hm : m ∈ Set.Ioo 0 1)
     {lam X : ℕ → Ω → ℝ} (h : ∀ᵐ ω ∂P', Tendsto (fun n ↦ wealth m lam X n ω) atTop (𝓝 0)) :
     ∀ᵐ ω ∂P', (∃ n, wealth m lam X n ω = 0) ∨

@@ -28,13 +28,12 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Theorem 5.2** (sum-of-squares criterion II, Wang, Agrawal, Ramdas 2026). Let `P` be a
-`1`-sub-Gaussian distribution with mean `m`, and let `(lam, X)` be a run of a
-strategy `alg` (with real-valued actions) in the i.i.d. environment of law `P`. Then the plug-in
-test process `M n = exp (∑_{k < n} ((X k - m)² - (X k - lam k)²) / 2)` converges almost surely
-to a random variable `M` such that, almost surely, `M = 0` iff `∑ (lam n - m) ^ 2 = ∞`, and
-consequently `M > 0` iff `∑ (lam n - m) ^ 2 < ∞`. The paper assumes `P` non-degenerate; the proof
-does not use it. -/
+/-- **Theorem 5.2** (sum-of-squares criterion II) [WAR26, Theorem 5.2]. Let `P` be a
+`1`-sub-Gaussian distribution with mean `m`, and let `(lam, X)` be a run of a strategy `alg` (with
+real-valued actions) in the i.i.d. environment of law `P`. Then the plug-in test process
+`M n = exp (∑_{k < n} ((X k - m)² - (X k - lam k)²) / 2)` converges almost surely to a random
+variable `M` such that, almost surely, `M = 0` iff `∑ (lam n - m) ^ 2 = ∞`, and consequently `M > 0`
+iff `∑ (lam n - m) ^ 2 < ∞`. The paper assumes `P` non-degenerate; the proof does not use it. -/
 theorem sum_sq_criterion_subgaussian (hP : HasSubgaussianMGF (fun x ↦ x - m) 1 P)
     (alg : Algorithm Unit ℝ ℝ) {lam X : ℕ → Ω → ℝ}
     (h : IsAlgEnvSeq (fun _ _ ↦ ()) lam X alg (Environment.const P) P') :

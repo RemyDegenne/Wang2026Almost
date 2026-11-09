@@ -34,13 +34,12 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Theorem 2.1** (sum-of-squares criterion, Wang, Agrawal, Ramdas 2026). Let `P` be a
-non-degenerate distribution on `[0, 1]` with mean `m`, and let `(lam, X)` be a run of a betting
-strategy `alg` in the i.i.d. environment of law `P`, with bet fractions in
-`[-1 / (1 - m), 1 / m]`. Then the wealth process converges almost surely to a random variable
-`W` such that, almost surely, `W = 0` iff `∑ lam n ^ 2 = ∞` or some bet loses the whole wealth
-(`lam n (X n - m) = -1`), and consequently `W > 0` iff `∑ lam n ^ 2 < ∞` and no bet loses the
-whole wealth. -/
+/-- **Theorem 2.1** (sum-of-squares criterion) [WAR26, Theorem 2.1]. Let `P` be a non-degenerate
+distribution on `[0, 1]` with mean `m`, and let `(lam, X)` be a run of a betting strategy `alg` in
+the i.i.d. environment of law `P`, with bet fractions in `[-1 / (1 - m), 1 / m]`. Then the wealth
+process converges almost surely to a random variable `W` such that, almost surely, `W = 0` iff
+`∑ lam n ^ 2 = ∞` or some bet loses the whole wealth (`lam n (X n - m) = -1`), and consequently
+`W > 0` iff `∑ lam n ^ 2 < ∞` and no bet loses the whole wealth. -/
 theorem sum_sq_criterion (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
     (hnd : P ≠ Measure.dirac m) (alg : Algorithm Unit ℝ ℝ) {lam X : ℕ → Ω → ℝ}
     (h : IsAlgEnvSeq (fun _ _ ↦ ()) lam X alg (Environment.const P) P')

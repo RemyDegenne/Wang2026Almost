@@ -32,10 +32,10 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Proposition 2.8** (Wang, Agrawal, Ramdas 2026): for i.i.d. observations `X` of law `P` on
-`[0, 1]` with mean `m` and variance `σ² > 0`, and a plug-in variance estimate `v` (a measurable
-function of the past observations) which is consistent (`v n → σ²` almost surely), the bet
-fractions `hedgeFraction C α m (v n) n` of the predictable hedging strategy (`C, α ∈ (0, 1)`) are
+/-- **Proposition 2.8** [WAR26, Proposition 2.8]: for i.i.d. observations `X` of law `P` on `[0, 1]`
+with mean `m` and variance `σ² > 0`, and a plug-in variance estimate `v` (a measurable function of
+the past observations) which is consistent (`v n → σ²` almost surely), the bet fractions
+`hedgeFraction C α m (v n) n` of the predictable hedging strategy (`C, α ∈ (0, 1)`) are
 `Ω_{a.s.}((n log n)^{-1/2})`, and the hedged wealth process converges to `0` almost surely. -/
 theorem hedged_bankrupt (hP : ∀ᵐ x ∂P, x ∈ Set.Icc (0 : ℝ) 1) (hm : ∫ x, x ∂P = m)
     (hvar : 0 < Var[id; P]) {C α : ℝ} (hC : C ∈ Set.Ioo 0 1) (hα : α ∈ Set.Ioo 0 1)

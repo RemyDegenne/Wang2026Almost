@@ -35,9 +35,9 @@ namespace Wang2026Almost
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P' : Measure Ω} [IsProbabilityMeasure P']
   {P : Measure ℝ} [IsProbabilityMeasure P] {m : ℝ}
 
-/-- **Proposition 2.6** (Wang, Agrawal, Ramdas 2026): for i.i.d. observations `X` of law `P` on
-`[0, 1]` with mean `m` and variance `σ² > 0`, a GRAPA bet fraction process `gr` (`gr n` maximizes
-the hindsight wealth of the first `n` rounds) satisfies the almost sure Bahadur expansion
+/-- **Proposition 2.6** [WAR26, Proposition 2.6]: for i.i.d. observations `X` of law `P` on `[0, 1]`
+with mean `m` and variance `σ² > 0`, a GRAPA bet fraction process `gr` (`gr n` maximizes the
+hindsight wealth of the first `n` rounds) satisfies the almost sure Bahadur expansion
 `√n gr n = S n / (σ² √n) + o_{a.s.}(n^{-1/4} log n)`, `S n = ∑_{k < n} (X k - m)`, hence
 `√n gr n → N(0, σ⁻²)` in distribution and `gr n = Ω_p(n^{-1/2})`, and the GRAPA wealth process
 converges to `0` almost surely. -/

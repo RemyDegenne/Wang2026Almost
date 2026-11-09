@@ -38,11 +38,11 @@ def IsBinaryPath (x : ℕ → ℝ) : Prop := ∀ k, x k = 0 ∨ x k = 1
 def IsPathPredictable (lam : ℕ → (ℕ → ℝ) → ℝ) : Prop :=
   ∀ n x y, (∀ k < n, x k = y k) → lam n x = lam n y
 
-/-- **Fact 2** (Wang, Agrawal, Ramdas 2026): let `lam`, `nu` be two predictable strategies on the
-path space with values in `[-1 / (1 - m), 1 / m]` such that `W^lam n > ρ W^nu n` for all `n` on
-all binary paths, with `ρ ∈ [0, 1)`. Then for every `κ ∈ [-ρ / (1 - ρ), 1]`, on all binary paths,
-the bet fractions `portfolioFraction m κ lam nu coord` are in `[-1 / (1 - m), 1 / m]` and their
-wealth is the portfolio `(1 - κ) W^lam + κ W^nu`. -/
+/-- **Fact 2** [WAR26, Fact 2]: let `lam`, `nu` be two predictable strategies on the path space with
+values in `[-1 / (1 - m), 1 / m]` such that `W^lam n > ρ W^nu n` for all `n` on all binary paths,
+with `ρ ∈ [0, 1)`. Then for every `κ ∈ [-ρ / (1 - ρ), 1]`, on all binary paths, the bet fractions
+`portfolioFraction m κ lam nu coord` are in `[-1 / (1 - m), 1 / m]` and their wealth is the
+portfolio `(1 - κ) W^lam + κ W^nu`. -/
 lemma wealth_portfolioFraction_short {m ρ κ : ℝ} (hm : m ∈ Set.Ioo 0 1) (hρ : ρ ∈ Set.Ico 0 1)
     (hκ : κ ∈ Set.Icc (-ρ / (1 - ρ)) 1) {lam nu : ℕ → (ℕ → ℝ) → ℝ}
     (hlam_pred : IsPathPredictable lam) (hnu_pred : IsPathPredictable nu)
