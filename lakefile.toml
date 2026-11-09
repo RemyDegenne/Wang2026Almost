@@ -26,11 +26,11 @@ git = "https://github.com/PatrickMassot/checkdecls.git"
 [[lean_lib]]
 name = "Wang2026Almost"
 
-# Comparator (https://github.com/leanprover/comparator) challenge/solution modules for the
-# headline results listed in formalization.yaml; see comparator/README.md. One library with a
-# stub root: tools that import every library root (checkdecls, referee) must not load the
-# challenge modules, which redeclare project and LML names, so those are globs, not roots.
-# Add one "Challenge_<name>" entry per line of comparator/targets.txt.
+# Comparator (https://github.com/leanprover/comparator) challenge and solution modules for the
+# headline results listed in formalization.yaml; see comparator/README.md. One library with a stub
+# root: tools that import every library root (checkdecls) must not load the challenge modules,
+# which redeclare project and LMLExplore names, so those are globs, not roots. Add one
+# "Challenge_<name>" entry per line of comparator/targets.txt.
 [[lean_lib]]
 name = "Comparator"
 srcDir = "comparator"

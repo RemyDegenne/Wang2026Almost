@@ -2,26 +2,12 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Probability.IdentDistrib
-public import Mathlib.Probability.Independence.InfinitePi
-public import Mathlib.Probability.Kernel.Basic
-public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
-public import Mathlib.Probability.Process.FiniteDimensionalLaws
-public import Mathlib.Probability.HasCondDistrib
-public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
-public import Mathlib.Probability.Independence.Basic
-public import Mathlib.Probability.Independence.Conditional
-public import Mathlib.MeasureTheory.Measure.SubFinite
-public import Mathlib.Probability.Kernel.RadonNikodym
-public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
-public import Mathlib.Order.Restriction
-public import Mathlib.Probability.Kernel.IonescuTulcea.Maps
-public import Mathlib.Analysis.Normed.Ring.Basic
-public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Probability.Kernel.Composition.MapComap
+public import LeanMachineLearning.SequentialLearning.StationaryEnv
+public import LeanMachineLearning.ForMathlib.Probability.Independence.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Measure.WithDensity
@@ -44,9 +30,8 @@ public import Mathlib.Probability.Kernel.Condexp
 public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.Probability.Process.Adapted
+public import LeanMachineLearning.SequentialLearning.SumRewards
 public import Mathlib.Order.Filter.Extr
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Probability.Martingale.BorelCantelli
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
@@ -81,7 +66,7 @@ variable {Ω : Type*}
 
 /-- The range `[-1 / (1 - m), 1 / m]` of the bet fractions for which the wealth stays
 nonnegative when the observations are in `[0, 1]`. -/
-def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
+noncomputable def fractionRange (m : ℝ) : Set ℝ := Set.Icc (-1 / (1 - m)) (1 / m)
 
 /-- The wealth after `n` rounds of the predictable plug-in betting strategy `lam` on the
 observations `X`, testing the null mean `m`: `∏_{k < n} (1 + lam k (X k - m))`. -/
